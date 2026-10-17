@@ -686,3 +686,6 @@ html body .imdbb-home>.imdbb-hero{ bottom: calc(var(--imdbb-row) + var(--imdbb-b
 html body.imdbb-compact .full-start-new__right{ padding-bottom: calc(var(--imdbb-card-p, 17em) - 1em) !important; }
 html body.imdbb-compact .imdbb-band{ bottom: calc(3.5em - 1em) !important; }
 }
+
+/*! imdbb-kp */
+html body .imdbb-hero__meta>.imdbb-hero__r[data-kp]{color:#ff5500!important}

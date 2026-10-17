@@ -4,6 +4,7 @@ import Utils from '../../../utils/utils'
 import ovx from '../../../utils/imdbb_ov'
 import '../../../utils/imdbb_lgdark'
 import '../../../utils/imdbb_rus'
+import KP from '../../../utils/kp'
 
 const HKEY = 'imdbb_hd3'
 const HTTL = 7 * 864e5
@@ -165,6 +166,23 @@ export default function(main){
                 if(qq) qh = qq.innerHTML
             }
             q('.imdbb-hero__meta').innerHTML = metaHtml(d, info, {rate: rate, ql: qh, ct: info ? cert(info, kind) : ''})
+            try{
+                let kpk = kind + ':' + d.id
+
+                q('.imdbb-hero__meta').setAttribute('data-kpk', kpk)
+
+                if(!rate && KP.isRu(d, info)) KP.rating(d, kind, function(v){
+                    try{
+                        let mm = q('.imdbb-hero__meta')
+
+                        if(!v || !mm || mm.getAttribute('data-kpk') !== kpk || mm.querySelector('.imdbb-hero__r')) return
+
+                        mm.innerHTML = metaHtml(d, info, {rate: '', kp: v.toFixed(1), ql: qh, ct: info ? cert(info, kind) : ''})
+                    }
+                    catch(e){}
+                })
+            }
+            catch(e){}
 
             q('.imdbb-hero__s').textContent = subLine(d, info)
             q('.imdbb-hero__d').textContent = ovx.pick(d, info && info.overview, d.overview)
