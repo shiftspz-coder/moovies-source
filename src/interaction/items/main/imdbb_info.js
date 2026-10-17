@@ -21,7 +21,7 @@ function mg(ps){
 // o: {rate: '7.6' строкой, ql: html значка качества (запасной), ct: возраст}
 export function metaHtml(d, info, o){
     let parts = []
-    if(o.rate && o.kp2) parts.push('<span class="imdbb-hero__r" data-two="1"><span class="imdbb-hero__rp"><b>' + esc(o.rate) + '</b><i>IMDb</i></span><span class="imdbb-hero__rp imdbb-hero__rk"><b>' + esc(o.kp2) + '</b><i>КП</i></span></span>')
+    if(o.rate && o.kp2) parts.push('<span class="imdbb-hero__r" data-two="1"><span class="imdbb-hero__rp"><b>' + esc(o.rate) + '</b><i>IMDb</i></span><span class="imdbb-hero__rp imdbb-hero__rk"><b>' + esc(o.kp2) + '</b><i>КиноПоиск</i></span></span>')
     else if(o.rate) parts.push('<span class="imdbb-hero__r"><b>' + esc(o.rate) + '</b><i>IMDb</i></span>')
     else if(o.kp) parts.push('<span class="imdbb-hero__r" data-kp="1"><b>' + esc(o.kp) + '</b><i>КП</i></span>')
     let qm = window.__imdbbQm ? window.__imdbbQm(d) : []

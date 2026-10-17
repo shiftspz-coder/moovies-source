@@ -700,3 +700,11 @@ html body.imdbb-compact .full-start-new__buttons .button--play:not(.focus), html
 html body .imdbb-hero__meta>.imdbb-hero__r[data-two]{flex-direction:row!important; gap:.9em}
 html body .imdbb-hero__r[data-two] .imdbb-hero__rp{display:flex; flex-direction:column; align-items:center}
 html body .imdbb-hero__r[data-two] .imdbb-hero__rk{color:#ff5500!important}
+
+/*! imdbb-kp5 */
+html body .imdbb-hero__meta>.imdbb-hero__r[data-two]{gap:.6em!important}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rp{flex-direction:column-reverse!important; align-items:flex-start!important; background:rgba(255,255,255,.08); border-left:3px solid #f5c518; border-radius:.4em; padding:.35em .7em .35em .6em}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rk{border-left-color:#ff5500}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rp b{color:#fff!important; font-size:1.7em; margin-top:.15em}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rp i{margin-top:0; font-size:.62em; font-weight:500; letter-spacing:.03em; color:#f5c518}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rk i{color:#ff5500}
