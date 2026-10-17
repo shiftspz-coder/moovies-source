@@ -223,6 +223,22 @@ export default function(main){
             }).catch(function(){})
         }
 
+        let wm = window.__imdbbWarm = {}
+        let warm = function(info){
+            try{
+                let ls = info && info.images && info.images.logos
+                if(!ls || !ls.length) return
+                let pick = ls.filter(function(x){ return x.iso_639_1 === 'ru' })[0] || ls.filter(function(x){ return x.iso_639_1 === 'en' })[0] || ls[0]
+                if(!pick || !pick.file_path) return
+                let u = L.TMDB.image('t/p/w500' + pick.file_path)
+                if(wm[u]) return
+                wm[u] = 1
+                let im = new Image()
+                im.src = u
+                if(im.decode) im.decode().catch(function(){})
+            }
+            catch(e){}
+        }
         let pf = {}
         let prefetch = function(el){
             try{
@@ -238,9 +254,9 @@ export default function(main){
                     if(!d2 || !d2.id || !(d2.title || d2.name)) return
                     if(d2.episode_number !== undefined || d2.still_path !== undefined) return
                     let k2 = ckey(d2)
-                    if(cache[k2] || pf[k2] || hget(k2)) return
+                    let hw = cache[k2] || hget(k2); if(hw){ warm(hw); return } if(pf[k2]) return
                     pf[k2] = 1
-                    setTimeout(function(){ load(d2, function(){}) }, 500 + n * 350)
+                    setTimeout(function(){ load(d2, function(j){ warm(j) }) }, 100 + n * 120)
                 })
             }
             catch(e){}
