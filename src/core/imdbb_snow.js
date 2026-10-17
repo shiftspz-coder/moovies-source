@@ -250,6 +250,12 @@ function init(){
             field: {name: 'Вид снега', description: 'Работает, когда снег включён'},
             onChange: function(){ setTimeout(apply, 60) }
         })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
+            param: {name: 'imdbb_lgbt_block', type: 'trigger', default: false},
+            field: {name: 'Блокировка ЛГБТ-контента', description: 'Выключено: все карточки открываются как обычно. Включено: показывается заглушка «Контент ограничен»'}
+        })
     }
     catch(e){}
 

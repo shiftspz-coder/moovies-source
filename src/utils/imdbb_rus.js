@@ -23,7 +23,7 @@ function addParam(){
     param_added = true
 
     L.SettingsApi.addParam({
-        component: 'interface',
+        component: 'imdbb',
         param: {name: 'rus_menu', type: 'trigger', default: true},
         field: {name: 'Русское в меню', description: 'Показывать пункт «Русское» (русские фильмы, сериалы и подборки по платформам)'}
     })

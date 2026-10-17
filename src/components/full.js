@@ -65,7 +65,7 @@ function component(object){
 
                 // Проверяем по ключевым словам, есть ли в фильме ЛГБТ тематика
                 let key_tags   = data.movie.keywords ? (data.movie.keywords.results || data.movie.keywords.keywords) : []
-                let lgbt_block = Storage.field('lgbt_content_block') || VPN.is(['ru','by'])
+                let lgbt_block = Storage.field('imdbb_lgbt_block')
 
                 if(lgbt_block && key_tags && key_tags.find && key_tags.length && window.lampa_settings.lgbt) {
                     Keys.lgbt.forEach(keyword=>{
