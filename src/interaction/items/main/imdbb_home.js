@@ -262,6 +262,22 @@ export default function(main){
             catch(e){}
         }
 
+        let unwait = function(dd){
+            try{
+                hero.setAttribute('data-imdbb-lw', '1')
+                let go = function(){ if(cur === dd) hero.classList.remove('imdbb-hero--wait') }
+                let im = q('.imdbb-hero__logo img')
+                if(im && !im.complete){
+                    let t = setTimeout(go, 700)
+                    let f = function(){ clearTimeout(t); go() }
+                    im.addEventListener('load', f)
+                    im.addEventListener('error', f)
+                }
+                else go()
+            }
+            catch(e){ hero.classList.remove('imdbb-hero--wait') }
+        }
+
         let upd = function(card, d){
             if(!d) return
             if(!d.id){
@@ -285,7 +301,7 @@ export default function(main){
             let ep = d.episode_number !== undefined || d.still_path !== undefined
             let wait = !ci && !ep
             hero.classList.toggle('imdbb-hero--wait', wait)
-            render(d, ci || null, el, wait)
+            render(d, ci || null, el, wait); if(!wait){ let im0 = q('.imdbb-hero__logo img'); if(im0 && !im0.complete){ hero.classList.add('imdbb-hero--wait'); unwait(d) } }
             try{ if(d.backdrop_path && L.Background && !isBm) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path)) }catch(e){}
             clearTimeout(timer)
             clearTimeout(timer2)
@@ -295,9 +311,9 @@ export default function(main){
                     if(d.backdrop_path && L.Background && !isBm) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path))
                 }
                 catch(e){}
-                load(d, function(info){ if(cur === d){ render(d, info, curEl); hero.classList.remove('imdbb-hero--wait') } })
+                load(d, function(info){ if(cur === d){ render(d, info, curEl); unwait(d) } })
                 prefetch(curEl)
-                timer2 = setTimeout(function(){ if(cur === d){ render(d, cache[ckey(d)] || null, curEl); hero.classList.remove('imdbb-hero--wait') } }, 1800)
+                timer2 = setTimeout(function(){ if(cur === d){ render(d, cache[ckey(d)] || null, curEl); unwait(d) } }, 1800)
             }, 250)
         }
 
