@@ -49,7 +49,7 @@ let timer_change
  */
 function init(){
     Storage.listener.follow('change', (event)=>{
-        if(event.name == 'background' || event.name == 'background_type') resize()
+        if(event.name == 'background' || event.name == 'background_type' || event.name == 'imdbb_dim_off' || event.name == 'imdbb_dim_main' || event.name == 'imdbb_dim_card') resize()
     })
 
     let u = Platform.any() ? Manifest.github_lampa : './'
@@ -101,6 +101,30 @@ function bg(){
 }
 
 /**
+ * Сила затемнения фона 0..1 (1 = как в оригинале), настройки IMDb+
+ */
+function imdbbDim(){
+    let g = function(k, d){ try{ return Storage.get(k, d) }catch(e){ return d } }
+    let off = g('imdbb_dim_off', 'false')
+
+    if(off === true || off === 'true') return 0
+
+    let main = bokeh.d
+    let v = parseFloat(g(main ? 'imdbb_dim_main' : 'imdbb_dim_card', main ? '100' : '0'))
+
+    if(isNaN(v)) v = main ? 100 : 0
+
+    return Math.max(0, Math.min(100, v)) / 100
+}
+
+/**
+ * Прозрачность самой картинки: на главной 1, в карточке от 1 (нет затемнения) до 0.2 (оригинал)
+ */
+function imdbbImgAlpha(){
+    return bokeh.d ? 1 : 1 - 0.8 * imdbbDim()
+}
+
+/**
  * Рисовать
  * @param {object} data 
  * @param {object} item - фон
@@ -145,7 +169,9 @@ function draw(data, item, noimage){
         }
 
 
-        item.ctx.globalAlpha = type == 'poster' ? 0.7 : 0.6
+        let dim = imdbbDim()
+
+        item.ctx.globalAlpha = (type == 'poster' ? 0.7 : 0.6) * dim
         item.ctx.globalCompositeOperation = 'multiply'
 
         let angle = 90 * Math.PI / 180,
@@ -248,7 +274,7 @@ function blur(data, item, complite){
 		let nw = img.width * ratio,
 			nh = img.height * ratio;
 
-            item.ctx.globalAlpha = data.img.width > 1000 ? (bokeh.d ? 1 : 0.2) : 1
+            item.ctx.globalAlpha = data.img.width > 1000 ? imdbbImgAlpha() : 1
 
             item.ctx.drawImage(img, -(nw-window.screen_width) / 2, -(nh-window.screen_height) / 2, nw, nh)
 

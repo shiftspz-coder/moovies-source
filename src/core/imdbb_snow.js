@@ -253,6 +253,24 @@ function init(){
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',
+            param: {name: 'imdbb_dim_off', type: 'trigger', default: false},
+            field: {name: 'Убрать затемнение фона', description: 'Полностью убирает затемнение фона везде: на главной, в рядах и в карточке'}
+        })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
+            param: {name: 'imdbb_dim_main', type: 'select', values: {'0': 'Нет', '25': '25%', '50': '50%', '75': '75%', '100': 'Стандартное'}, default: '100'},
+            field: {name: 'Затемнение: главная и ряды', description: 'Не действует, если включено «Убрать затемнение фона»'}
+        })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
+            param: {name: 'imdbb_dim_card', type: 'select', values: {'0': 'Нет', '25': '25%', '50': '50%', '75': '75%', '100': 'Стандартное'}, default: '0'},
+            field: {name: 'Затемнение: карточка', description: 'Не действует, если включено «Убрать затемнение фона»'}
+        })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
             param: {name: 'imdbb_lgbt_block', type: 'trigger', default: false},
             field: {name: 'Блокировка ЛГБТ-контента', description: 'Выключено: все карточки открываются как обычно. Включено: показывается заглушка «Контент ограничен»'}
         })
