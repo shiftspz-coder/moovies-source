@@ -253,6 +253,12 @@ function init(){
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',
+            param: {name: 'imdbb_kp_both', type: 'trigger', default: false},
+            field: {name: 'Рейтинг Кинопоиска рядом с IMDb', description: 'Показывает оценку Кинопоиска справа от IMDb на главной и в карточке. Выключено: КП только вместо IMDb у русских фильмов'}
+        })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
             param: {name: 'imdbb_dim_off', type: 'trigger', default: false},
             field: {name: 'Убрать затемнение фона', description: 'Полностью убирает затемнение фона везде: на главной, в рядах и в карточке'}
         })

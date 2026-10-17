@@ -25,6 +25,7 @@ import Buttons from './start/buttons'
 import ovx from '../../utils/imdbb_ov'
 
 const QKEY = 'imdbb_q2'
+const kpBoth = ()=>{ try{ return localStorage.getItem('imdbb_kp_both') === 'true' }catch(e){ return false } }
 
 function gate(h, k){
     let e = h && h[0]
@@ -196,7 +197,7 @@ class Start extends Emit {
         let ibw = this.html
 
         if(document.body.classList.contains('imdbb-compact')){
-            ibw.addClass('imdbb-fwait');window.__imdbbUnif = 1;(()=>{ try{ if(localStorage.getItem('imdbb_hero_card') === 'false') return; let rg = this.html.find('.full-start-new__right'); if(!rg.length) return; let hero = $('<div class="imdbb-hero imdbb-hero--card">' + HERO_HTML + '</div>'), card = this.card; rg.prepend(hero); this.html.addClass('imdbb-unif'); let up = ()=>{ try{ let r = this.html.find('.rate--imdb:not(.hide) > div').eq(0).text().trim(), qc = this.html.find('.imdbb-cq').first(), on = this.html.find('.imdbb-fav.on').length, pl; hero.find('.imdbb-hero__tag').text(card.tagline || ''); hero.find('.imdbb-hero__meta').html(metaHtml(card, card, {rate: r, kp: (!r && KP.isRu(card, card)) ? this.html.find('.rate--kp:not(.hide) > div').eq(0).text().trim() : '', ql: qc.length ? (qc[0].classList.contains('imdbb-cqm') ? Array.prototype.map.call(qc[0].children, function(n){ return n.innerHTML }) : qc.html()) : '', ct: pg || ''})); pl = hero.find('.imdbb-hero__pl'); on && pl.length && pl.append('<span class="imdbb-hero__fav"><svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M6 3h12v18l-6-4-6 4z" fill="currentColor"/></svg></span>'); hero.find('.imdbb-hero__s').text(subLine(card, card)); hero.find('.imdbb-hero__d').text(ovx.pick(card, card.overview) || '') }catch(e){} }; this.html[0].__imdbbHu = up; up(); ovx.refresh(card, function(t){ hero.find('.imdbb-hero__d').text(t) }) }catch(e){} })();
+            ibw.addClass('imdbb-fwait');window.__imdbbUnif = 1;(()=>{ try{ if(localStorage.getItem('imdbb_hero_card') === 'false') return; let rg = this.html.find('.full-start-new__right'); if(!rg.length) return; let hero = $('<div class="imdbb-hero imdbb-hero--card">' + HERO_HTML + '</div>'), card = this.card; rg.prepend(hero); this.html.addClass('imdbb-unif'); let up = ()=>{ try{ let r = this.html.find('.rate--imdb:not(.hide) > div').eq(0).text().trim(), qc = this.html.find('.imdbb-cq').first(), on = this.html.find('.imdbb-fav.on').length, pl; hero.find('.imdbb-hero__tag').text(card.tagline || ''); hero.find('.imdbb-hero__meta').html(metaHtml(card, card, {rate: r, kp: (!r && KP.isRu(card, card)) ? this.html.find('.rate--kp:not(.hide) > div').eq(0).text().trim() : '', kp2: (r && kpBoth()) ? this.html.find('.rate--kp:not(.hide) > div').eq(0).text().trim() : '', ql: qc.length ? (qc[0].classList.contains('imdbb-cqm') ? Array.prototype.map.call(qc[0].children, function(n){ return n.innerHTML }) : qc.html()) : '', ct: pg || ''})); pl = hero.find('.imdbb-hero__pl'); on && pl.length && pl.append('<span class="imdbb-hero__fav"><svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M6 3h12v18l-6-4-6 4z" fill="currentColor"/></svg></span>'); hero.find('.imdbb-hero__s').text(subLine(card, card)); hero.find('.imdbb-hero__d').text(ovx.pick(card, card.overview) || '') }catch(e){} }; this.html[0].__imdbbHu = up; up(); ovx.refresh(card, function(t){ hero.find('.imdbb-hero__d').text(t) }) }catch(e){} })();
             setTimeout(function(){ gate(ibw) }, 1000)
         }
 
@@ -277,7 +278,7 @@ class Start extends Emit {
 
         this.html.find('.rate--tmdb, .full-start__status').addClass('hide')
 
-        let kpFb = ()=>{ try{ let c = this.card; if(!KP.isRu(c, c)) return; let kind = (c.media_type === 'tv' || (c.name && !c.title) || c.first_air_date) ? 'tv' : 'movie'; KP.rating(c, kind, (v)=>{ try{ if(!(v > 0) || this.html.find('.rate--imdb:not(.hide)').length) return; this.html.find('.rate--kp').removeClass('hide').find('> div').eq(0).text(v.toFixed(1)); let u = this.html[0] && this.html[0].__imdbbHu; u && u() }catch(e){} }) }catch(e){} }
+        let kpFb = ()=>{ try{ let c = this.card; if(!KP.isRu(c, c) && !kpBoth()) return; let kind = (c.media_type === 'tv' || (c.name && !c.title) || c.first_air_date) ? 'tv' : 'movie'; KP.rating(c, kind, (v)=>{ try{ if(!(v > 0) || (this.html.find('.rate--imdb:not(.hide)').length && !kpBoth())) return; this.html.find('.rate--kp').removeClass('hide').find('> div').eq(0).text(v.toFixed(1)); let u = this.html[0] && this.html[0].__imdbbHu; u && u() }catch(e){} }) }catch(e){} }
 
         if(!(parseFloat(this.card.imdb_rating) > 0)){
             IMDb.rating(this.card, (r)=>{
@@ -292,7 +293,7 @@ class Start extends Emit {
 
         if(parseFloat(this.card.imdb_rating) > 0) gate(this.html, 'r')
 
-        this.qualityChip()
+        this.qualityChip(); if(kpBoth()) kpFb()
 
         if(this.card.genres){
             genres = this.card.genres.slice(0,5).map((a)=>{

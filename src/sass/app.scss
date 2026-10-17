@@ -695,3 +695,8 @@ html body.imdbb-compact .full-start-new__buttons .button--play.focus, html body.
 html body.imdbb-compact .full-start-new__buttons .button--play.focus *, html body.imdbb-compact .full-start-new__buttons .button--book.focus *, html body.imdbb-compact .full-start-new__buttons .button--reaction.focus *{ color:#1e1f21 !important; -webkit-text-fill-color:#1e1f21 !important }
 html body.imdbb-compact .full-start-new__buttons .button--play.focus svg{ fill:#1e1f21 !important; stroke:#1e1f21 !important }
 html body.imdbb-compact .full-start-new__buttons .button--play:not(.focus), html body.imdbb-compact .full-start-new__buttons .button--book:not(.focus), html body.imdbb-compact .full-start-new__buttons .button--reaction:not(.focus){ box-shadow:inset 0 0 0 1px rgba(255,255,255,.28) !important }
+
+/*! imdbb-kp2 */
+html body .imdbb-hero__meta>.imdbb-hero__r[data-two]{flex-direction:row!important; gap:.9em}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rp{display:flex; flex-direction:column; align-items:center}
+html body .imdbb-hero__r[data-two] .imdbb-hero__rk{color:#ff5500!important}

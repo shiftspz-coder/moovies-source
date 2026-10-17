@@ -171,6 +171,7 @@ export default function(main){
 
                 q('.imdbb-hero__meta').setAttribute('data-kpk', kpk)
 
+                if(rate && localStorage.getItem('imdbb_kp_both') === 'true') KP.rating(d, kind, function(v){ try{ let m2 = q('.imdbb-hero__meta'); if(!v || !m2 || m2.getAttribute('data-kpk') !== kpk) return; m2.innerHTML = metaHtml(d, info, {rate: rate, kp2: v.toFixed(1), ql: qh, ct: info ? cert(info, kind) : ''}) }catch(e){} })
                 if(!rate && KP.isRu(d, info)) KP.rating(d, kind, function(v){
                     try{
                         let mm = q('.imdbb-hero__meta')
