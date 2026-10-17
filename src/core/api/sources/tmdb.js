@@ -247,8 +247,47 @@ function find(find, params = {}){
     return finded
 }
 
+function rusMain(params, oncomplite, onerror){
+    let d = new Date().toISOString().slice(0, 10)
+    let m = 'discover/movie?sort_by=primary_release_date.desc&with_original_language=ru&vote_average.gte=5&vote_average.lte=9.5&primary_release_date.lte=' + d
+    let n = (id)=> 'discover/tv?with_networks=' + id + '&sort_by=first_air_date.desc&air_date.lte=' + d
+    let rows = [
+        ['Русские фильмы', m],
+        ['Русские сериалы', 'discover/tv?with_original_language=ru&sort_by=first_air_date.desc&air_date.lte=' + d],
+        ['Русские мультфильмы', m + '&with_genres=16'],
+        ['Start', n(2493)],
+        ['Premier', n(2859)],
+        ['Wink', n(4085)],
+        ['ИВИ', n(3923)],
+        ['Okko', n(3871)],
+        ['КиноПоиск', n(3827)],
+        ['KION', n(5806)],
+        ['СТС', n(806)],
+        ['ТНТ', n(1191)]
+    ]
+    let parts_data = rows.map((r)=>{
+        return (call)=>{
+            get(r[1], params, (json)=>{
+                json.title = r[0]
+
+                call(json)
+            }, call, {life: day * 2})
+        }
+    })
+
+    function loadPart(partLoaded, partEmpty){
+        Api.partNext(parts_data, 6, partLoaded, partEmpty)
+    }
+
+    loadPart(oncomplite, onerror)
+
+    return loadPart
+}
+
 function main(params = {}, oncomplite, onerror){
     let parts_limit = 6
+    if(params.rus_mode) return rusMain(params, oncomplite, onerror)
+
     let parts_data  = [
         (call)=>{
             get('movie/now_playing',params,(json)=>{

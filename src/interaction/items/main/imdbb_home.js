@@ -3,6 +3,7 @@ import {lgcached, lgput} from '../../card/module/ratting'
 import Utils from '../../../utils/utils'
 import ovx from '../../../utils/imdbb_ov'
 import '../../../utils/imdbb_lgdark'
+import '../../../utils/imdbb_rus'
 
 const HKEY = 'imdbb_hd3'
 const HTTL = 7 * 864e5
