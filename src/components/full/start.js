@@ -11,6 +11,7 @@ import Emit from '../../utils/emit'
 import TMDB from '../../core/api/sources/tmdb'
 import Permit from '../../core/account/permit'
 import IMDb from '../../utils/imdb'
+import KP from '../../utils/kp'
 
 import Options from './start/options'
 import Torrents from './start/torrents'
@@ -195,7 +196,7 @@ class Start extends Emit {
         let ibw = this.html
 
         if(document.body.classList.contains('imdbb-compact')){
-            ibw.addClass('imdbb-fwait');window.__imdbbUnif = 1;(()=>{ try{ if(localStorage.getItem('imdbb_hero_card') === 'false') return; let rg = this.html.find('.full-start-new__right'); if(!rg.length) return; let hero = $('<div class="imdbb-hero imdbb-hero--card">' + HERO_HTML + '</div>'), card = this.card; rg.prepend(hero); this.html.addClass('imdbb-unif'); let up = ()=>{ try{ let r = this.html.find('.rate--imdb:not(.hide) > div').eq(0).text().trim(), qc = this.html.find('.imdbb-cq').first(), on = this.html.find('.imdbb-fav.on').length, pl; hero.find('.imdbb-hero__tag').text(card.tagline || ''); hero.find('.imdbb-hero__meta').html(metaHtml(card, card, {rate: r, ql: qc.length ? qc.html() : '', ct: pg || ''})); pl = hero.find('.imdbb-hero__pl'); on && pl.length && pl.append('<span class="imdbb-hero__fav"><svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M6 3h12v18l-6-4-6 4z" fill="currentColor"/></svg></span>'); hero.find('.imdbb-hero__s').text(subLine(card, card)); hero.find('.imdbb-hero__d').text(ovx.pick(card, card.overview) || '') }catch(e){} }; this.html[0].__imdbbHu = up; up(); ovx.refresh(card, function(t){ hero.find('.imdbb-hero__d').text(t) }) }catch(e){} })();
+            ibw.addClass('imdbb-fwait');window.__imdbbUnif = 1;(()=>{ try{ if(localStorage.getItem('imdbb_hero_card') === 'false') return; let rg = this.html.find('.full-start-new__right'); if(!rg.length) return; let hero = $('<div class="imdbb-hero imdbb-hero--card">' + HERO_HTML + '</div>'), card = this.card; rg.prepend(hero); this.html.addClass('imdbb-unif'); let up = ()=>{ try{ let r = this.html.find('.rate--imdb:not(.hide) > div').eq(0).text().trim(), qc = this.html.find('.imdbb-cq').first(), on = this.html.find('.imdbb-fav.on').length, pl; hero.find('.imdbb-hero__tag').text(card.tagline || ''); hero.find('.imdbb-hero__meta').html(metaHtml(card, card, {rate: r, kp: (!r && KP.isRu(card, card)) ? this.html.find('.rate--kp:not(.hide) > div').eq(0).text().trim() : '', ql: qc.length ? qc.html() : '', ct: pg || ''})); pl = hero.find('.imdbb-hero__pl'); on && pl.length && pl.append('<span class="imdbb-hero__fav"><svg viewBox="0 0 24 24" width="1em" height="1em"><path d="M6 3h12v18l-6-4-6 4z" fill="currentColor"/></svg></span>'); hero.find('.imdbb-hero__s').text(subLine(card, card)); hero.find('.imdbb-hero__d').text(ovx.pick(card, card.overview) || '') }catch(e){} }; this.html[0].__imdbbHu = up; up(); ovx.refresh(card, function(t){ hero.find('.imdbb-hero__d').text(t) }) }catch(e){} })();
             setTimeout(function(){ gate(ibw) }, 1000)
         }
 
@@ -276,12 +277,14 @@ class Start extends Emit {
 
         this.html.find('.rate--tmdb, .full-start__status').addClass('hide')
 
+        let kpFb = ()=>{ try{ let c = this.card; if(!KP.isRu(c, c)) return; let kind = (c.media_type === 'tv' || (c.name && !c.title) || c.first_air_date) ? 'tv' : 'movie'; KP.rating(c, kind, (v)=>{ try{ if(!(v > 0) || this.html.find('.rate--imdb:not(.hide)').length) return; this.html.find('.rate--kp').removeClass('hide').find('> div').eq(0).text(v.toFixed(1)); let u = this.html[0] && this.html[0].__imdbbHu; u && u() }catch(e){} }) }catch(e){} }
+
         if(!(parseFloat(this.card.imdb_rating) > 0)){
             IMDb.rating(this.card, (r)=>{
                 r = parseFloat(r)
                 gate(this.html, 'r')
 
-                if(!(r > 0)) return
+                if(!(r > 0)) return kpFb()
 
                 this.html.find('.rate--imdb').removeClass('hide').find('> div').eq(0).text(r >= 10 ? 10 : r.toFixed(1))
             })
