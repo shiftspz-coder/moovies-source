@@ -338,6 +338,7 @@ function run(){
 
 const LKEY = 'imdbb_lg1'
 const LTTL = 7 * 864e5
+const LTTL1 = 864e5
 let lcache = null
 let lsave = null
 let lq = []
@@ -375,7 +376,7 @@ function lsaveLater(){
 function lget(k){
     let c = lload()[k]
 
-    return c && c.t + LTTL > Date.now() ? c : null
+    return c && c.t + (c.l === 'ru' ? LTTL : LTTL1) > Date.now() ? c : null
 }
 
 function lgMode(){
@@ -399,12 +400,12 @@ function lnext(){
 
     lact++
 
-    let done = function(p, bad){
+    let done = function(p, bad, l){
         lact--
 
         delete lpend[j.k]
 
-        lload()[j.k] = {p: p, t: bad ? Date.now() - LTTL + 300e3 : Date.now()}
+        lload()[j.k] = {p: p, t: bad ? Date.now() - LTTL1 + 300e3 : Date.now(), l: l}
 
         lsaveLater()
 
@@ -421,11 +422,11 @@ function lnext(){
             let all = JSON.parse(x.responseText).logos || []
             let pick = all.filter(function(a){ return a.iso_639_1 === lang })[0] || all.filter(function(a){ return a.iso_639_1 === 'en' })[0] || all[0]
 
-            if(pick && pick.file_path) p = pick.file_path.replace('.svg', '.png')
+            if(pick && pick.file_path){ p = pick.file_path.replace('.svg', '.png'); x.__imdbbLl = pick.iso_639_1 || '' }
         }
         catch(e){}
 
-        done(p, false)
+        done(p, false, x.__imdbbLl)
     }
     x.onerror = x.ontimeout = function(){ done('', true) }
     x.send()

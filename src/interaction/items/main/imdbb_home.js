@@ -23,7 +23,7 @@ function hload(){
 function hget(k){
     let c = hload()[k]
 
-    return c && c.t + HTTL > Date.now() ? c.i : null
+    return c && c.t + ((c.i && c.i.images && c.i.images.logos && c.i.images.logos[0] && c.i.images.logos[0].iso_639_1 === 'ru') ? HTTL : 864e5) > Date.now() ? c.i : null
 }
 
 function hput(k, j, ct){
