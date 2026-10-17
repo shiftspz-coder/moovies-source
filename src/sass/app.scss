@@ -709,13 +709,8 @@ html body .imdbb-hero__r[data-two] .imdbb-hero__rp b{color:#fff!important; font-
 html body .imdbb-hero__r[data-two] .imdbb-hero__rp i{margin-top:0; font-size:.62em; font-weight:500; letter-spacing:.03em; color:#f5c518}
 html body .imdbb-hero__r[data-two] .imdbb-hero__rk i{color:#ff5500}
 
-/*! imdbb-rr */
-html body .imdbb-hero .imdbb-hero__meta{grid-template-columns:auto auto 1fr !important}
-html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__pl{grid-column-start:1 !important; grid-column-end:2 !important}
-html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__tx, html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__g{grid-column-start:1 !important; grid-column-end:2 !important}
-html body .imdbb-hero .imdbb-hero__meta .imdbb-hero__r ~ span{margin-left:0 !important}
-html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r{grid-column-start:2 !important; grid-column-end:3 !important; grid-row-start:1 !important; grid-row-end:span 3 !important; align-self:center !important; margin-left:1.2em !important; padding:0 !important; border:0 !important; background:none !important}
-html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r:not([data-two]){flex-direction:column-reverse !important; align-items:flex-start !important; background:rgba(255,255,255,.08) !important; border-left:3px solid #f5c518 !important; border-radius:.4em !important; padding:.35em .7em .35em .6em !important}
+/*! imdbb-rs */
+html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r:not([data-two]){flex-direction:column-reverse !important; align-items:flex-start !important; align-self:center !important; background:rgba(255,255,255,.08) !important; border-right:0 !important; border-left:3px solid #f5c518 !important; border-radius:.4em !important; padding:.35em .7em .35em .6em !important}
 html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r[data-kp]{border-left-color:#ff5500 !important}
 html body .imdbb-hero .imdbb-hero__r:not([data-two]) b{color:#fff !important; font-size:1.7em; margin-top:.15em}
 html body .imdbb-hero .imdbb-hero__r:not([data-two]) i{margin-top:0 !important; font-size:.62em; font-weight:500; letter-spacing:.03em; color:#f5c518 !important}
