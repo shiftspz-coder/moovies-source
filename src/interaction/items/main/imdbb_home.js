@@ -270,6 +270,7 @@ export default function(main){
             let wait = !ci && !ep
             hero.classList.toggle('imdbb-hero--wait', wait)
             render(d, ci || null, el, wait)
+            try{ if(d.backdrop_path && L.Background && !isBm) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path)) }catch(e){}
             clearTimeout(timer)
             clearTimeout(timer2)
             timer = setTimeout(function(){

@@ -192,14 +192,16 @@ function draw(data, item, noimage){
  * Плавный переход с двойным прогревом обоих canvas
  */
 function fadeTo(new_bg) {
+    const fid = window.__imdbbFid = (window.__imdbbFid || 0) + 1
     const fade      = background.fade.ctx
     const old_image = background[view === 'one' ? 'two' : 'one'].canvas[0]
     const new_image = new_bg.canvas[0]
-    const duration  = 700   // длительность fade
-    const warmup    = 80    // прогрев GPU
+    const duration  = 250   // длительность fade
+    const warmup    = 30    // прогрев GPU
     const start     = Date.now()
 
     function step() {
+        if (fid !== window.__imdbbFid) return
         const elapsed = Date.now() - start
 
         if (elapsed < warmup) {
@@ -356,7 +358,7 @@ function change(url = ''){
     timer = setTimeout(()=>{
         if(url) load()
         else draw(false, false, true)
-    },300)
+    },120)
 }
 
 /**
