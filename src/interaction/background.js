@@ -351,10 +351,12 @@ function change(url = ''){
 
     clearTimeout(timer)
 
+    window.__imdbbBgFast = 1
+
     timer = setTimeout(()=>{
         if(url) load()
         else draw(false, false, true)
-    },1000)
+    },300)
 }
 
 /**
