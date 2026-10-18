@@ -912,3 +912,7 @@ html body.imdbb-compact[class][class] .imdbb-cqm>span.imdbb-hero__fav,
 html body.imdbb-compact[class][class] span.imdbb-hero__fav{
   border:0!important; background:none!important; box-shadow:none!important; outline:0!important; border-radius:0!important; padding:0!important;
 }
+
+/*! imdbb-snap */
+html body .imdbb-snap{ z-index:5; pointer-events:none!important; transition:opacity .25s ease; overflow:hidden }
+html body .imdbb-snapping .activity__loader{ display:none!important }

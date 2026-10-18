@@ -78,6 +78,64 @@ export default function(main){
         if(localStorage.getItem('imdbb_wide') === 'false') return
 
         let L = window.Lampa
+        if(!window.__imdbbSnap && L && L.Listener && L.Listener.follow){
+            window.__imdbbSnap = 1
+            L.Listener.follow('activity', function(e){
+                try{
+                    if(!e || e.type !== 'create' || e.component !== 'full') return
+                    let act = e.object && e.object.activity
+                    let slide = act && act.render ? act.render(true) : null
+                    if(!slide || !slide.appendChild) return
+                    let cid = String((e.object.card && e.object.card.id) || e.object.id || '').replace(/[^0-9a-z_-]/gi, '')
+                    if(!cid) return
+                    let sel = '.imdbb-home:not(.imdbb-snap)>.imdbb-hero[data-imdbb-id="' + cid + '"]'
+                    let src = document.querySelector('.activity--active ' + sel) || document.querySelector(sel)
+                    if(!src || src.classList.contains('imdbb-hero--wait')) return
+                    let lg = src.querySelector('.imdbb-hero__logo')
+                    if(!lg || !lg.firstChild) return
+                    let home = src.parentNode
+                    let hb = home.getBoundingClientRect()
+                    if(!hb.width || !hb.height) return
+                    let ov = document.createElement('div')
+                    ov.className = home.className + ' imdbb-snap'
+                    ov.style.position = 'absolute'
+                    slide.appendChild(ov)
+                    let cl = src.cloneNode(true)
+                    cl.classList.remove('imdbb-hero--wait')
+                    cl.removeAttribute('data-imdbb-id')
+                    ov.appendChild(cl)
+                    let pb = (ov.offsetParent || slide).getBoundingClientRect()
+                    ov.style.left = (hb.left - pb.left) + 'px'
+                    ov.style.top = (hb.top - pb.top) + 'px'
+                    ov.style.width = hb.width + 'px'
+                    ov.style.height = hb.height + 'px'
+                    ov.style.right = 'auto'
+                    ov.style.bottom = 'auto'
+                    slide.classList.add('imdbb-snapping')
+                    let t0 = Date.now(), done = false, iv = 0
+                    let fin = function(){
+                        if(done) return
+                        done = true
+                        clearInterval(iv)
+                        ov.style.opacity = '0'
+                        setTimeout(function(){
+                            try{ ov.remove() }catch(x){}
+                            try{ slide.classList.remove('imdbb-snapping') }catch(x){}
+                        }, 320)
+                    }
+                    iv = setInterval(function(){
+                        try{
+                            let age = Date.now() - t0
+                            if(!document.body.contains(slide)) return fin()
+                            let ready = !!slide.querySelector('.full-start-new__right') && !slide.classList.contains('activity--load') && !slide.querySelector('.imdbb-fwait')
+                            if((ready && age > 250) || age > 4500) fin()
+                        }
+                        catch(x){ fin() }
+                    }, 60)
+                }
+                catch(err){}
+            })
+        }
         let isBm = ['bookmarks','relise','favorite','category_full','myperson','actor'].indexOf(o.component) > -1
         let hero = document.createElement('div')
         hero.className = 'imdbb-hero'
@@ -317,7 +375,7 @@ export default function(main){
             if(ci) cache[kk] = ci
             let ep = d.episode_number !== undefined || d.still_path !== undefined
             let wait = !ci && !ep
-            hero.classList.toggle('imdbb-hero--wait', wait)
+            try{ hero.setAttribute('data-imdbb-id', String(d.id)) }catch(e){}; hero.classList.toggle('imdbb-hero--wait', wait)
             render(d, ci || null, el, wait); if(!wait){ let im0 = q('.imdbb-hero__logo img'); if(im0 && !im0.complete){ hero.classList.add('imdbb-hero--wait'); unwait(d) } }
             try{ if(d.backdrop_path && L.Background && !isBm) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path)) }catch(e){}
             clearTimeout(timer)
