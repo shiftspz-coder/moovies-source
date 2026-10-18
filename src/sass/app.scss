@@ -825,3 +825,8 @@ html body.imdbb-rs-19[class*="imdbb-rs-"] .imdbb-hero{
 html body.imdbb-rs-20[class*="imdbb-rs-"] .imdbb-hero{
 @include rsb{ background:rgba(var(--rr),.2)!important; border-radius:.55em!important; padding:.3em .9em!important }
 }
+
+/*! imdbb-rs-fit */
+@media not all and (max-height: 479px) and (pointer: coarse){
+html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r:not([data-two]){align-self:stretch!important; justify-content:center}
+}
