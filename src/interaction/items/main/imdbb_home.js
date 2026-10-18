@@ -279,6 +279,22 @@ export default function(main){
             catch(e){ hero.classList.remove('imdbb-hero--wait') }
         }
 
+        let preFull = function(d){
+            try{
+                if(!d || !d.id || d.episode_number !== undefined || d.still_path !== undefined) return
+                if(!L.Api || !L.Api.full || !L.Storage.field('request_caching')) return
+                let method = d.original_name ? 'tv' : 'movie'
+                let pk = method + ':' + d.id
+                setTimeout(function(){
+                    if(cur !== d) return
+                    let pm = window.__imdbbPre = window.__imdbbPre || {}
+                    if(pm[pk]) return
+                    pm[pk] = 1
+                    try{ L.Api.full({id: d.id, method: method, card: d, url: '', component: 'full', source: d.source || L.Storage.field('source'), page: 1}, function(){}, function(){}) }catch(e){}
+                }, 150)
+            }
+            catch(e){}
+        }
         let upd = function(card, d){
             if(!d) return
             if(!d.id){
@@ -313,7 +329,7 @@ export default function(main){
                 }
                 catch(e){}
                 load(d, function(info){ if(cur === d){ render(d, info, curEl); unwait(d) } })
-                prefetch(curEl)
+                prefetch(curEl); preFull(d)
                 timer2 = setTimeout(function(){ if(cur === d){ render(d, cache[ckey(d)] || null, curEl); unwait(d) } }, 1800)
             }, 250)
         }
