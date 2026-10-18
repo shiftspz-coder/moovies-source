@@ -511,16 +511,17 @@ export function qlabel(m){
     return c && c.v ? label(c.v) : ''
 }
 
+const IMDBB_MIC = '<svg class="imdbb-mic" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>'
 function bstyle(){ try{ return String(window.Lampa.Storage.get('imdbb_badge_style', '0')) }catch(e){ return '0' } }
 
-window.__imdbbBk = function(x){ x = String(x || ''); if(x === '4K') return '4k'; if(x === 'FHD') return 'fhd'; if(x === 'HDR') return 'hdr'; if(x === 'Dolby Vision') return 'dv'; if(x.indexOf('Дубляж') === 0) return 'dub'; return '' }
+window.__imdbbBk = function(x){ x = String(x || ''); if(x === '4K') return '4k'; if(x === 'FHD') return 'fhd'; if(x === 'HDR') return 'hdr'; if(x === 'Dolby Vision' || x === 'DV') return 'dv'; if(x.indexOf('Дубляж') === 0 || x.indexOf('imdbb-mic') > -1) return 'dub'; return '' }
 
 function mlabels(v){
     if(!v || !v.q) return []
 
     let out = [v.q === '1080' ? 'FHD' : v.q]
 
-    if(v.q !== 'TS' && bstyle() !== '0'){ if(v.hdr) out.push('HDR'); if(v.dv) out.push('Dolby Vision') }
+    if(v.q !== 'TS' && bstyle() !== '0'){ if(v.hdr) out.push('HDR'); if(v.dv) out.push('DV') }
 
     if(v.q === 'TS' || !v.dub) return out
 
@@ -531,7 +532,7 @@ function mlabels(v){
         return e && (typeof e !== 'object' || Object.keys(e).length) ? true : false
     }
 
-    out.push(dq && v.q === '4K' && !has('4K') && has('1080') ? 'Дубляж FHD' : 'Дубляж')
+    { let fo = dq && v.q === '4K' && !has('4K') && has('1080'); out.push(bstyle() === '0' ? (fo ? 'Дубляж FHD' : 'Дубляж') : IMDBB_MIC + (fo ? ' FHD' : '')) }
 
     return out
 }
