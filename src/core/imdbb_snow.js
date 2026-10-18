@@ -275,6 +275,17 @@ function init(){
             field: {name: 'Затемнение: карточка', description: 'Не действует, если включено «Убрать затемнение фона»'}
         })
 
+        let rsApply = function(){ try{ let v = parseInt(window.Lampa.Storage.get('imdbb_rate_style', '1'), 10); if(!(v >= 1 && v <= 20)) v = 1; let cl = document.body && document.body.classList; if(!cl) return; for(let n = 1; n <= 20; n++) cl.remove('imdbb-rs-' + n); cl.add('imdbb-rs-' + v) }catch(e){} }
+        rsApply(); setTimeout(rsApply, 800)
+        Lp.Listener.follow('app', function(e){ if(e.type === 'ready') rsApply() })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
+            param: {name: 'imdbb_rate_style', type: 'select', values: {'1': '1. Кромка слева (как сейчас)', '2': '2. Подчёркивание цветом', '3': '3. Стекло', '4': '4. Одна рамка с разделителем', '5': '5. Кольца', '6': '6. Метка-значок сверху', '7': '7. Шкала под числом', '8': '8. Контурные рамки', '9': '9. Кромка сверху', '10': '10. Минимал: точка и линия', '11': '11. Стекло и точка', '12': '12. Тонкая линия, крупное число', '13': '13. Сплошная заливка', '14': '14. Дуга', '15': '15. Звезда в цвете', '16': '16. Метка вертикально сбоку', '17': '17. Число с /10', '18': '18. Капсула', '19': '19. Общая плашка, двухцветная кромка', '20': '20. Тонированные плашки'}, default: '1'},
+            field: {name: 'Вид оценок', description: 'Оформление блока оценок IMDb и КиноПоиск на главной и в карточке'},
+            onChange: function(){ rsApply() }
+        })
+
         Lp.SettingsApi.addParam({
             component: 'imdbb',
             param: {name: 'imdbb_lgbt_block', type: 'trigger', default: false},

@@ -3,6 +3,7 @@ const MAP = {US:'США',GB:'Великобритания',RU:'Россия',FR:
 
 function esc(s){ return String(s || '').replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c] }) }
 function kindOf(d){ return d.media_type === 'tv' || (d.name && !d.title) || d.first_air_date ? 'tv' : 'movie' }
+function vv(x){ let n = parseFloat(x); return n > 0 ? Math.min(10, n) : 0 }
 
 export const HERO_HTML = '<div class="imdbb-hero__logo"></div><div class="imdbb-hero__tag"></div><div class="imdbb-hero__meta"></div><div class="imdbb-hero__s"></div><div class="imdbb-hero__d"></div>'
 
@@ -23,9 +24,9 @@ function mg(ps){
 // o: {rate: '7.6' строкой, ql: html значка качества (запасной), ct: возраст}
 export function metaHtml(d, info, o){
     let parts = []
-    if(o.rate && o.kp2) parts.push('<span class="imdbb-hero__r" data-two="1"><span class="imdbb-hero__rp"><b>' + esc(o.rate) + '</b><i>IMDb</i></span><span class="imdbb-hero__rp imdbb-hero__rk"><b>' + esc(o.kp2) + '</b><i>КиноПоиск</i></span></span>')
-    else if(o.rate) parts.push('<span class="imdbb-hero__r"><b>' + esc(o.rate) + '</b><i>IMDb</i></span>')
-    else if(o.kp) parts.push('<span class="imdbb-hero__r" data-kp="1"><b>' + esc(o.kp) + '</b><i>КиноПоиск</i></span>')
+    if(o.rate && o.kp2) parts.push('<span class="imdbb-hero__r" data-two="1"><span class="imdbb-hero__rp" style="--v:' + vv(o.rate) + '"><b>' + esc(o.rate) + '</b><i>IMDb</i></span><span class="imdbb-hero__rp imdbb-hero__rk" style="--v:' + vv(o.kp2) + '"><b>' + esc(o.kp2) + '</b><i>КиноПоиск</i></span></span>')
+    else if(o.rate) parts.push('<span class="imdbb-hero__r" style="--v:' + vv(o.rate) + '"><b>' + esc(o.rate) + '</b><i>IMDb</i></span>')
+    else if(o.kp) parts.push('<span class="imdbb-hero__r" data-kp="1" style="--v:' + vv(o.kp) + '"><b>' + esc(o.kp) + '</b><i>КиноПоиск</i></span>')
     let qm = window.__imdbbQm ? window.__imdbbQm(d) : []
     if(qm.length) qm.forEach(function(x){ parts.push('<span class="imdbb-hero__q">' + x + '</span>') })
     else if(o.ql) (Array.isArray(o.ql) ? o.ql : [o.ql]).forEach(function(x){ parts.push('<span class="imdbb-hero__q" data-qs="1">' + x + '</span>') })
