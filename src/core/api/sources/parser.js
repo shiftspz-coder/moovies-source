@@ -134,10 +134,15 @@ function init(){
 
 function parserLinks(type){
     if(type == 'jackett'){
-        return [
-            {url: Storage.field('jackett_url').replace('jacred.xyz','jac.red'), key: Storage.field('jackett_key'), rank: 0},
-            {url: Storage.field('jackett_url_two').replace('jacred.xyz','jac.red'), key: Storage.field('jackett_key_two'), rank: 1}
-        ]
+        window.__imdbbMultiUrl = 1
+        let out = [], n = 0
+        ;[['jackett_url','jackett_key',0],['jackett_url_two','jackett_key_two',1]].forEach(g=>{
+            let key = Storage.field(g[1])
+            String(Storage.field(g[0]) || '').split(/[\s,;]+/).filter(Boolean).forEach(u=>{
+                out.push({url: u.replace('jacred.xyz','jac.red'), key: key, rank: n++, group: g[2]})
+            })
+        })
+        return out
     }
     else if(type == 'prowlarr'){
         return [
@@ -152,13 +157,16 @@ function selectParserLinks(type){
     let use   = Storage.field('parser_use_link') || 'one'
     let links = parserLinks(type)
 
-    if(use == 'one') return links[0] && links[0].url ? [links[0]] : []
-    if(use == 'two') return links[1] && links[1].url ? [links[1]] : []
+    let grp = l=>typeof l.group == 'number' ? l.group : l.rank
+    if(use == 'one') return links.filter(l=>l && l.url && grp(l) == 0)
+    if(use == 'two') return links.filter(l=>l && l.url && grp(l) == 1)
 
     return links.filter(l=>l && l.url)
 }
 
 function resultKey(item){
+    let bt = String(item.MagnetUri || item.downloadUrl || '').match(/btih:([0-9a-fA-F]{32,40})/)
+    if(bt) return 'b:' + bt[1].toLowerCase()
     if(item.MagnetUri) return 'm:' + item.MagnetUri
     if(item.downloadUrl) return 'm:' + item.downloadUrl
 
@@ -181,7 +189,9 @@ function mergeResults(items){
             let prev_rank = typeof prev.source_rank == 'number' ? prev.source_rank : 0
             let next_rank = typeof item.source_rank == 'number' ? item.source_rank : 0
 
-            if(next_rank < prev_rank) {
+            let prev_s = parseInt(prev.Seeders) || 0, next_s = parseInt(item.Seeders) || 0
+            if(next_s != prev_s){ if(next_s > prev_s) map.set(key, item) }
+            else if(next_rank < prev_rank) {
                 map.set(key, item)
             }
             else if(next_rank == prev_rank){
