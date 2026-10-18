@@ -185,7 +185,7 @@ export default function(main){
             }
             catch(e){}
 
-            q('.imdbb-hero__s').textContent = subLine(d, info)
+            q('.imdbb-hero__s').textContent = ''
             q('.imdbb-hero__d').textContent = ovx.pick(d, info && info.overview, d.overview)
             try{
                 let dd = q('.imdbb-hero__d')

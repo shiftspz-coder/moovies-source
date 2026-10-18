@@ -8,14 +8,16 @@ export const HERO_HTML = '<div class="imdbb-hero__logo"></div><div class="imdbb-
 
 function mg(ps){
     if(!ps.length) return ''
-    let r = '', pl = '', tx = [], g = ''
+    let r = '', pl = '', tx = [], g = '', sl = ''
     ps.forEach(function(x){
         if(x.indexOf('<span class="imdbb-hero__r"') === 0) r = x
         else if(x.indexOf('<span class="imdbb-hero__q"') === 0 || x.indexOf('<span class="imdbb-hero__c"') === 0) pl += x
         else if(x.indexOf('<span class="imdbb-hero__g"') === 0) g = x
+        else if(x.indexOf('<span class="imdbb-hero__sl"') === 0) sl = x
         else tx.push(x.replace(/^<span>/, '').replace(/<\/span>$/, ''))
     })
-    return r + (pl ? '<span class="imdbb-hero__pl">' + pl + '</span>' : '') + (tx.length ? '<span class="imdbb-hero__tx">' + tx.join('<em class="imdbb-dot">·</em>') + '</span>' : '') + g
+    if(sl && r){ let n = (pl ? 1 : 0) + (tx.length ? 1 : 0) + (g ? 1 : 0) + 1; if(n > 1) r = r.replace('<span class="imdbb-hero__r"', '<span class="imdbb-hero__r" data-rn="' + n + '"') }
+    return r + (pl ? '<span class="imdbb-hero__pl">' + pl + '</span>' : '') + (tx.length ? '<span class="imdbb-hero__tx">' + tx.join('<em class="imdbb-dot">·</em>') + '</span>' : '') + g + sl
 }
 
 // o: {rate: '7.6' строкой, ql: html значка качества (запасной), ct: возраст}
@@ -39,6 +41,8 @@ export function metaHtml(d, info, o){
         let g = (info.genres || []).slice(0, 3).map(function(x){ let n = x.name + ''; return n.charAt(0).toUpperCase() + n.slice(1) }).join(', ')
         if(g) parts.push('<span class="imdbb-hero__g">' + esc(g) + '</span>')
     }
+    let sl0 = subLine(d, info)
+    if(sl0) parts.push('<span class="imdbb-hero__sl">' + esc(sl0) + '</span>')
     return mg(parts)
 }
 

@@ -715,3 +715,14 @@ html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r[data-kp]{border-left-colo
 html body .imdbb-hero .imdbb-hero__r:not([data-two]) b{color:#fff !important; font-size:1.7em; margin-top:.15em}
 html body .imdbb-hero .imdbb-hero__r:not([data-two]) i{margin-top:0 !important; font-size:.62em; font-weight:500; letter-spacing:.03em; color:#f5c518 !important}
 html body .imdbb-hero .imdbb-hero__r[data-kp] i{color:#ff5500 !important}
+
+/*! imdbb-meta4 */
+html body .imdbb-hero__sl{grid-column-start:2; grid-column-end:-1; color:rgba(255,255,255,.7)}
+@media not all and (max-height: 479px) and (pointer: coarse){
+html body .imdbb-hero__meta>.imdbb-hero__r[data-rn="2"]{grid-row-end:span 2}
+html body .imdbb-hero__meta>.imdbb-hero__r[data-rn="3"]{grid-row-end:span 3}
+html body .imdbb-hero__meta>.imdbb-hero__r[data-rn="4"]{grid-row-end:span 4}
+html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r[data-rn][data-two]{align-items:stretch!important}
+html body .imdbb-hero .imdbb-hero__r[data-rn][data-two] .imdbb-hero__rp{justify-content:center}
+html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r[data-rn]:not([data-two]){align-self:stretch!important; justify-content:center}
+}
