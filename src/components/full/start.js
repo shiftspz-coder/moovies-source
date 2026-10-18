@@ -233,7 +233,7 @@ class Start extends Emit {
                 let img = $('<img style="' + st + '" />')
 
                 img.on('load', function(){
-                    lt.removeClass('twolines').html('').append(img).css('visibility', ''); try{ let hl = ibh.find('.imdbb-hero__logo')[0]; if(hl){ hl.innerHTML = '<img alt="">'; hl.firstChild.src = img.attr('src'); if(window.__imdbbLgDark) window.__imdbbLgDark.watch(hl.firstChild) } }catch(e){}
+                    lt.removeClass('twolines').html('').append(img).css('visibility', ''); try{ let hl = ibh.find('.imdbb-hero__logo')[0]; if(hl){ hl.innerHTML = '<img alt="">'; hl.firstChild.src = img.attr('src'); if(window.__imdbbLgDark) window.__imdbbLgDark.watch(hl.firstChild); try{ let c0 = ibc.title || ibc.name || '', o0 = ibc.original_title || ibc.original_name || ''; if(ruOn && (pick.iso_639_1 || '') !== lang && c0 && c0 !== o0){ let e0 = document.createElement('div'); e0.className = 'imdbb-hero__ru'; e0.textContent = c0; hl.appendChild(e0) } }catch(e){} } }catch(e){}
                     try{ ibh.find('.imdbb-rutl').remove(); let ct = ibc.title || ibc.name || ''; let co = ibc.original_title || ibc.original_name || ''; if(ruOn && (pick.iso_639_1 || '') !== lang && ct && ct !== co){ let w = document.createElement('div'); w.className = 'imdbb-rutl'; let t2 = document.createElement('div'); t2.className = 'imdbb-rutl__t'; t2.textContent = ct; w.appendChild(t2); if(lt[0] && lt[0].parentNode) lt[0].parentNode.insertBefore(w, lt[0]) } }catch(e){}
                     lg.css('visibility', '')
                     gate(ibh, 'l')
@@ -268,7 +268,7 @@ class Start extends Emit {
 
         this.card.status && this.html.find('.full-start__status').removeClass('hide').text(Lang.translate('tv_status_' + this.card.status.toLowerCase().replace(/ /g,'_')))
 
-        if(this.card.imdb_rating && parseFloat(this.card.imdb_rating) > 0){
+        try{ let ic = IMDb.cached(this.card); if(ic > 0) this.card.imdb_rating = ic }catch(e){} if(this.card.imdb_rating && parseFloat(this.card.imdb_rating) > 0){
             this.html.find('.rate--imdb').removeClass('hide').find('> div').eq(0).text(parseFloat(this.card.imdb_rating) >= 10 ? 10 : this.card.imdb_rating)
         }
 
