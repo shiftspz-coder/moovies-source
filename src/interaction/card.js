@@ -505,7 +505,7 @@ function Card(data, params = {}){
         this.card.addEventListener('hover:focus',()=>{
             this.watched()
 
-            if(this.onFocus) this.onFocus(this.card, data)
+            try{ let L = window.Lampa, d = data, el = this.card; clearTimeout(window.__imdbbPfT); if(d && d.id && typeof d.gender === 'undefined' && d.episode_number === undefined && d.still_path === undefined && (d.title || d.name) && L && L.Api && L.Storage && L.Storage.field('request_caching')) window.__imdbbPfT = setTimeout(function(){ try{ if(!el.classList.contains('focus')) return; let m = d.name ? 'tv' : 'movie', pk = m + ':' + d.id, pm = window.__imdbbPre = window.__imdbbPre || {}; if(pm[pk] && (pm[pk] === 1 || Date.now() - pm[pk] < 3e5)) return; pm[pk] = Date.now(); L.Api.full({id: d.id, method: m, card: d, url: d.url || '', component: 'full', source: d.source || L.Storage.field('source'), page: 1}, function(){}, function(){}) }catch(e){} }, 300) }catch(e){} if(this.onFocus) this.onFocus(this.card, data)
         })
 
         this.card.addEventListener('hover:touch',()=>{
