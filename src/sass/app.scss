@@ -906,9 +906,9 @@ html body[class] .imdbb-meta.imdbb-fav::after{ content:none!important; }
   html body.imdbb-compact .activity--load .activity__loader{ opacity:0; animation: imdbbLd .3s ease .8s forwards; }
 }
 
-/*! imdbb-fav3 */
+/*! imdbb-fav4 */
 html body.imdbb-compact[class][class] .imdbb-hero__pl>span.imdbb-hero__fav,
 html body.imdbb-compact[class][class] .imdbb-cqm>span.imdbb-hero__fav,
 html body.imdbb-compact[class][class] span.imdbb-hero__fav{
-  border:0!important; background:none!important; box-shadow:none!important; outline:0!important; border-radius:0!important; padding:0 .15em!important;
+  border:0!important; background:none!important; box-shadow:none!important; outline:0!important; border-radius:0!important; padding:0!important;
 }
