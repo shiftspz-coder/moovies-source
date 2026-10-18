@@ -887,3 +887,21 @@ html body.imdbb-compact.imdbb-bs-d .imdbb-hero__pl>span[data-b="dub"] svg,
 html body.imdbb-compact.imdbb-bs-d .imdbb-cqm>span[data-b="dub"] svg,
 html body.imdbb-compact.imdbb-bs-e .imdbb-hero__pl>span[data-b="dub"] svg,
 html body.imdbb-compact.imdbb-bs-e .imdbb-cqm>span[data-b="dub"] svg{width:1em!important; height:1em!important; margin:0!important; vertical-align:middle!important}
+
+/*! imdbb-fav2 */
+html body[class] .imdbb-meta.imdbb-fav,
+html body[class] .imdbb-meta.imdbb-fav.on,
+html body[class] .full-start-new__rate-line > .imdbb-meta.imdbb-fav,
+html body[class] .full-start-new__rate-line > .imdbb-meta.imdbb-fav.on{
+  border:0!important; background:none!important; box-shadow:none!important; outline:0!important; border-radius:0!important; padding:0!important;
+}
+html body[class] .imdbb-meta.imdbb-fav::before,
+html body[class] .imdbb-meta.imdbb-fav::after{ content:none!important; }
+
+/*! imdbb-seam */
+@keyframes imdbbLd{ to{ opacity:1 } }
+@media not all and (max-height: 479px) and (pointer: coarse){
+  html body.imdbb-compact .activity__body{ transition: opacity .25s ease, transform .25s ease; }
+  html body.imdbb-compact .activity--load .activity__body{ transform: translateY(.5em); }
+  html body.imdbb-compact .activity--load .activity__loader{ opacity:0; animation: imdbbLd .3s ease .8s forwards; }
+}
