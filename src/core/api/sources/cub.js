@@ -37,7 +37,7 @@ function url(u, params = {}){
 
     let email = Storage.get('account','{}').email || ''
 
-    return Utils.addUrlComponent(Utils.protocol() + 'tmdb.'+Manifest.cub_domain+'/' + u, 'email=' + encodeURIComponent(email))
+    return Utils.addUrlComponent((window.location.protocol == 'https:' ? window.location.origin + '/p/3849c2cf/cubt/' : Utils.protocol() + 'tmdb.'+Manifest.cub_domain+'/') + u, 'email=' + encodeURIComponent(email))
 }
 
 function add(u, params){

@@ -262,7 +262,7 @@ function reliseTmdbCards(items, oncomplite){
 }
 
 function relise(params, oncomplite, onerror){
-    network.silent(Utils.protocol() + 'tmdb.'+Manifest.cub_domain+'?sort=releases&results=20&page='+params.page,(data)=>{
+    network.silent((window.location.protocol == 'https:' ? window.location.origin + '/p/3849c2cf/cubt' : Utils.protocol() + 'tmdb.'+Manifest.cub_domain) + '/?sort=releases&results=20&page='+params.page,(data)=>{
         data = Utils.addSource(data, 'cub')
 
         if(data.results && data.results.length){
