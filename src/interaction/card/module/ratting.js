@@ -139,7 +139,7 @@ function qnext(){
         try{ v = JSON.parse(x.responseText) }
         catch(e){}
 
-        end(v && typeof v === 'object' ? {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null} : null)
+        end(v && typeof v === 'object' ? {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null, hdr: v.hdr || null, dv: v.dv || null} : null)
     }
     x.onerror = x.ontimeout = function(){ end(null) }
     x.send()
@@ -511,10 +511,16 @@ export function qlabel(m){
     return c && c.v ? label(c.v) : ''
 }
 
+function bstyle(){ try{ return String(window.Lampa.Storage.get('imdbb_badge_style', '0')) }catch(e){ return '0' } }
+
+window.__imdbbBk = function(x){ x = String(x || ''); if(x === '4K') return '4k'; if(x === 'FHD') return 'fhd'; if(x === 'HDR') return 'hdr'; if(x === 'Dolby Vision') return 'dv'; if(x.indexOf('Дубляж') === 0) return 'dub'; return '' }
+
 function mlabels(v){
     if(!v || !v.q) return []
 
     let out = [v.q === '1080' ? 'FHD' : v.q]
+
+    if(v.q !== 'TS' && bstyle() !== '0'){ if(v.hdr) out.push('HDR'); if(v.dv) out.push('Dolby Vision') }
 
     if(v.q === 'TS' || !v.dub) return out
 

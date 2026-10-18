@@ -286,6 +286,17 @@ function init(){
             onChange: function(){ rsApply() }
         })
 
+        let bsApply = function(){ try{ let v = String(window.Lampa.Storage.get('imdbb_badge_style', '0')); let cl = document.body && document.body.classList; if(!cl) return; ['a', 'b', 'c'].forEach(function(k){ cl.remove('imdbb-bs-' + k) }); if(v === 'a' || v === 'b' || v === 'c') cl.add('imdbb-bs-' + v) }catch(e){} }
+        bsApply(); setTimeout(bsApply, 800)
+        Lp.Listener.follow('app', function(e){ if(e.type === 'ready') bsApply() })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
+            param: {name: 'imdbb_badge_style', type: 'select', values: {'0': 'Как сейчас', 'a': 'A. Чёрные с рамкой', 'b': 'B. Цветная заливка', 'c': 'C. Контур с точкой'}, default: '0'},
+            field: {name: 'Плашки качества', description: 'Оформление плашек 4K, FHD, HDR и Dolby Vision. HDR и Dolby Vision показываются только при выбранном оформлении (не «Как сейчас»)'},
+            onChange: function(){ bsApply() }
+        })
+
         Lp.SettingsApi.addParam({
             component: 'imdbb',
             param: {name: 'imdbb_lgbt_block', type: 'trigger', default: false},

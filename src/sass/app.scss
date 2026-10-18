@@ -830,3 +830,38 @@ html body.imdbb-rs-20[class*="imdbb-rs-"] .imdbb-hero{
 @media not all and (max-height: 479px) and (pointer: coarse){
 html body .imdbb-hero .imdbb-hero__meta>.imdbb-hero__r:not([data-two]){align-self:stretch!important; justify-content:center}
 }
+
+/*! imdbb-bs */
+@mixin bq($c,$b){
+  html body.imdbb-compact.imdbb-bs-#{$c} .imdbb-hero__pl>span[data-b="#{$b}"],
+  html body.imdbb-compact.imdbb-bs-#{$c} .imdbb-cqm>span[data-b="#{$b}"]{ @content }
+}
+@mixin bqx($c,$b,$p){
+  html body.imdbb-compact.imdbb-bs-#{$c} .imdbb-hero__pl>span[data-b="#{$b}"]::#{$p},
+  html body.imdbb-compact.imdbb-bs-#{$c} .imdbb-cqm>span[data-b="#{$b}"]::#{$p}{ @content }
+}
+@each $c in a, b, c{
+  @each $b in "4k", "fhd", "hdr", "dv"{
+    @include bq($c,$b){ display:inline-flex!important; align-items:center!important; gap:.35em!important; line-height:1.15!important; font-weight:800!important; white-space:nowrap!important; border-radius:.3em!important; padding:.05em .5em!important; box-sizing:border-box!important }
+  }
+}
+@include bq(a,"4k"){ background:#000!important; border:2px solid #fff!important; color:#fff!important }
+@include bqx(a,"4k","after"){ content:"ULTRA\A HD"; white-space:pre; font-size:.42em; line-height:1; letter-spacing:.1em; font-weight:600 }
+@include bq(a,"fhd"){ background:#000!important; border:2px solid #9db4c9!important; color:#fff!important }
+@include bqx(a,"fhd","after"){ content:"1080p"; font-size:.5em; font-weight:600; color:#9db4c9; letter-spacing:.06em }
+@include bq(a,"hdr"){ background:linear-gradient(90deg,#ffb347,#ff4fd8,#6c8cff) left bottom/100% .16em no-repeat,#000!important; border:0!important; color:#fff!important }
+@include bq(a,"dv"){ background:linear-gradient(90deg,#7d5bff,#ff4fa8,#ff9a3c) left bottom/100% .16em no-repeat,#000!important; border:0!important; color:#fff!important; text-transform:uppercase!important; letter-spacing:.1em!important; padding-left:.4em!important }
+@include bq(b,"4k"){ background:linear-gradient(135deg,#ffd34d,#ff8a00)!important; color:#1a1200!important; border:0!important }
+@include bqx(b,"4k","after"){ content:"UHD"; font-size:.5em; font-weight:700; letter-spacing:.1em }
+@include bq(b,"fhd"){ background:linear-gradient(135deg,#4aa3ff,#2d5bff)!important; color:#fff!important; border:0!important }
+@include bq(b,"hdr"){ background:linear-gradient(135deg,#ff9a3c,#ff2d95)!important; color:#fff!important; border:0!important }
+@include bq(b,"dv"){ background:linear-gradient(135deg,#2a1466,#000)!important; color:#fff!important; border:1px solid #7d5bff!important; text-transform:uppercase!important; letter-spacing:.1em!important }
+@each $c in a, b{
+  @include bqx($c,"dv","before"){ content:""; width:1.15em; height:1em; flex:none; background:radial-gradient(circle at 0% 50%,#fff .5em,transparent .52em) 0 0/.55em 1em no-repeat, radial-gradient(circle at 100% 50%,#fff .5em,transparent .52em) .6em 0/.55em 1em no-repeat }
+}
+@each $b in "4k", "fhd", "hdr", "dv"{
+  @include bq(c,$b){ background:transparent!important; border:1px solid rgba(255,255,255,.45)!important; color:#fff!important; letter-spacing:.08em!important; font-weight:600!important }
+}
+@each $b,$col in ("4k": #fff, "fhd": #4aa3ff, "hdr": #ffb347, "dv": #a78bff){
+  @include bqx(c,$b,"before"){ content:""; width:.42em; height:.42em; border-radius:50%; background:$col; flex:none }
+}

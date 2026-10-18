@@ -86,7 +86,7 @@ class Start extends Emit {
             this.html.find('.imdbb-cq').remove()
 
             let ml = document.body.classList.contains('imdbb-compact') && window.__imdbbQl ? window.__imdbbQl(v) : null
-            let el = ml && ml.length ? $('<div class="imdbb-cq imdbb-cqm">' + ml.map(function(x){ return '<span>' + x + '</span>' }).join('') + '</div>') : $('<div class="imdbb-cq">' + t + (d ? ' ' + d : '') + '</div>')
+            let el = ml && ml.length ? $('<div class="imdbb-cq imdbb-cqm">' + ml.map(function(x){ return '<span data-b="' + (window.__imdbbBk ? window.__imdbbBk(x) : '') + '">' + x + '</span>' }).join('') + '</div>') : $('<div class="imdbb-cq">' + t + (d ? ' ' + d : '') + '</div>')
             let im = this.html.find('.rate--imdb')
 
             if(this.html.find('.full-start-new__rate-line').length) this.html.find('.full-start-new__rate-line').append(el)
@@ -130,7 +130,7 @@ class Start extends Emit {
 
             if(!v || typeof v !== 'object'){ gate(this.html, 'q'); return }
 
-            let val = {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null}
+            let val = {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null, hdr: v.hdr || null, dv: v.dv || null}
 
             try{
                 let s = JSON.parse(localStorage.getItem(QKEY) || '{}')

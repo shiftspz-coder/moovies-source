@@ -28,7 +28,7 @@ export function metaHtml(d, info, o){
     else if(o.rate) parts.push('<span class="imdbb-hero__r" style="--v:' + vv(o.rate) + '"><b>' + esc(o.rate) + '</b><i>IMDb</i></span>')
     else if(o.kp) parts.push('<span class="imdbb-hero__r" data-kp="1" style="--v:' + vv(o.kp) + '"><b>' + esc(o.kp) + '</b><i>КиноПоиск</i></span>')
     let qm = window.__imdbbQm ? window.__imdbbQm(d) : []
-    if(qm.length) qm.forEach(function(x){ parts.push('<span class="imdbb-hero__q">' + x + '</span>') })
+    if(qm.length) qm.forEach(function(x){ parts.push('<span class="imdbb-hero__q" data-b="' + (window.__imdbbBk ? window.__imdbbBk(x) : '') + '">' + x + '</span>') })
     else if(o.ql) (Array.isArray(o.ql) ? o.ql : [o.ql]).forEach(function(x){ parts.push('<span class="imdbb-hero__q" data-qs="1">' + x + '</span>') })
     if(o.ct) parts.push('<span class="imdbb-hero__c">' + esc(o.ct) + '</span>')
     let date = (info && (info.release_date || info.first_air_date)) || d.release_date || d.first_air_date || ''
