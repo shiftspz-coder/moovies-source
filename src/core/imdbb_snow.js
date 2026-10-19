@@ -275,7 +275,107 @@ function init(){
             field: {name: 'Затемнение: карточка', description: 'Не действует, если включено «Убрать затемнение фона»'}
         })
 
-        window.__imdbbProbe = 1
+        window.__imdbbProbe = 2
+        let mkvTracks = function(buf){
+            let u = new Uint8Array(buf), n = u.length, out = {a: [], v: 0, s: 0, ok: false}
+            let rid = function(p){
+                let b = u[p]; if(b === undefined) return null
+                let l = 1, m = 0x80
+                while(l <= 4 && !(b & m)){ l++; m = m >> 1 }
+                if(l > 4) return null
+                let v = 0
+                for(let i = 0; i < l; i++){ if(u[p + i] === undefined) return null; v = v * 256 + u[p + i] }
+                return {v: v, l: l}
+            }
+            let rsz = function(p){
+                let b = u[p]; if(b === undefined) return null
+                let l = 1, m = 0x80
+                while(l <= 8 && !(b & m)){ l++; m = m >> 1 }
+                if(l > 8) return null
+                let v = b & (m - 1), all = (v === m - 1)
+                for(let i = 1; i < l; i++){ let c = u[p + i]; if(c === undefined) return null; if(c !== 255) all = false; v = v * 256 + c }
+                return {v: all ? -1 : v, l: l}
+            }
+            let uint = function(a, b){ let v = 0; for(let i = a; i < b; i++) v = v * 256 + u[i]; return v }
+            let str = function(a, b){ let s = ''; for(let i = a; i < b && u[i]; i++) s += String.fromCharCode(u[i]); return s }
+            let utf = function(a, b){ try{ return decodeURIComponent(escape(str(a, b))) }catch(e){ return str(a, b) } }
+            let entry = function(a, b){
+                let t = {}, p = a
+                while(p < b){
+                    let id = rid(p); if(!id) break
+                    let sz = rsz(p + id.l); if(!sz || sz.v < 0) break
+                    let ds = p + id.l + sz.l, de = Math.min(ds + sz.v, b)
+                    if(id.v === 0xD7) t.num = uint(ds, de)
+                    else if(id.v === 0x83) t.type = uint(ds, de)
+                    else if(id.v === 0x86) t.codec = str(ds, de)
+                    else if(id.v === 0x22B59C) t.lang = str(ds, de)
+                    else if(id.v === 0x22B59D) t.bcp = str(ds, de)
+                    else if(id.v === 0x536E) t.name = utf(ds, de)
+                    else if(id.v === 0xE1){
+                        let q = ds
+                        while(q < de){
+                            let i2 = rid(q); if(!i2) break
+                            let s2 = rsz(q + i2.l); if(!s2 || s2.v < 0) break
+                            let d2 = q + i2.l + s2.l
+                            if(i2.v === 0x9F) t.ch = uint(d2, Math.min(d2 + s2.v, de))
+                            q = d2 + s2.v
+                        }
+                    }
+                    p = ds + sz.v
+                }
+                return t
+            }
+            let p = 0
+            while(p < n){
+                let id = rid(p); if(!id) break
+                let sz = rsz(p + id.l); if(!sz) break
+                let ds = p + id.l + sz.l
+                if(id.v === 0x18538067){ p = ds; continue }
+                if(id.v === 0x1F43B675) break
+                if(id.v === 0x1654AE6B){
+                    out.ok = true
+                    let end = sz.v < 0 ? n : Math.min(ds + sz.v, n), q = ds
+                    while(q < end){
+                        let i2 = rid(q); if(!i2) break
+                        let s2 = rsz(q + i2.l); if(!s2 || s2.v < 0) break
+                        let d2 = q + i2.l + s2.l, e2 = Math.min(d2 + s2.v, end)
+                        if(i2.v === 0xAE){
+                            let t = entry(d2, e2)
+                            if(t.type === 2) out.a.push(t)
+                            else if(t.type === 1) out.v++
+                            else if(t.type === 17) out.s++
+                        }
+                        q = d2 + s2.v
+                    }
+                    break
+                }
+                if(sz.v < 0) break
+                p = ds + sz.v
+            }
+            return out
+        }
+        let probeHead = function(url, cb){
+            let fin = false
+            let once = function(a, b){ if(fin) return; fin = true; clearTimeout(tm); cb(a, b) }
+            let ctl = window.AbortController ? new AbortController() : null
+            let tm = setTimeout(function(){ if(ctl) ctl.abort(); once(null, 'timeout 90 c') }, 90000)
+            fetch(url, {headers: {Range: 'bytes=0-'}, signal: ctl ? ctl.signal : undefined}).then(function(r){
+                if(!r.body || !r.body.getReader) return once(null, 'нет потокового чтения, статус ' + r.status)
+                let rd = r.body.getReader(), chunks = [], got = 0, LIM = 1048576
+                let step = function(){
+                    rd.read().then(function(x){
+                        if(x.value){ chunks.push(x.value); got += x.value.length }
+                        if(x.done || got >= LIM){
+                            try{ rd.cancel() }catch(e){}
+                            let all = new Uint8Array(got), o = 0
+                            chunks.forEach(function(c){ all.set(c, o); o += c.length })
+                            once(all.buffer, r.status)
+                        } else step()
+                    }).catch(function(e){ once(null, String(e)) })
+                }
+                step()
+            }).catch(function(e){ once(null, String(e)) })
+        }
         let probeRun = function(){
             let box = document.createElement('div')
             box.style.cssText = 'position:fixed;left:2%;top:2%;width:96%;height:96%;z-index:2147483000;background:rgba(0,0,0,.92);color:#fff;font:15px/1.35 monospace;padding:14px;white-space:pre-wrap;overflow:hidden;box-sizing:border-box'
@@ -295,10 +395,10 @@ function init(){
                 x.ontimeout = function(){ cb(0, 'timeout') }
                 try{ x.send(body) }catch(e){ cb(0, String(e)) }
             }
-            let hashes = ['0820683290bf2f7b8da8991acc53ca73dd2892d9', 'dfba59895929c3b15196d0e805dc1bc8487ebfbf']
+            let hashes = ['dfba59895929c3b15196d0e805dc1bc8487ebfbf', '0820683290bf2f7b8da8991acc53ca73dd2892d9']
             let base = String(window.Lampa.Storage.get('torrserver_url', '') || 'http://127.0.0.1:8090').replace(/\/+$/, '')
             if(!/^https?:\/\//.test(base)) base = 'http://' + base
-            log('Проба озвучек (тест)\nTorrServer: ' + base)
+            log('Проба озвучек (тест, MKV)\nTorrServer: ' + base)
             let run = function(h, cb){
                 let tag = h.slice(0, 8)
                 let clean = function(){
@@ -308,22 +408,27 @@ function init(){
                     let fs = j.file_stats, pick = null
                     for(let k = 0; k < fs.length; k++){
                         let p = String(fs[k].path || '')
-                        if(/s0?4[\s._-]*e0?10(?!\d)|(^|[^\d])0?4x10(?!\d)/i.test(p)){ pick = fs[k]; break }
+                        if(/\.(mkv|mp4|avi)$/i.test(p) && /s0?4[\s._-]*e0?10(?!\d)|(^|[^\d])0?4x10(?!\d)/i.test(p)){ pick = fs[k]; break }
                     }
                     if(!pick){
-                        log('[' + tag + '] файлов: ' + fs.length + ', 10-я серия 4 сезона по имени не найдена. Последние:')
-                        fs.slice(-12).forEach(function(f){ log('  ' + String(f.path).slice(-75)) })
+                        log('[' + tag + '] файлов: ' + fs.length + ', видео 10-й серии 4 сезона не найдено. Последние:')
+                        fs.slice(-10).forEach(function(f){ log('  ' + String(f.path).slice(-75)) })
                         return clean()
                     }
-                    log('[' + tag + '] файл id ' + pick.id + ': ' + String(pick.path).slice(-60))
-                    preq('GET', base + '/ffp/' + h + '/' + pick.id, null, 90000, function(st3, tx3){
-                        log('[' + tag + '] /ffp: ' + st3)
-                        let f = null; try{ f = JSON.parse(tx3) }catch(e){}
-                        if(!f || !f.streams){ log(String(tx3).slice(0, 200)); return clean() }
-                        f.streams.forEach(function(s){
-                            if(s.codec_type !== 'audio') return
-                            let tg = s.tags || {}
-                            log('аудио #' + s.index + ' ' + (tg.language || '?') + ' | ' + (tg.title || '-') + ' | ' + (s.codec_name || '') + ' ' + (s.channels || '') + 'ch')
+                    let nm = String(pick.path).split('/').pop()
+                    log('[' + tag + '] файл id ' + pick.id + ': ' + nm.slice(-60))
+                    if(!/\.mkv$/i.test(nm)){ log('[' + tag + '] не MKV, разбор не поддержан'); return clean() }
+                    let t1 = Date.now()
+                    probeHead(base + '/stream/' + encodeURIComponent(nm) + '?link=' + h + '&index=' + pick.id + '&play', function(buf, st){
+                        if(!buf){ log('[' + tag + '] чтение начала файла: ' + st); return clean() }
+                        let u8 = new Uint8Array(buf)
+                        let hex = ''; for(let i = 0; i < 12 && i < u8.length; i++) hex += (u8[i] < 16 ? '0' : '') + u8[i].toString(16) + ' '
+                        log('[' + tag + '] прочитано ' + u8.length + ' байт за ' + Math.round((Date.now() - t1) / 1000) + ' c, статус ' + st + ', начало ' + hex)
+                        let r = mkvTracks(buf)
+                        if(!r.ok){ log('[' + tag + '] блок дорожек (Tracks) в этих байтах не найден'); return clean() }
+                        log('[' + tag + '] видео: ' + r.v + ', субтитров: ' + r.s + ', аудио: ' + r.a.length)
+                        r.a.forEach(function(t){
+                            log('  аудио #' + t.num + ' ' + (t.lang || '?') + (t.bcp ? '/' + t.bcp : '') + ' | ' + (t.name || '-') + ' | ' + (t.codec || '') + ' ' + (t.ch || '') + 'ch')
                         })
                         clean()
                     })
@@ -355,7 +460,7 @@ function init(){
         Lp.SettingsApi.addParam({
             component: 'imdbb',
             param: {name: 'imdbb_probe', type: 'trigger', default: false},
-            field: {name: 'Проба озвучек (тест)', description: 'Временный тест: через TorrServer читает дорожки 10-й серии «Теда Лассо» 4 сезона. Включите и ждите результат на экране'},
+            field: {name: 'Проба озвучек (тест)', description: 'Временный тест: читает дорожки 10-й серии «Теда Лассо» 4 сезона из начала MKV-файла через TorrServer. Включите и ждите результат на экране'},
             onChange: function(){ setTimeout(function(){ try{ if(String(window.Lampa.Storage.get('imdbb_probe', 'false')) === 'true'){ window.Lampa.Storage.set('imdbb_probe', 'false'); probeRun() } }catch(e){} }, 120) }
         })
 
