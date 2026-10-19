@@ -275,7 +275,81 @@ function init(){
             field: {name: 'Затемнение: карточка', description: 'Не действует, если включено «Убрать затемнение фона»'}
         })
 
-        window.__imdbbProbe = 2
+        window.__imdbbProbe = 3
+        window.__imdbbProbeV = 'pv3x'
+        let aviTracks = function(b){
+            let u = new Uint8Array(b), n = u.length, out = {a: [], v: 0, s: 0, ok: false}, cur = null
+            let s4 = function(p){ return String.fromCharCode(u[p], u[p + 1], u[p + 2], u[p + 3]) }
+            let l32 = function(p){ return u[p] + u[p + 1] * 256 + u[p + 2] * 65536 + u[p + 3] * 16777216 }
+            let l16 = function(p){ return u[p] + u[p + 1] * 256 }
+            let walk = function(p, end){
+                while(p + 8 <= end && p + 8 <= n){
+                    let id = s4(p), sz = l32(p + 4), d = p + 8
+                    if(id === 'LIST'){
+                        let lt = s4(d)
+                        if(lt === 'movi') return
+                        if(lt === 'hdrl' || lt === 'strl'){ if(lt === 'hdrl') out.ok = true; walk(d + 4, Math.min(d + sz, end)) }
+                    }
+                    else if(id === 'strh'){
+                        let ty = s4(d)
+                        if(ty === 'vids'){ out.v++; cur = null }
+                        else if(ty === 'auds'){ cur = {num: out.a.length + 1}; out.a.push(cur) }
+                        else cur = null
+                    }
+                    else if(id === 'strf' && cur){ cur.codec = '0x' + l16(d).toString(16); cur.ch = l16(d + 2) }
+                    else if(id === 'strn' && cur){ let s = ''; for(let i = d; i < d + sz && i < n && u[i]; i++) s += String.fromCharCode(u[i]); cur.name = s }
+                    p = d + sz + (sz & 1)
+                }
+            }
+            walk(12, n)
+            return out
+        }
+        let mp4Tracks = function(b){
+            let u = new Uint8Array(b), n = u.length, out = {a: [], v: 0, s: 0, ok: false}, cur = null
+            let s4 = function(p){ return String.fromCharCode(u[p], u[p + 1], u[p + 2], u[p + 3]) }
+            let b32 = function(p){ return ((u[p] * 256 + u[p + 1]) * 256 + u[p + 2]) * 256 + u[p + 3] }
+            let b16 = function(p){ return u[p] * 256 + u[p + 1] }
+            let fin = function(){
+                if(!cur) return
+                if(cur.k === 'vide') out.v++
+                else if(cur.k === 'soun'){ cur.num = out.a.length + 1; out.a.push(cur) }
+                else if(cur.k === 'sbtl' || cur.k === 'text' || cur.k === 'subt') out.s++
+                cur = null
+            }
+            let walk = function(p, end){
+                while(p + 8 <= end && p + 8 <= n){
+                    let sz = b32(p), t = s4(p + 4), d = p + 8
+                    if(sz === 1){ sz = b32(p + 8) * 4294967296 + b32(p + 12); d = p + 16 }
+                    else if(sz === 0) sz = n - p
+                    if(sz < 8) break
+                    let e = Math.min(p + sz, end)
+                    if(t === 'moov'){ out.ok = true; walk(d, e) }
+                    else if(t === 'trak'){ cur = {k: ''}; walk(d, e); fin() }
+                    else if((t === 'mdia' || t === 'minf' || t === 'stbl') && cur) walk(d, e)
+                    else if(t === 'mdhd' && cur){
+                        let l = b16(d + (u[d] === 1 ? 32 : 20))
+                        cur.lang = String.fromCharCode(((l >> 10) & 31) + 96, ((l >> 5) & 31) + 96, (l & 31) + 96)
+                    }
+                    else if(t === 'hdlr' && cur){
+                        cur.k = s4(d + 8)
+                        let s = ''; for(let i = d + 24; i < e && u[i]; i++) s += String.fromCharCode(u[i])
+                        try{ cur.name = decodeURIComponent(escape(s)) }catch(x){ cur.name = s }
+                    }
+                    else if(t === 'stsd' && cur){ cur.codec = s4(d + 12); cur.ch = b16(d + 32) }
+                    p += sz
+                }
+            }
+            walk(0, n)
+            return out
+        }
+        let sniffTracks = function(b){
+            let u = new Uint8Array(b)
+            let s4 = function(p){ return String.fromCharCode(u[p], u[p + 1], u[p + 2], u[p + 3]) }
+            if(u[0] === 0x1a && u[1] === 0x45 && u[2] === 0xdf && u[3] === 0xa3) return mkvTracks(b)
+            if(s4(0) === 'RIFF' && s4(8) === 'AVI ') return aviTracks(b)
+            if(s4(4) === 'ftyp') return mp4Tracks(b)
+            return {ok: false, a: [], v: 0, s: 0}
+        }
         let mkvTracks = function(buf){
             let u = new Uint8Array(buf), n = u.length, out = {a: [], v: 0, s: 0, ok: false}
             let rid = function(p){
@@ -395,7 +469,7 @@ function init(){
                 x.ontimeout = function(){ cb(0, 'timeout') }
                 try{ x.send(body) }catch(e){ cb(0, String(e)) }
             }
-            let hashes = ['dfba59895929c3b15196d0e805dc1bc8487ebfbf', '0820683290bf2f7b8da8991acc53ca73dd2892d9']
+            let hashes = ['05f389934e08d4d3caddb3fb49e0fdf61d1db8a6', '64098e4bf5458d460dc294c98251913e3bf5200f', '7c1e870a06f29f68573648edd7d097f5c200f58c']
             let base = String(window.Lampa.Storage.get('torrserver_url', '') || 'http://127.0.0.1:8090').replace(/\/+$/, '')
             if(!/^https?:\/\//.test(base)) base = 'http://' + base
             log('Проба озвучек (тест, MKV)\nTorrServer: ' + base)
@@ -408,7 +482,7 @@ function init(){
                     let fs = j.file_stats, pick = null
                     for(let k = 0; k < fs.length; k++){
                         let p = String(fs[k].path || '')
-                        if(/\.(mkv|mp4|avi)$/i.test(p) && /s0?4[\s._-]*e0?10(?!\d)|(^|[^\d])0?4x10(?!\d)/i.test(p)){ pick = fs[k]; break }
+                        if(/\.(mkv|mp4|m4v|avi)$/i.test(p) && (!pick || (fs[k].length || 0) > (pick.length || 0))){ pick = fs[k] }
                     }
                     if(!pick){
                         log('[' + tag + '] файлов: ' + fs.length + ', видео 10-й серии 4 сезона не найдено. Последние:')
@@ -417,14 +491,14 @@ function init(){
                     }
                     let nm = String(pick.path).split('/').pop()
                     log('[' + tag + '] файл id ' + pick.id + ': ' + nm.slice(-60))
-                    if(!/\.mkv$/i.test(nm)){ log('[' + tag + '] не MKV, разбор не поддержан'); return clean() }
+                    
                     let t1 = Date.now()
                     probeHead(base + '/stream/' + encodeURIComponent(nm) + '?link=' + h + '&index=' + pick.id + '&play', function(buf, st){
                         if(!buf){ log('[' + tag + '] чтение начала файла: ' + st); return clean() }
                         let u8 = new Uint8Array(buf)
                         let hex = ''; for(let i = 0; i < 12 && i < u8.length; i++) hex += (u8[i] < 16 ? '0' : '') + u8[i].toString(16) + ' '
                         log('[' + tag + '] прочитано ' + u8.length + ' байт за ' + Math.round((Date.now() - t1) / 1000) + ' c, статус ' + st + ', начало ' + hex)
-                        let r = mkvTracks(buf)
+                        let r = sniffTracks(buf)
                         if(!r.ok){ log('[' + tag + '] блок дорожек (Tracks) в этих байтах не найден'); return clean() }
                         log('[' + tag + '] видео: ' + r.v + ', субтитров: ' + r.s + ', аудио: ' + r.a.length)
                         r.a.forEach(function(t){
