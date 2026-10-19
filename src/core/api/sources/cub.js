@@ -578,21 +578,21 @@ function metadataGet(params, oncomplite){
     
     network.silent(Utils.protocol() + Manifest.cub_domain + '/api/ai/video-view/' + params.id + '/metadata?type=' + params.method, oncomplite,()=>{
         oncomplite({})
-    }, false, {timeout: 1000 * 5})
+    }, false, {timeout: 1000 * 5, cache: {life: 5}})
 }
 
-function reactionsGet(params, oncomplite){
+function reactionsGet(params, oncomplite){ window.__imdbbCubCache = 1;
     if(window.lampa_settings.disable_features.reactions) return oncomplite({result: []})
     
     network.silent(Utils.cubUrl('/api/reactions/get/' + params.method + '_' + params.id), oncomplite,()=>{
         oncomplite({result: []})
-    }, false, {timeout: 1000 * 5})
+    }, false, {timeout: 1000 * 5, cache: {life: 5}})
 }
 
 function discussGet(params, oncomplite, onerror){
     if(window.lampa_settings.disable_features.discuss) return onerror()
     
-    network.silent(Utils.protocol() + Manifest.cub_domain + '/api/discuss/get/'+params.method+'_'+params.id+'/' + (params.page || 1) + '/' + Storage.field('language'), oncomplite, onerror, false, {timeout: 1000 * 5})
+    network.silent(Utils.protocol() + Manifest.cub_domain + '/api/discuss/get/'+params.method+'_'+params.id+'/' + (params.page || 1) + '/' + Storage.field('language'), oncomplite, onerror, false, {timeout: 1000 * 5, cache: {life: 5}})
 }
 
 function reactionsAdd(params, oncomplite, onerror){
