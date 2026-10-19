@@ -275,6 +275,90 @@ function init(){
             field: {name: 'Затемнение: карточка', description: 'Не действует, если включено «Убрать затемнение фона»'}
         })
 
+        window.__imdbbProbe = 1
+        let probeRun = function(){
+            let box = document.createElement('div')
+            box.style.cssText = 'position:fixed;left:2%;top:2%;width:96%;height:96%;z-index:2147483000;background:rgba(0,0,0,.92);color:#fff;font:15px/1.35 monospace;padding:14px;white-space:pre-wrap;overflow:hidden;box-sizing:border-box'
+            document.body.appendChild(box)
+            let lines = []
+            let log = function(s){ lines.push(s); if(lines.length > 40) lines.shift(); box.textContent = lines.join('\n') }
+            let done = false
+            let onKey = function(e){ if(!done) return; e.stopPropagation(); e.preventDefault(); window.removeEventListener('keydown', onKey, true); if(box.parentNode) box.parentNode.removeChild(box) }
+            window.addEventListener('keydown', onKey, true)
+            let finish = function(m){ log('\n--- ' + m + ' ---\nНажмите любую кнопку пульта, чтобы закрыть'); done = true }
+            let preq = function(method, url, body, tmo, cb){
+                let x = new XMLHttpRequest()
+                x.open(method, url, true)
+                x.timeout = tmo
+                x.onload = function(){ cb(x.status, x.responseText) }
+                x.onerror = function(){ cb(0, 'network error') }
+                x.ontimeout = function(){ cb(0, 'timeout') }
+                try{ x.send(body) }catch(e){ cb(0, String(e)) }
+            }
+            let hashes = ['0820683290bf2f7b8da8991acc53ca73dd2892d9', 'dfba59895929c3b15196d0e805dc1bc8487ebfbf']
+            let base = String(window.Lampa.Storage.get('torrserver_url', '') || 'http://127.0.0.1:8090').replace(/\/+$/, '')
+            if(!/^https?:\/\//.test(base)) base = 'http://' + base
+            log('Проба озвучек (тест)\nTorrServer: ' + base)
+            let run = function(h, cb){
+                let tag = h.slice(0, 8)
+                let clean = function(){
+                    preq('POST', base + '/torrents', JSON.stringify({action: 'rem', hash: h}), 15000, function(){ log('[' + tag + '] удалена из TorrServer'); cb() })
+                }
+                let got = function(j){
+                    let fs = j.file_stats, pick = null
+                    for(let k = 0; k < fs.length; k++){
+                        let p = String(fs[k].path || '')
+                        if(/s0?4[\s._-]*e0?10(?!\d)|(^|[^\d])0?4x10(?!\d)/i.test(p)){ pick = fs[k]; break }
+                    }
+                    if(!pick){
+                        log('[' + tag + '] файлов: ' + fs.length + ', 10-я серия 4 сезона по имени не найдена. Последние:')
+                        fs.slice(-12).forEach(function(f){ log('  ' + String(f.path).slice(-75)) })
+                        return clean()
+                    }
+                    log('[' + tag + '] файл id ' + pick.id + ': ' + String(pick.path).slice(-60))
+                    preq('GET', base + '/ffp/' + h + '/' + pick.id, null, 90000, function(st3, tx3){
+                        log('[' + tag + '] /ffp: ' + st3)
+                        let f = null; try{ f = JSON.parse(tx3) }catch(e){}
+                        if(!f || !f.streams){ log(String(tx3).slice(0, 200)); return clean() }
+                        f.streams.forEach(function(s){
+                            if(s.codec_type !== 'audio') return
+                            let tg = s.tags || {}
+                            log('аудио #' + s.index + ' ' + (tg.language || '?') + ' | ' + (tg.title || '-') + ' | ' + (s.codec_name || '') + ' ' + (s.channels || '') + 'ch')
+                        })
+                        clean()
+                    })
+                }
+                log('\n[' + tag + '] добавляю раздачу')
+                preq('POST', base + '/torrents', JSON.stringify({action: 'add', link: 'magnet:?xt=urn:btih:' + h, title: '[PROBE] ted lasso', save_to_db: false}), 70000, function(st, tx){
+                    log('[' + tag + '] add: ' + st + ' ' + (st ? '' : tx))
+                    if(st === 0 && tx === 'network error') return clean()
+                    let t0 = Date.now()
+                    let poll = function(){
+                        preq('POST', base + '/torrents', JSON.stringify({action: 'get', hash: h}), 8000, function(st2, tx2){
+                            let j = null; try{ j = JSON.parse(tx2) }catch(e){}
+                            if(j && j.file_stats && j.file_stats.length) got(j)
+                            else if(Date.now() - t0 > 60000){ log('[' + tag + '] нет списка файлов за 60 с'); clean() }
+                            else setTimeout(poll, 2000)
+                        })
+                    }
+                    poll()
+                })
+            }
+            let next = function(i){ if(i >= hashes.length) return finish('готово'); run(hashes[i], function(){ next(i + 1) }) }
+            preq('GET', base + '/echo', null, 5000, function(st, tx){
+                log('/echo: ' + st + ' ' + String(tx).slice(0, 60))
+                if(st !== 200) return finish('нет связи с TorrServer')
+                next(0)
+            })
+        }
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
+            param: {name: 'imdbb_probe', type: 'trigger', default: false},
+            field: {name: 'Проба озвучек (тест)', description: 'Временный тест: через TorrServer читает дорожки 10-й серии «Теда Лассо» 4 сезона. Включите и ждите результат на экране'},
+            onChange: function(){ setTimeout(function(){ try{ if(String(window.Lampa.Storage.get('imdbb_probe', 'false')) === 'true'){ window.Lampa.Storage.set('imdbb_probe', 'false'); probeRun() } }catch(e){} }, 120) }
+        })
+
         let rsApply = function(){ try{ let v = parseInt(window.Lampa.Storage.get('imdbb_rate_style', '1'), 10); if(!(v >= 1 && v <= 20)) v = 1; let cl = document.body && document.body.classList; if(!cl) return; for(let n = 1; n <= 20; n++) cl.remove('imdbb-rs-' + n); cl.add('imdbb-rs-' + v) }catch(e){} }
         rsApply(); setTimeout(rsApply, 800)
         Lp.Listener.follow('app', function(e){ if(e.type === 'ready') rsApply() })
