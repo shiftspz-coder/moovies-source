@@ -6,6 +6,7 @@ import Controller from '../core/controller'
 import Arrays from '../utils/arrays'
 import Emit from '../utils/emit'
 import TMDB from '../core/api/sources/tmdb'
+import IMDb from '../utils/imdb'
 
 /**
  * Исследователь
@@ -81,7 +82,10 @@ class Explorer extends Emit {
         })
 
         this.html.find('.explorer-card__head-create').text(year + (countries.length ? ' - ' + countries[0] : '')).toggleClass('hide',Boolean(year == '0000'))
-        this.html.find('.explorer-card__head-rate').toggleClass('hide',!Boolean(rate > 0)).find('span').text(rate.toFixed(1))
+        let _rb = this.html.find('.explorer-card__head-rate'), _ir = 0
+        try{ window.__imdbbExpR = 1; _ir = IMDb.cached(movie) || 0 }catch(e){}
+        _rb.toggleClass('hide',!Boolean(_ir > 0)).find('span').text(_ir > 0 ? _ir.toFixed(1) : '')
+        if(!(_ir > 0)) try{ IMDb.rating(movie, (v)=>{ if(v > 0) _rb.removeClass('hide').find('span').text(parseFloat(v).toFixed(1)) }) }catch(e){}
         this.html.find('.explorer-card__title').text(title).toggleClass('small',Boolean(title.length > 50))
         this.html.find('.explorer-card__descr').text(movie.overview || '')
         this.html.find('.explorer-card__genres').text(genres.join(', '))
