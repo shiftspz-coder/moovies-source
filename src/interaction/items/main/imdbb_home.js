@@ -286,6 +286,7 @@ export default function(main){
         let wm = window.__imdbbWarm = {}
         let warm = function(info){
             try{
+                try{ ((info && info.production_companies) || []).forEach(function(x){ if(!x.logo_path) return; let su = L.TMDB.image('t/p/w154' + x.logo_path); if(wm[su]) return; wm[su] = 1; let sm = new Image(); sm.src = su; if(sm.decode) sm.decode().catch(function(){}) }) }catch(e){}
                 let ls = info && info.images && info.images.logos
                 if(!ls || !ls.length) return
                 let pick = ls.filter(function(x){ return x.iso_639_1 === 'ru' })[0] || ls.filter(function(x){ return x.iso_639_1 === 'en' })[0] || ls[0]

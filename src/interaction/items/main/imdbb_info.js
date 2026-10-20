@@ -60,10 +60,18 @@ export function stFill(el, info){
         let h = ''
         pcs.slice(0, 4).forEach(function(x){
             let lp = x.logo_path
-            if(lp && st !== 't') h += '<span class="imdbb-st__i"><img src="' + esc(L.TMDB.image('t/p/w154' + lp)) + '" alt="' + esc(x.name) + '"></span>'
+            if(lp && st !== 't') h += '<span class="imdbb-st__i"><img decoding="sync" src="' + esc(L.TMDB.image('t/p/w154' + lp)) + '" alt="' + esc(x.name) + '"></span>'
             else h += '<span class="imdbb-st__i imdbb-st__t">' + esc(x.name) + '</span>'
         })
         el.innerHTML = h
+        window.__imdbbStW = 1
+        let imgs = Array.prototype.slice.call(el.querySelectorAll('img')).filter(function(i){ return !i.complete })
+        if(!imgs.length){ el.classList.remove('imdbb-st--w'); return }
+        el.classList.add('imdbb-st--w')
+        let left = imgs.length
+        let done = function(){ if(el.__imdbbSt === key) el.classList.remove('imdbb-st--w') }
+        imgs.forEach(function(i){ let f = function(){ left--; if(left <= 0) done() }; i.addEventListener('load', f); i.addEventListener('error', f) })
+        setTimeout(done, 1200)
     }
     catch(e){}
 }
