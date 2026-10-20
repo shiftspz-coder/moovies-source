@@ -268,7 +268,7 @@ export default function(main){
         let load = function(d, cb){
             if(d.episode_number !== undefined || d.still_path !== undefined) return /* imdbb_ep_guard */
             let k = ckey(d)
-            if(cache[k]) return cb(cache[k])
+            window.__imdbbStFix = 1; if(cache[k] && cache[k].production_companies) return cb(cache[k])
             let hc = hget(k)
             if(hc && hc.production_companies && !ovx.old(hc.overview, (hload()[k] || {}).t) && !(!hc.tagline && Date.now() - ((hload()[k] || {}).t || 0) > 864e5)){ cache[k] = hc; return cb(hc) } ;window.__imdbbTgFresh = 1
             let kind = kindOf(d)
