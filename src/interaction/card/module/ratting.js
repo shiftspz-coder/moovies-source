@@ -139,7 +139,7 @@ function qnext(){
         try{ v = JSON.parse(x.responseText) }
         catch(e){}
 
-        end(v && typeof v === 'object' ? {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null, hdr: v.hdr || null, dv: v.dv || null} : null)
+        end(v && typeof v === 'object' ? {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null, hdr: v.hdr || null, dv: v.dv || null, tops: Array.isArray(v.tops) ? v.tops : []} : null)
     }
     x.onerror = x.ontimeout = function(){ end(null) }
     x.send()

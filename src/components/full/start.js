@@ -23,6 +23,7 @@ import Translations from './start/translations'
 import Bookmarks from './start/bookmarks'
 import Buttons from './start/buttons'
 import ovx from '../../utils/imdbb_ov'
+import Tracks from '../../core/imdbb_tracks'
 
 const QKEY = 'imdbb_q2'
 const kpBoth = ()=>{ try{ return localStorage.getItem('imdbb_kp_both') === 'true' }catch(e){ return false } }
@@ -94,6 +95,17 @@ class Start extends Emit {
             else this.html.find('.full-start-new__rate-line').append(el)
         }
 
+        let verify = (v)=>{
+            if(!v || (v.q !== '4K' && v.q !== '1080') || !v.tops || !v.tops.length) return
+
+            let le = card.last_episode_to_air
+            let ep = kind === 'tv' && le && le.season_number && le.episode_number ? {s: le.season_number, e: le.episode_number} : null
+
+            Tracks.run(v.tops, ep, (ok)=>{
+                if(ok && this.html && this.html[0] && document.body.contains(this.html[0])) show(Tracks.apply(v))
+            })
+        }
+
         let store = null
 
         try{ store = JSON.parse(localStorage.getItem(QKEY) || '{}') }
@@ -101,8 +113,9 @@ class Start extends Emit {
 
         let c = store[key]
 
-        if(c && c.t + c.l > Date.now()){
-            show(c.v)
+        if(c && c.t + c.l > Date.now() && !(c.v && (c.v.q === '4K' || c.v.q === '1080') && c.v.tops === undefined)){
+            show(Tracks.apply(c.v))
+            verify(c.v)
             gate(this.html, 'q')
 
             return
@@ -130,7 +143,7 @@ class Start extends Emit {
 
             if(!v || typeof v !== 'object'){ gate(this.html, 'q'); return }
 
-            let val = {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null, hdr: v.hdr || null, dv: v.dv || null}
+            let val = {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null, hdr: v.hdr || null, dv: v.dv || null, tops: Array.isArray(v.tops) ? v.tops : []}
 
             try{
                 let s = JSON.parse(localStorage.getItem(QKEY) || '{}')
@@ -141,7 +154,8 @@ class Start extends Emit {
             }
             catch(e){}
 
-            show(val)
+            show(Tracks.apply(val))
+            verify(val)
             gate(this.html, 'q')
         }
         x.onerror = x.ontimeout = ()=>{ gate(this.html, 'q') }
