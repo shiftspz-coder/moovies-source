@@ -916,3 +916,6 @@ html body.imdbb-compact[class][class] span.imdbb-hero__fav{
 /*! imdbb-snap */
 html body .imdbb-snap{ z-index:5; pointer-events:none!important; transition:opacity .25s ease; overflow:hidden }
 html body .imdbb-snapping .activity__loader{ display:none!important }
+
+/*! imdbb-favgap */
+html body .imdbb-hero__meta > .imdbb-hero__fav{margin-left:.5em}

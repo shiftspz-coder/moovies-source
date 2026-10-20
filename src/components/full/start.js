@@ -283,7 +283,7 @@ class Start extends Emit {
         this.card.status && this.html.find('.full-start__status').removeClass('hide').text(Lang.translate('tv_status_' + this.card.status.toLowerCase().replace(/ /g,'_')))
 
         try{ let ic = IMDb.cached(this.card); if(ic > 0) this.card.imdb_rating = ic }catch(e){} if(this.card.imdb_rating && parseFloat(this.card.imdb_rating) > 0){
-            this.html.find('.rate--imdb').removeClass('hide').find('> div').eq(0).text(parseFloat(this.card.imdb_rating) >= 10 ? 10 : this.card.imdb_rating)
+            this.html.find('.rate--imdb').removeClass('hide').find('> div').eq(0).text(parseFloat(this.card.imdb_rating) >= 10 ? 10 : (window.__imdbbRt1 = 1, parseFloat(this.card.imdb_rating).toFixed(1)))
         }
 
         if(this.card.kp_rating && parseFloat(this.card.kp_rating) > 0){
