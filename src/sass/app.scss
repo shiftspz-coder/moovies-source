@@ -919,3 +919,24 @@ html body .imdbb-snapping .activity__loader{ display:none!important }
 
 /*! imdbb-favgap */
 html body .imdbb-hero__meta > .imdbb-hero__fav{margin-left:.5em}
+
+/*! imdbb-st */
+.imdbb-hero__st{display:none; align-items:center; gap:.9em; flex-wrap:nowrap; margin:.55em 0 .2em; pointer-events:none}
+body.imdbb-st-p .imdbb-hero__st,body.imdbb-st-w .imdbb-hero__st,body.imdbb-st-f .imdbb-hero__st,body.imdbb-st-t .imdbb-hero__st{display:flex}
+.imdbb-hero__st:empty{display:none!important}
+.imdbb-st__i{display:flex; align-items:center}
+.imdbb-st__i img{display:block; height:1.7em; max-width:6.5em; object-fit:contain}
+.imdbb-st__t{font-size:.95em; white-space:nowrap; opacity:.9}
+body.imdbb-st-p .imdbb-st__i{background:rgba(255,255,255,.92); border-radius:.4em; padding:.25em .6em; text-shadow:none}
+body.imdbb-st-p .imdbb-st__t{color:#1e1f21; opacity:1}
+body.imdbb-st-w .imdbb-st__i img,body.imdbb-st-f .imdbb-st__i img{filter:brightness(0) invert(1); opacity:.9}
+body.imdbb-st-f .imdbb-st__i{border:1px solid rgba(255,255,255,.4); border-radius:.4em; padding:.25em .6em}
+body.imdbb-st-t .imdbb-st__i+.imdbb-st__i::before{content:"\00b7"; margin-right:.9em; opacity:.6}
+body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__logo{order:1}
+body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__tag{order:2}
+body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__meta{order:3}
+body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__st{order:4}
+body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__s{order:5}
+body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__d{order:6}
+body.imdbb-sp-3 .imdbb-hero__st{position:absolute; top:0; right:0; margin:0}
+body.imdbb-sp-3 .imdbb-home>.imdbb-hero .imdbb-hero__st{top:5em; right:var(--imdbb-x, 3em)}

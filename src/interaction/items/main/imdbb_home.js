@@ -1,4 +1,4 @@
-import {metaHtml, subLine, HERO_HTML, cert} from './imdbb_info'
+import {metaHtml, subLine, HERO_HTML, cert, stFill} from './imdbb_info'
 import {lgcached, lgput} from '../../card/module/ratting'
 import Utils from '../../../utils/utils'
 import ovx from '../../../utils/imdbb_ov'
@@ -40,6 +40,7 @@ function hput(k, j, ct){
             production_countries: pc,
             origin_country: j.origin_country && j.origin_country[0] ? [j.origin_country[0]] : [],
             genres: (j.genres || []).slice(0, 3).map(function(x){ return {name: x.name} }),
+            production_companies: (j.production_companies || []).slice(0, 4).map(function(x){ return {name: x.name, logo_path: x.logo_path || ''} }),
             status: j.status,
             number_of_seasons: j.number_of_seasons,
             number_of_episodes: j.number_of_episodes,
@@ -223,7 +224,7 @@ export default function(main){
                 let qq = el.querySelector('.imdbb-q')
                 if(qq) qh = qq.innerHTML
             }
-            q('.imdbb-hero__meta').innerHTML = metaHtml(d, info, {rate: rate, ql: qh, ct: info ? cert(info, kind) : ''})
+            q('.imdbb-hero__meta').innerHTML = metaHtml(d, info, {rate: rate, ql: qh, ct: info ? cert(info, kind) : ''}); stFill(q('.imdbb-hero__st'), info)
             try{
                 let kpk = kind + ':' + d.id
 
@@ -269,7 +270,7 @@ export default function(main){
             let k = ckey(d)
             if(cache[k]) return cb(cache[k])
             let hc = hget(k)
-            if(hc && !ovx.old(hc.overview, (hload()[k] || {}).t) && !(!hc.tagline && Date.now() - ((hload()[k] || {}).t || 0) > 864e5)){ cache[k] = hc; return cb(hc) } ;window.__imdbbTgFresh = 1
+            if(hc && hc.production_companies && !ovx.old(hc.overview, (hload()[k] || {}).t) && !(!hc.tagline && Date.now() - ((hload()[k] || {}).t || 0) > 864e5)){ cache[k] = hc; return cb(hc) } ;window.__imdbbTgFresh = 1
             let kind = kindOf(d)
             let app = kind === 'tv' ? 'images,content_ratings' : 'images,release_dates'
             let url = L.TMDB.api(kind + '/' + d.id + '?api_key=' + L.TMDB.key() + '&language=ru&append_to_response=' + app + '&include_image_language=ru,en,null')

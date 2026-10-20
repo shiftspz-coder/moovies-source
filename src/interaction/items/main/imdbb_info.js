@@ -5,7 +5,7 @@ function esc(s){ return String(s || '').replace(/[&<>"]/g, function(c){ return {
 function kindOf(d){ return d.media_type === 'tv' || (d.name && !d.title) || d.first_air_date ? 'tv' : 'movie' }
 function vv(x){ let n = parseFloat(x); return n > 0 ? Math.min(10, n) : 0 }
 
-export const HERO_HTML = '<div class="imdbb-hero__logo"></div><div class="imdbb-hero__tag"></div><div class="imdbb-hero__meta"></div><div class="imdbb-hero__s"></div><div class="imdbb-hero__d"></div>'
+export const HERO_HTML = '<div class="imdbb-hero__logo"></div><div class="imdbb-hero__tag"></div><div class="imdbb-hero__meta"></div><div class="imdbb-hero__s"></div><div class="imdbb-hero__d"></div><div class="imdbb-hero__st"></div>'
 
 function mg(ps){
     if(!ps.length) return ''
@@ -45,6 +45,27 @@ export function metaHtml(d, info, o){
     let sl0 = subLine(d, info)
     if(sl0) parts.push('<span class="imdbb-hero__sl">' + esc(sl0) + '</span>')
     return mg(parts)
+}
+
+export function stFill(el, info){
+    try{
+        if(!el) return
+        let L = window.Lampa
+        let st = String(L.Storage.get('imdbb_st_style', '0'))
+        let pcs = (info && info.production_companies) || []
+        let key = st + '|' + pcs.map(function(x){ return x.name }).join(',')
+        if(el.__imdbbSt === key) return
+        el.__imdbbSt = key
+        if(st === '0' || !pcs.length){ el.innerHTML = ''; return }
+        let h = ''
+        pcs.slice(0, 4).forEach(function(x){
+            let lp = x.logo_path
+            if(lp && st !== 't') h += '<span class="imdbb-st__i"><img src="' + esc(L.TMDB.image('t/p/w154' + lp)) + '" alt="' + esc(x.name) + '"></span>'
+            else h += '<span class="imdbb-st__i imdbb-st__t">' + esc(x.name) + '</span>'
+        })
+        el.innerHTML = h
+    }
+    catch(e){}
 }
 
 export function subLine(d, info){
