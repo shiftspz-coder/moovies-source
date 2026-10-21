@@ -371,6 +371,14 @@ export default function(main){
             }
             catch(e){}
         }
+        let fullOpen = function(){
+            try{
+                window.__imdbbFo = 1
+                let a = L.Activity && L.Activity.active && L.Activity.active()
+                return !!(a && a.component === 'full')
+            }
+            catch(e){ return false }
+        }
         let upd = function(card, d){
             if(!d) return
             if(!d.id){
@@ -395,13 +403,13 @@ export default function(main){
             let wait = !ci && !ep
             try{ hero.setAttribute('data-imdbb-id', String(d.id)) }catch(e){}; hero.classList.toggle('imdbb-hero--wait', wait)
             render(d, ci || null, el, wait); if(!wait){ let im0 = q('.imdbb-hero__logo img'); if(im0 && !im0.complete){ hero.classList.add('imdbb-hero--wait'); unwait(d) } }
-            try{ if(d.backdrop_path && L.Background && !isBm) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path)) }catch(e){}
+            try{ if(d.backdrop_path && L.Background && !isBm && !fullOpen()) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path)) }catch(e){}
             clearTimeout(timer)
             clearTimeout(timer2)
             timer = setTimeout(function(){
                 if(cur !== d) return
                 try{
-                    if(d.backdrop_path && L.Background && !isBm) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path))
+                    if(d.backdrop_path && L.Background && !isBm && !fullOpen()) L.Background.change(L.TMDB.image('t/p/w1280' + d.backdrop_path))
                 }
                 catch(e){}
                 load(d, function(info){ if(cur === d){ render(d, info, curEl); unwait(d) } })
