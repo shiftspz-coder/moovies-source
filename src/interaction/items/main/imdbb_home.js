@@ -270,13 +270,13 @@ export default function(main){
             let k = ckey(d)
             window.__imdbbStFix = 1; if(cache[k] && cache[k].production_companies) return cb(cache[k])
             let hc = hget(k)
-            if(hc && hc.production_companies && !ovx.old(hc.overview, (hload()[k] || {}).t) && !(!hc.tagline && Date.now() - ((hload()[k] || {}).t || 0) > 864e5)){ cache[k] = hc; return cb(hc) } ;window.__imdbbTgFresh = 1
+            if(hc && hc.production_companies && !ovx.old(hc.overview, (hload()[k] || {}).t) && !(!hc.tagline && Date.now() - ((hload()[k] || {}).t || 0) > 864e5)){ cache[k] = hc; if(gm[k]) hc.genres = gm[k]; return cb(hc) } ;window.__imdbbTgFresh = 1
             let kind = kindOf(d)
             let app = kind === 'tv' ? 'images,content_ratings' : 'images,release_dates'
             let url = L.TMDB.api(kind + '/' + d.id + '?api_key=' + L.TMDB.key() + '&language=ru&append_to_response=' + app + '&include_image_language=ru,en,null')
             fetch(url).then(function(r){ return r.json() }).then(function(j){
                 if(j && j.id){
-                    let done = function(){ cache[k] = j; hput(k, j, cert(j, kind)); cb(j) }
+                    let done = function(){ if(gm[k]) j.genres = gm[k]; cache[k] = j; hput(k, j, cert(j, kind)); cb(j) }
                     if(String(j.overview || '').trim()) done()
                     else fetch(L.TMDB.api(kind + '/' + d.id + '?api_key=' + L.TMDB.key() + '&language=en')).then(function(r2){ return r2.json() }).then(function(e){ if(e && e.overview) j.overview = e.overview }, function(){}).then(done)
                 }
@@ -339,6 +339,22 @@ export default function(main){
             catch(e){ hero.classList.remove('imdbb-hero--wait') }
         }
 
+        let gm = window.__imdbbGm = {}
+        let gsync = function(d, data){
+            try{
+                let m = data && data.movie
+                if(!m || !m.genres || !m.genres.length) return
+                window.__imdbbGs = 1
+                let k = ckey(d), g = m.genres.slice(0, 3).map(function(x){ return {name: x.name} })
+                gm[k] = g
+                let ci = cache[k]
+                if(ci) ci.genres = g
+                let hd = hload()[k]
+                if(hd && hd.i) hd.i.genres = g
+                if(cur === d && ci) render(d, ci, curEl)
+            }
+            catch(e){}
+        }
         let preFull = function(d){
             try{
                 if(!d || !d.id || d.episode_number !== undefined || d.still_path !== undefined) return
@@ -350,7 +366,7 @@ export default function(main){
                     let pm = window.__imdbbPre = window.__imdbbPre || {}
                     if(pm[pk]) return
                     pm[pk] = 1
-                    try{ L.Api.full({id: d.id, method: method, card: d, url: '', component: 'full', source: d.source || L.Storage.field('source'), page: 1}, function(){}, function(){}) }catch(e){}
+                    try{ L.Api.full({id: d.id, method: method, card: d, url: '', component: 'full', source: d.source || L.Storage.field('source'), page: 1}, function(data){ try{ gsync(d, data) }catch(e){} }, function(){}) }catch(e){}
                 }, 150)
             }
             catch(e){}
