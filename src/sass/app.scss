@@ -1004,3 +1004,9 @@ html body.imdbb-compact[class][class] .full-start-new__buttons{
     }
   }
 }
+
+/*! imdbb-lgclamp3 */
+html body[class] .imdbb-lgtx,
+html body[class] .imdbb-hero__logo .imdbb-lgtx,
+html body[class] .imdbb-lgw .imdbb-lgt.imdbb-lgtx,
+html body[class] .full-start-new__title .imdbb-lgtx{display:-webkit-box!important; -webkit-box-orient:vertical!important; -webkit-line-clamp:2!important; overflow:hidden!important; text-overflow:ellipsis!important}
