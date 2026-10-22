@@ -41,7 +41,7 @@ function newRelRow(){
     return {
         name: 'new_releases',
         settings: [
-            {param: {name: 'new_releases_votes', type: 'select', values: {'0': 'Без порога', '10': '10', '20': '20', '50': '50', '100': '100', '200': '200', '500': '500'}, default: '50'}, field: {name: 'Новинки: минимум голосов', description: 'Сколько оценок в TMDB должно быть у фильма, чтобы попасть в ряд «Новинки по дате»'}}
+            {param: {name: 'new_releases_votes', type: 'select', values: {'0': 'Без порога', '10': '10', '20': '20', '50': '50', '75': '75', '100': '100', '200': '200', '500': '500'}, default: '50'}, field: {name: 'Новинки: минимум голосов', description: 'Сколько оценок в TMDB должно быть у фильма, чтобы попасть в ряд «Новинки по дате»'}}
         ],
         title: 'Новинки по дате',
         index: 0,
