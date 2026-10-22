@@ -40,18 +40,24 @@ function init(){
 function newRelRow(){
     return {
         name: 'new_releases',
+        settings: [
+            {param: {name: 'new_releases_votes', type: 'select', values: {'0': 'Без порога', '10': '10', '20': '20', '50': '50', '100': '100', '200': '200', '500': '500'}, default: '50'}, field: {name: 'Новинки: минимум голосов', description: 'Сколько оценок в TMDB должно быть у фильма, чтобы попасть в ряд «Новинки по дате»'}}
+        ],
         title: 'Новинки по дате',
         index: 0,
         screen: ['main'],
         call: (params)=>{
             let d = new Date()
             let to = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2)
+            let vc = parseInt(Storage.get('new_releases_votes', '50'))
+
+            if(isNaN(vc)) vc = 50
 
             return function(call){
-                TMDB.get('discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=50', params, (json)=>{
+                TMDB.get('discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=' + vc, params, (json)=>{
                     json.title = 'Новинки по дате'
 
-                    json.url = 'discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=50'
+                    json.url = 'discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=' + vc
                     json.source = 'tmdb'
 
                     call(json)
