@@ -162,7 +162,7 @@ function Results(source){
             onInstance: (item, item_data)=>{
                 item.use({
                     onFocus: ()=>{
-                        try{ Background.change(Utils.cardImgBackground(item_data)) }catch(e){}
+                        try{ window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)) }catch(e){} window.__imdbbSb = 0
                     },
                     onEnter: ()=>{
                         if(source.onSelect){

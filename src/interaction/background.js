@@ -371,6 +371,7 @@ function load(){
  * @param {string} url
  */
 function change(url = ''){
+    try{ if(document.body.classList.contains('search--open') && !window.__imdbbSb) return }catch(e){}
     if(url == src || Storage.field('light_version') || !Storage.field('background')) return
 
     bokeh.d = true
