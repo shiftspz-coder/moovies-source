@@ -235,7 +235,7 @@ export default function(main){
                     try{
                         let mm = q('.imdbb-hero__meta')
 
-                        if(!v || !mm || mm.getAttribute('data-kpk') !== kpk || mm.querySelector('.imdbb-hero__r')) return
+                        if(!v || !mm || mm.getAttribute('data-kpk') !== kpk || mm.querySelector('.imdbb-hero__rv')) return
 
                         mm.innerHTML = metaHtml(d, info, {rate: '', kp: v.toFixed(1), ql: qh, ct: info ? cert(info, kind) : ''})
                     }

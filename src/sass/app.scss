@@ -940,3 +940,16 @@ body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__s{order:5}
 body.imdbb-sp-2 .imdbb-hero>.imdbb-hero__d{order:6}
 body.imdbb-sp-3 .imdbb-hero>.imdbb-hero__st{--imdbb-st2:1; order:-1; align-self:stretch; justify-content:flex-end; align-items:flex-start; height:0; margin:0}
 .imdbb-hero__st.imdbb-st--w{opacity:0}
+
+/*! imdbb-rline */
+html body .imdbb-hero__sl .imdbb-hero__rv{display:inline-flex; align-items:baseline; gap:.4em}
+html body .imdbb-hero__sl .imdbb-hero__rv i{font-style:normal; font-size:.8em; font-weight:700; letter-spacing:.04em; color:#f5c518}
+html body .imdbb-hero__sl .imdbb-hero__rvk i{color:#ff5500}
+html body .imdbb-hero__sl .imdbb-hero__rv b{font-weight:600; color:#fff}
+html body .imdbb-hero__sl .imdbb-dot{font-style:normal; margin:0 .6em; opacity:.6}
+
+/*! imdbb-stfix */
+body.imdbb-st-p .imdbb-st__i img{filter:brightness(0); opacity:.85}
+body.imdbb-sp-3 .imdbb-st__i:nth-child(n+4){display:none}
+body.imdbb-sp-3 .imdbb-st__i img{height:1.3em; max-width:4.5em}
+body.imdbb-sp-3 .imdbb-hero__st{gap:.5em}

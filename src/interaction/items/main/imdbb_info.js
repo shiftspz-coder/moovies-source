@@ -17,6 +17,13 @@ function mg(ps){
         else if(x.indexOf('<span class="imdbb-hero__sl"') === 0) sl = x
         else tx.push(x.replace(/^<span>/, '').replace(/<\/span>$/, ''))
     })
+    if(r){
+        let rv = [], rx = /<b>([^<]*)<\/b><i>([^<]*)<\/i>/g, m
+        while((m = rx.exec(r))) rv.push('<span class="imdbb-hero__rv' + (m[2] === 'IMDb' ? '' : ' imdbb-hero__rvk') + '"><i>' + (m[2] === 'IMDb' ? 'IMDb' : 'КП') + '</i><b>' + m[1] + '</b></span>')
+        let st0 = sl ? sl.replace(/^<span class="imdbb-hero__sl">/, '').replace(/<\/span>$/, '') : ''
+        sl = '<span class="imdbb-hero__sl">' + rv.join('<em class="imdbb-dot">·</em>') + (st0 ? '<em class="imdbb-dot">·</em>' + st0 : '') + '</span>'
+        r = ''
+    }
     if(sl && r){ let n = (pl ? 1 : 0) + (tx.length ? 1 : 0) + (g ? 1 : 0) + 1; if(n > 1) r = r.replace('<span class="imdbb-hero__r"', '<span class="imdbb-hero__r" data-rn="' + n + '"') }
     return r + (pl ? '<span class="imdbb-hero__pl">' + pl + '</span>' : '') + (tx.length ? '<span class="imdbb-hero__tx">' + tx.join('<em class="imdbb-dot">·</em>') + '</span>' : '') + g + sl
 }
@@ -42,7 +49,7 @@ export function metaHtml(d, info, o){
         let g = (info.genres || []).slice(0, 3).map(function(x){ let n = x.name + ''; return n.charAt(0).toUpperCase() + n.slice(1) }).join(', ')
         if(g) parts.push('<span class="imdbb-hero__g">' + esc(g) + '</span>')
     }
-    let sl0 = subLine(d, info)
+    let sl0 = subLine(d, info, !!(o.rate && o.kp2))
     if(sl0) parts.push('<span class="imdbb-hero__sl">' + esc(sl0) + '</span>')
     return mg(parts)
 }
@@ -76,13 +83,14 @@ export function stFill(el, info){
     catch(e){}
 }
 
-export function subLine(d, info){
+export function subLine(d, info, short){
     let kind = kindOf(d)
     let sl = ''
     if(info && kind === 'tv' && info.number_of_seasons){
         let st = (info.status === 'Ended' || info.status === 'Canceled') ? 'Завершён' : 'Идёт'
         sl = 'Сезоны: ' + info.number_of_seasons + ' • Серии: ' + (info.number_of_episodes || '') + ' • ' + st
     }
+    if(!sl && info && kind !== 'tv' && info.budget >= 1e6 && short) sl = 'Бюджет $ ' + (Math.round(info.budget / 1e5) / 10 + '').replace('.', ',') + ' млн'
     if(!sl && info && kind !== 'tv' && info.budget > 0) sl = 'Бюджет $ ' + String(info.budget).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
     return sl
 }
@@ -119,3 +127,4 @@ if(typeof window !== 'undefined') window.__imdbbCert = cert
 
 
 if(typeof window !== "undefined") window.__imdbbTfAlign = 1
+if(typeof window !== "undefined") window.__imdbbRl = 1
