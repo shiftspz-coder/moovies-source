@@ -91,13 +91,14 @@ export function subLine(d, info, short){
         let st = (info.status === 'Ended' || info.status === 'Canceled') ? 'Завершён' : 'Идёт'
         sl = 'Сезоны: ' + info.number_of_seasons + ' • Серии: ' + (info.number_of_episodes || '') + ' • ' + st
     }
-    if(!sl && info && kind !== 'tv' && info.budget >= 1e6 && short) sl = 'Бюджет $ ' + (Math.round(info.budget / 1e5) / 10 + '').replace('.', ',') + ' млн'
+    if(!sl && info && kind !== 'tv' && info.budget >= 1e6) sl = 'Бюджет $ ' + (Math.round(info.budget / 1e5) / 10 + '').replace('.', ',') + ' млн'
     if(!sl && info && kind !== 'tv' && info.budget > 0) sl = 'Бюджет $ ' + String(info.budget).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
     return sl
 }
 
 if(typeof window !== 'undefined') window.__imdbbInfo = 1
 if(typeof window !== 'undefined') window.__imdbbOrdA = 1
+if(typeof window !== 'undefined') window.__imdbbBudS = 1
 
 export function cert(info, kind){
     try{
