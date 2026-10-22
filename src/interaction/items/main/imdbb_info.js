@@ -21,11 +21,11 @@ function mg(ps){
         let rv = [], rx = /<b>([^<]*)<\/b><i>([^<]*)<\/i>/g, m
         while((m = rx.exec(r))) rv.push('<span class="imdbb-hero__rv' + (m[2] === 'IMDb' ? '' : ' imdbb-hero__rvk') + '"><i>' + (m[2] === 'IMDb' ? 'IMDb' : 'КП') + '</i><b>' + m[1] + '</b></span>')
         let st0 = sl ? sl.replace(/^<span class="imdbb-hero__sl">/, '').replace(/<\/span>$/, '') : ''
-        sl = '<span class="imdbb-hero__sl">' + rv.join('<em class="imdbb-dot">·</em>') + (st0 ? '<em class="imdbb-dot">·</em>' + st0 : '') + '</span>'
+        sl = '<span class="imdbb-hero__sl">' + (st0 ? [st0] : []).concat(rv).join('<em class="imdbb-dot">·</em>') + '</span>'
         r = ''
     }
     if(sl && r){ let n = (pl ? 1 : 0) + (tx.length ? 1 : 0) + (g ? 1 : 0) + 1; if(n > 1) r = r.replace('<span class="imdbb-hero__r"', '<span class="imdbb-hero__r" data-rn="' + n + '"') }
-    return r + (pl ? '<span class="imdbb-hero__pl">' + pl + '</span>' : '') + (tx.length ? '<span class="imdbb-hero__tx">' + tx.join('<em class="imdbb-dot">·</em>') + '</span>' : '') + g + sl
+    return r + (tx.length ? '<span class="imdbb-hero__tx">' + tx.join('<em class="imdbb-dot">·</em>') + '</span>' : '') + g + sl + (pl ? '<span class="imdbb-hero__pl">' + pl + '</span>' : '')
 }
 
 // o: {rate: '7.6' строкой, ql: html значка качества (запасной), ct: возраст}
@@ -97,6 +97,7 @@ export function subLine(d, info, short){
 }
 
 if(typeof window !== 'undefined') window.__imdbbInfo = 1
+if(typeof window !== 'undefined') window.__imdbbOrdA = 1
 
 export function cert(info, kind){
     try{
