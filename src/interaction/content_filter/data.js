@@ -393,7 +393,26 @@ data.tsort = {
         {title: 'Дата выхода: с поздней', f: 'date', d: 'desc'},
         {title: 'Дата выхода: с ранней', f: 'date', d: 'asc'},
         {title: 'Популярность', f: 'popularity', d: 'desc'},
-        {title: 'Число голосов', f: 'vote_count', d: 'desc'}
+        {title: 'Число голосов', f: 'vote_count', d: 'desc'},
+        {title: 'Качество: с высокого', f: 'quality', d: 'desc'},
+        {title: 'Дубляж сначала', f: 'dub', d: 'desc'}
+    ]
+}
+
+data.fq = {
+    title: 'Качество раздачи',
+    items: [
+        {title: '#{filter_any}', selected: true, q: ''},
+        {title: '4K', q: '4K'},
+        {title: '1080p и выше', q: 'FHD'}
+    ]
+}
+
+data.fdub = {
+    title: 'Дубляж',
+    items: [
+        {title: '#{filter_any}', selected: true, d: 0},
+        {title: 'Только с дубляжем', d: 1}
     ]
 }
 

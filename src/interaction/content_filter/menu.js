@@ -30,6 +30,14 @@ function imdbRange(){
     return {min: a, max: b}
 }
 
+function fqPick(){
+    return data.fq.items.find(s=>s.selected) || data.fq.items[0]
+}
+
+function fdubPick(){
+    return data.fdub.items.find(s=>s.selected) || data.fdub.items[0]
+}
+
 function tsortPick(){
     return data.tsort.items.find(s=>s.selected) || data.tsort.items[0]
 }
@@ -49,7 +57,7 @@ function main(){
     },data.type].concat(Storage.field('source') == 'cub' ? [data.rating] : [data.imdb_from, data.imdb_to], [data['genres_'+type],data.language].concat(Storage.field('source') == 'cub' ? [data.year] : [data.year_from, data.year_to]))
 
     if(Storage.field('source') == 'cub') items.push(data.pgrating,data.sort,data.quality)
-    else items.push(data.tsort)
+    else items.push(data.tsort, data.fq, data.fdub)
 
     items.forEach(itm=>{
         itm.title = Lang.translate(itm.title)
@@ -103,7 +111,7 @@ function queryForTMDB(){
     if(yr.max) query.push(yneed + '.lte=' + yr.max + '-12-31')
 
     let ts = tsortPick()
-    query.push('sort_by=' + (ts.f == 'date' ? yneed : ts.f) + '.' + ts.d)
+    query.push('sort_by=' + (ts.f == 'quality' || ts.f == 'dub' ? 'popularity' : (ts.f == 'date' ? yneed : ts.f)) + '.' + ts.d)
     query.push('vote_count.gte=' + (ts.f == 'date' ? 50 : 200))
 
     data['genres_'+type].items.forEach(a=>{
@@ -221,6 +229,9 @@ function search(){
         imdb_max: source == 'cub' ? 0 : imdbRange().max,
         imdb_sort: source == 'cub' ? 0 : (tsortPick().f == 'vote_average' ? 1 : 0),
         imdb_dir: source == 'cub' ? '' : (tsortPick().f == 'vote_average' ? tsortPick().d : ''),
+        q_sort: source == 'cub' ? '' : (tsortPick().f == 'quality' || tsortPick().f == 'dub' ? tsortPick().f : ''),
+        q_min: source == 'cub' ? '' : fqPick().q,
+        q_dub: source == 'cub' ? 0 : fdubPick().d,
         page: 1
     }
 

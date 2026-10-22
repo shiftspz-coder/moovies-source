@@ -538,6 +538,39 @@ function mlabels(v){
     return out
 }
 
+window.__imdbbQf = function(m, cb){
+    let p = proxy()
+
+    if(!m || !m.id || !p) return cb(null)
+
+    let key = kindOf(m) + ':' + m.id
+    let c = qget(key)
+
+    if(c) return cb(c.v || null)
+
+    if(!pend[key]){
+        pend[key] = 1
+
+        let title = m.title || m.name || ''
+        let orig = m.original_title || m.original_name || ''
+        let year = ((m.release_date || m.first_air_date || '') + '').slice(0, 4)
+
+        queue.push({k: key, u: p + '?title=' + encodeURIComponent(title) + '&year=' + year + '&orig=' + encodeURIComponent(orig) + '&kind=' + kindOf(m)})
+
+        qnext()
+    }
+
+    let n = 0
+    let t = setInterval(function(){
+        let c2 = qget(key)
+
+        if(c2 || ++n > 600){
+            clearInterval(t)
+            cb(c2 && c2.v ? c2.v : null)
+        }
+    }, 150)
+}
+
 window.__imdbbQl = mlabels
 
 window.__imdbbQm = function(m){

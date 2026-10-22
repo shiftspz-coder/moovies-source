@@ -9,6 +9,20 @@ import imdbbRows, {imdbbOn} from '../imdbb_rows'
 
 const MIN_KEEP = 8
 const MAX_PAGES = 3
+const MAX_PAGES_Q = 5
+
+function qrank(v){
+    return v && v.q === '4K' ? 3 : (v && v.q === '1080' ? 2 : (v && v.q === 'TS' ? 1 : 0))
+}
+
+function dubOf(v){
+    return v && v.q !== 'TS' && v.dub && (typeof v.dub !== 'object' || Object.keys(v.dub).length) ? 1 : 0
+}
+
+function qfetch(m, cb){
+    if(typeof window.__imdbbQf === 'function') window.__imdbbQf(m, cb)
+    else cb(null)
+}
 
 function imdbLister(object){
     let mn = parseFloat(object.imdb_min) || 0
@@ -17,7 +31,14 @@ function imdbLister(object){
     let hasRange = mn > 0 || mx < 10
     let sortOn = !!object.imdb_sort
 
-    if(!(hasRange || sortOn)) return null
+    let qmin = object.q_min || ''
+    let qdub = !!object.q_dub
+    let qsort = object.q_sort || ''
+    let needQ = !!(qmin || qdub || qsort)
+    let qneed = qmin == '4K' ? 3 : (qmin == 'FHD' ? 2 : 0)
+    let qpass = function(v){ return (!qneed || qrank(v) >= qneed) && (!qdub || dubOf(v)) }
+
+    if(!(hasRange || sortOn || needQ)) return null
 
     let starts = {1: 1}
 
@@ -31,7 +52,12 @@ function imdbLister(object){
 
             if(!kept.length) return err && err()
 
-            if(sortOn) kept.sort(function(a, b){ return object.imdb_dir == 'asc' ? (a.r || 99) - (b.r || 99) : b.r - a.r })
+            if(qsort) kept.sort(function(a, b){
+                let k = qsort == 'dub' ? (b.d - a.d) || (b.q - a.q) : (b.q - a.q) || (b.d - a.d)
+
+                return k || (b.r - a.r)
+            })
+            else if(sortOn) kept.sort(function(a, b){ return object.imdb_dir == 'asc' ? (a.r || 99) - (b.r || 99) : b.r - a.r })
 
             ok(Object.assign({}, last, {results: kept.map(function(x){ return x.m }), page: page}))
         }
@@ -45,13 +71,14 @@ function imdbLister(object){
                 let left = list.length
                 let flags = []
                 let rates = []
+                let qv = []
 
                 let after = function(){
-                    list.forEach(function(m, i){ if(flags[i]) kept.push({m: m, r: rates[i]}) })
+                    list.forEach(function(m, i){ if(flags[i]) kept.push({m: m, r: rates[i], q: qrank(qv[i]), d: dubOf(qv[i])}) })
 
                     tries++
 
-                    if(kept.length >= MIN_KEEP || tries >= MAX_PAGES || cur >= total) finish(cur)
+                    if(kept.length >= MIN_KEEP || tries >= (needQ ? MAX_PAGES_Q : MAX_PAGES) || cur >= total) finish(cur)
                     else step(cur + 1)
                 }
 
@@ -62,9 +89,23 @@ function imdbLister(object){
                         rates[i] = parseFloat(r) || 0
                         flags[i] = hasRange ? (rates[i] > 0 && rates[i] >= mn && rates[i] <= mx) : true
 
-                        left--
+                        let fin = function(){
+                            left -= 1
 
-                        if(left === 0) after()
+                            if(left === 0) after()
+                        }
+
+                        if(!needQ || !flags[i]) return fin()
+
+                        qfetch(m, function(v){
+                            qv[i] = v
+
+                            if(!qpass(v)) flags[i] = false
+
+                            fin()
+                        })
+
+                        
                     })
                 })
             }, function(){
