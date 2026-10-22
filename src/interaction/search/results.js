@@ -164,7 +164,7 @@ function Results(source){
                     onFocus: ()=>{
                         try{ window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)) }catch(e){} window.__imdbbSb = 0
                     },
-                    onEnter: ()=>{
+                    onEnter: ()=>{ try{ window.__imdbbSbU = Date.now() + 1500 }catch(e){}
                         if(source.onSelect){
                             source.onSelect({data, line, query, element: item_data, item_data},()=>{
                                 this.listener.send('select')
