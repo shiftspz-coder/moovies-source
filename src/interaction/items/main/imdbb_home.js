@@ -168,7 +168,7 @@ export default function(main){
                 let pick = ls.filter(function(x){ return x.iso_639_1 === 'ru' })[0] || ls.filter(function(x){ return x.iso_639_1 === 'en' })[0] || ls[0]
                 if(pick && pick.file_path) logo = L.TMDB.image('t/p/w500' + pick.file_path)
                 pl = pick ? (pick.iso_639_1 || '') : null
-                if(!lgcached(d) || lgcached(d).l === undefined) lgput(d, pick && pick.file_path ? pick.file_path.replace('.svg', '.png') : '', pick ? (pick.iso_639_1 || '') : '')
+                lgput(d, pick && pick.file_path ? pick.file_path.replace('.svg', '.png') : '', pick ? (pick.iso_639_1 || '') : '')
             }
             else if(!info){
                 let cp = lgcached(d)

@@ -560,7 +560,7 @@ export function lgput(m, p, l){
 
     let e0 = lget(k)
 
-    if(e0 && (e0.l !== undefined || l === undefined)) return
+    if(e0 && (e0.l !== undefined || l === undefined)){ let ul = ''; try{ ul = String(window.Lampa.Storage.get('language', 'ru')) }catch(e){} if(!(l && l === ul && e0.l !== ul && p)) return; window.__imdbbLgRu = 1 }
 
     lload()[k] = {p: p || '', t: Date.now(), l: l}
 
