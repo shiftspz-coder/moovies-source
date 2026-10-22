@@ -48,6 +48,7 @@ function font(){
 
 function measure(src, cb){
     let im = new Image()
+    im.crossOrigin = 'anonymous'
     im.onload = function(){
         try{
             if(!im.naturalWidth) return cb('')
@@ -99,7 +100,7 @@ function color(src, cb){
     if(m[k] && m[k].c) return cb(m[k].c)
     if(pend[k]){ pend[k].push(cb); return }
     pend[k] = [cb]
-    let u = String(src).replace(/^https?:\/\/image\.tmdb\.org\//, location.origin + '/p/3849c2cf/tmdbimg/')
+    let u = location.origin + '/p/3849c2cf/tmdbimg/t/p/w300/' + k.replace(/\.svg$/, '.png')
     measure(u, function(c){
         let l = pend[k] || []
         delete pend[k]
@@ -113,7 +114,7 @@ function node(title, cls, src){
     let t = document.createElement('div')
     t.className = 'imdbb-lgtx' + (cls ? ' ' + cls : '')
     t.textContent = title
-    color(src, function(c){ if(c) t.style.color = c })
+    color(src, function(c){ if(c){ t.style.color = c; t.setAttribute('data-lcx', '1') } })
     return t
 }
 
