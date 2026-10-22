@@ -226,7 +226,7 @@ class Start extends Emit {
             let ibc = this.card
             let ibl = lgcached(ibc)
             let ruOn = L.Storage.get('imdbb_logo_ru', 'false'); ruOn = ruOn === true || ruOn === 'true'
-            if(ibl && ibl.l === undefined && ruOn) ibl = null
+            if(ibl && ibl.l === undefined && (ruOn || (window.__imdbbLgTx && window.__imdbbLgTx.on()))) ibl = null
             let back = function(){ lt.css('visibility', ''); lg.css('visibility', ''); try{ let hl = ibh.find('.imdbb-hero__logo'); if(hl.length && !hl.children().length) hl.html($('<div class="imdbb-hero__t"></div>').text(ibc.title || ibc.name || '')) }catch(e){} gate(ibh, 'l') }
             let url = L.TMDB.api((this.card.name ? 'tv' : 'movie') + '/' + this.card.id + '/images?api_key=' + L.TMDB.key() + '&include_image_language=' + lang + ',en,null')
 
@@ -242,6 +242,7 @@ class Start extends Emit {
                 if(!ibl) lgput(ibc, pick && pick.file_path ? pick.file_path.replace('.svg', '.png') : '', pick ? (pick.iso_639_1 || '') : '')
 
                 if(!pick || !pick.file_path) return back()
+                try{ let tx = window.__imdbbLgTx, ct0 = ibc.title || ibc.name || '', co0 = ibc.original_title || ibc.original_name || ''; if(tx && tx.on() && (pick.iso_639_1 || '') !== lang && ct0 && ct0 !== co0){ tx.card(lt, ibh, ct0, L.TMDB.image('t/p/w500' + pick.file_path.replace('.svg', '.png')), function(){ lg.css('visibility', ''); gate(ibh, 'l') }); return } }catch(e){}
 
                 let st = window.innerWidth > 585 ? 'margin-top:0.3em;margin-bottom:0.1em;max-height:1.8em;max-width:100%;' : 'margin-top:0.3em;margin-bottom:0.1em;max-height:2.8em;max-width:100%;'
                 let img = $('<img style="' + st + '" />')

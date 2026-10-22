@@ -3,6 +3,7 @@ import {lgcached, lgput} from '../../card/module/ratting'
 import Utils from '../../../utils/utils'
 import ovx from '../../../utils/imdbb_ov'
 import '../../../utils/imdbb_lgdark'
+import '../../../utils/imdbb_lgtx'
 import '../../../utils/imdbb_rus'
 import KP from '../../../utils/kp'
 
@@ -180,7 +181,8 @@ export default function(main){
             }
             let lg = q('.imdbb-hero__logo')
             if(logo){
-                if(lg.getAttribute('data-src') !== logo){
+                if(window.__imdbbLgTx && window.__imdbbLgTx.use(d, logo, pl, title)){ window.__imdbbLgTx.paint(lg, d, title, logo) }
+                else if(lg.getAttribute('data-src') !== logo){
                     lg.setAttribute('data-src', logo)
                     lg.innerHTML = '<img alt="">'
                     let im = lg.firstChild
@@ -203,7 +205,7 @@ export default function(main){
                 let ru = L.Storage.get('imdbb_logo_ru', 'false')
                 let old = lg.querySelector('.imdbb-hero__ru')
                 if(old) old.remove()
-                if((ru === true || ru === 'true') && logo && pl !== null && pl !== 'ru' && title && title !== (d.original_title || d.original_name || '')){
+                if((ru === true || ru === 'true') && !(window.__imdbbLgTx && window.__imdbbLgTx.use(d, logo, pl, title)) && logo && pl !== null && pl !== 'ru' && title && title !== (d.original_title || d.original_name || '')){
                     let c = document.createElement('div')
                     c.className = 'imdbb-hero__ru'
                     c.textContent = title

@@ -458,7 +458,7 @@ function lgPaint(el, view, d, kind){
     }
 
     let name = d.title || d.name || ''
-    let sig = c.p || ('T:' + name)
+    let sig = (c.p || ('T:' + name)) + (window.__imdbbLgTx && window.__imdbbLgTx.on() ? '|tx' : '')
 
     $(el).addClass('imdbb-lgd')
 
@@ -468,7 +468,8 @@ function lgPaint(el, view, d, kind){
 
     let w = $('<div class="imdbb-lgw"></div>').attr('data-s', sig)
 
-    if(c.p){ let li = $('<img class="imdbb-lgi">').attr('src', window.Lampa.TMDB.image('t/p/w300' + c.p)); w.append(li); if(window.__imdbbLgDark) window.__imdbbLgDark.watch(li[0]) }
+    if(c.p && window.__imdbbLgTx && window.__imdbbLgTx.row(w, c, d, name)){ }
+    else if(c.p){ let li = $('<img class="imdbb-lgi">').attr('src', window.Lampa.TMDB.image('t/p/w300' + c.p)); w.append(li); if(window.__imdbbLgDark) window.__imdbbLgDark.watch(li[0]) }
     else w.append($('<span class="imdbb-lgt"></span>').text(name))
 
     view.append(w)
