@@ -114,7 +114,7 @@ function node(title, cls, src){
     let t = document.createElement('div')
     t.className = 'imdbb-lgtx' + (cls ? ' ' + cls : '')
     t.textContent = title
-    color(src, function(c){ if(c){ t.style.color = c; t.setAttribute('data-lcx', '1') } t.textContent = title + ' ' + (c || ('НЕТ ' + String(src).slice(-40))) /* lcdbg */ })
+    color(src, function(c){ if(c){ t.style.color = c; t.setAttribute('data-lcx', '1') } })
     return t
 }
 
