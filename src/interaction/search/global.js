@@ -10,6 +10,7 @@ import Arrays from '../../utils/arrays'
 import Layer from '../../core/layer'
 import HeadBackward from '../head/backward'
 import Head from '../head/head'
+import Filter from '../content_filter/menu'
 import Subscribe from '../../utils/subscribe'
 
 
@@ -26,7 +27,12 @@ let html = Template.elem('div', {class: 'main-search'}),
     listener = Subscribe()
 
 function init(){
-    Head.addIcon(Template.string('icon_search'), open).addClass('open--search')
+    let imdbbSe = Head.addIcon(Template.string('icon_search'), open).addClass('open--search')
+
+    // imdbb-filterbtn: кнопка «Фильтр» в шапке после поиска
+    let imdbbFe = Head.addIcon('<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linejoin="round"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>', ()=>{ Filter.show() }).addClass('open--filter')
+
+    if(imdbbSe && imdbbSe.after && imdbbFe) imdbbSe.after(imdbbFe)
 }
 
 function open(use_params = {}){

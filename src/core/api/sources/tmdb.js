@@ -388,9 +388,11 @@ function main(params = {}, oncomplite, onerror){
 
     Arrays.insert(parts_data, 0, Api.partKeywords(parts_data, 'movie', start_shuffle))
 
-    Arrays.insert(parts_data, 0, Api.partPersons(parts_data, parts_limit, 'movie', start_shuffle))
+    let imdbbRowOn = (n)=>{ let v = Storage.get('content_rows_tmdb_' + n, 'true'); return !(v === false || v === 'false') }
 
-    genres.movie.forEach(genre=>{
+    if(imdbbRowOn('persons')) Arrays.insert(parts_data, 0, Api.partPersons(parts_data, parts_limit, 'movie', start_shuffle))
+
+    if(imdbbRowOn('genres')) genres.movie.forEach(genre=>{
         let event = (call)=>{
             get('discover/movie?with_genres='+genre.id,params,(json)=>{
                 json.title = Lang.translate(genre.title.replace(/[^a-z_]/g,''))

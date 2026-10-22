@@ -32,7 +32,6 @@ let menu_items = [
     {action: 'tv', title: 'menu_tv', sprite: 'tv'},
     {action: 'myperson', title: 'title_persons', sprite: 'person'},
     {action: 'catalog', title: 'menu_catalog', sprite: 'catalog'},
-    {action: 'filter', title: 'menu_filter', sprite: 'filter'},
     {action: 'relise', title: 'menu_relises', sprite: 'hd'},
     {action: 'anime', title: 'menu_anime', sprite: 'anime'},
     {action: 'favorite', title: 'settings_input_links', sprite: 'favorite'},

@@ -3,6 +3,7 @@ import Settings from '../interaction/settings/api'
 import Storage from '../core/storage/storage'
 import Lang from '../core/lang'
 import TMDB from './api/sources/tmdb'
+import Favorite from './favorite'
 
 let rows = []
 let component = 'content_rows'
@@ -19,50 +20,20 @@ function init(){
         name: Lang.translate('title_channels'),
     })
 
-    add(yearRow())
     add(newRelRow())
+    add(bookmarksRow())
 
     // imdbb-mainrows: выключатели встроенных рядов главной (TMDB), ряды строит tmdb.js
     let imdbbMainRows = [['now_watch','title_now_watch'],['trend_day','title_trend_day'],['trend_week','title_trend_week'],['upcoming','title_upcoming'],['popular_movie','title_popular_movie'],['popular_tv','title_popular_tv'],['top_movie','title_top_movie'],['top_tv','title_top_tv']]
 
     imdbbMainRows.forEach(r=>add({name: 'tmdb_' + r[0], title: Lang.translate(r[1]), call: ()=>{}}))
 
+    // imdbb-rowtoggle2: выключатели рядов «по актёрам» и «по жанрам» главной TMDB
+    ;[['persons', 'Ряд «Актёры» (фильмы по актёрам)'], ['genres', 'Ряды по жанрам']].forEach(r=>add({name: 'tmdb_' + r[0], title: r[1], call: ()=>{}}))
+
     Lampa.Settings.listener.follow('open', (e) => {
         if (e.name == 'main') settings()
     })
-}
-
-function yearRow(){
-    let rx = /^\d{4}-\d{2}-\d{2}$/
-    let val = (k, d)=>{
-        let v = String(Storage.get(k, d)).trim()
-
-        return rx.test(v) ? v : d
-    }
-
-    return {
-        name: 'year_releases',
-        title: 'Релизы по дате выхода',
-        index: 0,
-        screen: ['main'],
-        settings: [
-            {param: {name: 'year_releases_from', type: 'input', values: '', default: '2026-01-01', placeholder: '2026-01-01'}, field: {name: 'Релизы: дата от', description: 'Формат ГГГГ-ММ-ДД, например 2026-12-31'}},
-            {param: {name: 'year_releases_to', type: 'input', values: '', default: '2026-12-31', placeholder: '2026-12-31'}, field: {name: 'Релизы: дата до', description: 'Формат ГГГГ-ММ-ДД, например 2026-12-31'}}
-        ],
-        call: (params)=>{
-            let from = val('year_releases_from', '2026-01-01')
-            let to   = val('year_releases_to', '2026-12-31')
-            let full = from.slice(0,4) == to.slice(0,4) && from.slice(5) == '01-01' && to.slice(5) == '12-31'
-
-            return function(call){
-                TMDB.get('discover/movie?primary_release_date.gte=' + from + '&primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc', params, (json)=>{
-                    json.title = full ? 'Релизы ' + from.slice(0,4) : 'Релизы ' + from + ' — ' + to
-
-                    call(json)
-                }, call)
-            }
-        }
-    }
 }
 
 // imdbb-newrel: новинки по дате выхода, от сегодняшнего дня назад
@@ -80,8 +51,39 @@ function newRelRow(){
                 TMDB.get('discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=50', params, (json)=>{
                     json.title = 'Новинки по дате'
 
+                    json.url = 'discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=50'
+                    json.source = 'tmdb'
+
                     call(json)
                 }, call)
+            }
+        }
+    }
+}
+
+// imdbb-favrow: ряд «Закладки» на главной (подгрузка по настройке imdbb_infinite)
+function bookmarksRow(){
+    return {
+        name: 'bookmarks_row',
+        title: 'Закладки',
+        index: 1,
+        screen: ['main'],
+        call: (params)=>{
+            return function(call){
+                let list = []
+
+                try{ list = Favorite.get({type: 'book'}) || [] }
+                catch(e){}
+
+                if(!list.length) return call()
+
+                let N = 20
+                let inf = typeof window.imdbbInf === 'function' ? window.imdbbInf() : true
+                let d = {title: 'Закладки', results: list.slice(0, N), page: 1, total_pages: Math.ceil(list.length / N)}
+
+                if(inf && d.total_pages > 1) d.imdbb_next = (page, ok, er)=>{ ok(list.slice((page - 1) * N, page * N)) }
+
+                call(d)
             }
         }
     }
