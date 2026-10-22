@@ -11,10 +11,13 @@ export default function(main){
             let old = meta.querySelector('.imdbb-hero__fav')
             let want = false
             try{ want = !!(cur && L.Favorite.check(cur).book) }catch(e){}
-            if(!want || !meta.children.length){ if(old) old.remove(); return }
-            if(old && meta.lastElementChild === old) return
-            if(old) old.remove()
-            meta.insertAdjacentHTML('beforeend', FAV)
+            if(!want || !meta.children.length){ if(old){ let op = old.parentNode; old.remove(); if(op && op.getAttribute && op.getAttribute('data-favonly')) op.remove() } return }
+            let pl = meta.querySelector('.imdbb-hero__pl:not([data-favonly])')
+            let wp = old && old.parentNode
+            if(old && (pl ? (wp === pl && pl.lastElementChild === old) : (wp && wp.getAttribute && wp.getAttribute('data-favonly') && meta.lastElementChild === wp))) return
+            if(old){ old.remove(); if(wp && wp.getAttribute && wp.getAttribute('data-favonly')) wp.remove() }
+            if(pl) pl.insertAdjacentHTML('beforeend', FAV)
+            else meta.insertAdjacentHTML('beforeend', '<span class="imdbb-hero__pl" data-favonly="1">' + FAV + '</span>')
         }
         if(meta) new MutationObserver(mark).observe(meta, {childList: true})
         let patch = function(item){

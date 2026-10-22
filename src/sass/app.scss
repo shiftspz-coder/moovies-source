@@ -978,3 +978,29 @@ html body .imdbb-lgw .imdbb-lgtx{font-size:1.35em}
 /*! imdbb-lgfit */
 html body .imdbb-lgw .imdbb-lgt.imdbb-lgtx{max-width:calc(100% - 1.2em)!important; white-space:normal!important; overflow:visible!important; text-overflow:clip!important; text-align:left; overflow-wrap:break-word}
 html body.imdbb-lg-b .imdbb-lgw .imdbb-lgt.imdbb-lgtx{max-width:90%!important; text-align:center}
+
+/*! imdbb-icobtn */
+html body .imdbb-hero__pl>span.imdbb-hero__fav svg{ width:1.2em!important; height:1.2em!important }
+html body.imdbb-compact[class][class] .full-start-new__buttons{
+  .button--book, .button--reaction{
+    background:none!important; background-color:transparent!important; box-shadow:none!important; border:0!important;
+    border-radius:50%!important; padding:.35em!important; margin:0 .3em 0 .7em!important; min-width:0!important; width:auto!important;
+    color:#fff!important; opacity:.65!important; transition:transform .15s, opacity .15s;
+    span{ display:none!important }
+    svg{ width:1.8em!important; height:1.8em!important; margin:0!important }
+    &.focus{
+      background:none!important; background-color:transparent!important; box-shadow:none!important;
+      color:#fff!important; opacity:1!important; transform:scale(1.3);
+      *{ color:#fff!important; -webkit-text-fill-color:#fff!important; opacity:1!important }
+    }
+  }
+  .button--play{
+    margin-right:.9em!important; transform-origin:left center; transition:transform .15s, box-shadow .15s;
+    &.focus{
+      background-color:rgba(30,31,33,.55)!important; box-shadow:inset 0 0 0 2px rgba(255,255,255,.95)!important;
+      color:#fff!important; transform:scale(1.1);
+      *{ color:#fff!important; -webkit-text-fill-color:#fff!important; opacity:1!important }
+      svg{ fill:#fff!important; stroke:#fff!important }
+    }
+  }
+}
