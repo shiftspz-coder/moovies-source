@@ -956,3 +956,9 @@ body.imdbb-sp-3 .imdbb-hero__st{gap:.5em}
 
 /*! imdbb-stright */
 html body.imdbb-compact .imdbb-hero--card{align-self:stretch}
+
+/*! imdbb-stfix4 */
+html body.imdbb-st-p .imdbb-st__i{background:none!important; padding:0!important; box-shadow:none!important}
+html body.imdbb-st-p .imdbb-st__i img{opacity:1!important; filter:drop-shadow(0 0 .12em rgba(0,0,0,.55))!important}
+html body.imdbb-st-p .imdbb-st__i[data-sl="d"] img{filter:brightness(0) invert(1) drop-shadow(0 0 .12em rgba(0,0,0,.55))!important}
+html body.imdbb-st-p .imdbb-st__t{color:#fff!important}
