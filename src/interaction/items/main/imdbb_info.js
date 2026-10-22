@@ -72,7 +72,7 @@ export function stFill(el, info){
         })
         el.innerHTML = h
         window.__imdbbStW = 1
-        try{ Array.prototype.forEach.call(el.querySelectorAll('.imdbb-st__i img'), function(im){ let p = new Image(); p.onload = function(){ try{ let c = document.createElement('canvas'); c.width = c.height = 24; let g = c.getContext('2d'); g.drawImage(p, 0, 0, 24, 24); let dd = g.getImageData(0, 0, 24, 24).data, sm = 0, n = 0; for(let i = 0; i < dd.length; i += 4){ if(dd[i + 3] > 128){ sm += (dd[i] * 299 + dd[i + 1] * 587 + dd[i + 2] * 114) / 1000; n++ } } if(n > 8) im.parentNode.setAttribute('data-sl', sm / n < 80 ? 'd' : 'w') }catch(e){} }; p.src = im.src.replace(/^https?:\/\/image\.tmdb\.org\//, location.origin + '/p/3849c2cf/tmdbimg/') }) }catch(e){}
+        try{ Array.prototype.forEach.call(el.querySelectorAll('.imdbb-st__i img'), function(im){ let p = new Image(); p.onload = function(){ try{ let c = document.createElement('canvas'); c.width = c.height = 24; let g = c.getContext('2d'); g.drawImage(p, 0, 0, 24, 24); let dd = g.getImageData(0, 0, 24, 24).data, sm = 0, n = 0; for(let i = 0; i < dd.length; i += 4){ if(dd[i + 3] > 128){ sm += (dd[i] * 299 + dd[i + 1] * 587 + dd[i + 2] * 114) / 1000; n++ } } if(n > 8) im.parentNode.setAttribute('data-sl', sm / n > 170 ? 'w' : 'd') }catch(e){} }; p.src = im.src.replace(/^https?:\/\/image\.tmdb\.org\//, location.origin + '/p/3849c2cf/tmdbimg/') }) }catch(e){}
         let imgs = Array.prototype.slice.call(el.querySelectorAll('img')).filter(function(i){ return !i.complete })
         if(!imgs.length){ el.classList.remove('imdbb-st--w'); return }
         el.classList.add('imdbb-st--w')
