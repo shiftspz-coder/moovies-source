@@ -373,6 +373,15 @@ function main(params = {}, oncomplite, onerror){
         }
     ]
 
+    // imdbb-mainrows
+    let imdbbRowNames = ['now_watch','trend_day','trend_week','upcoming','popular_movie','popular_tv','top_movie','top_tv']
+
+    parts_data = parts_data.filter((p, i)=>{
+        let v = Storage.get('content_rows_tmdb_' + imdbbRowNames[i], 'true')
+
+        return !(v === false || v === 'false')
+    })
+
     ContentRows.call('main', params, parts_data)
 
     let start_shuffle = parts_data.length + 2

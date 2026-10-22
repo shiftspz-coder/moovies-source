@@ -21,6 +21,11 @@ function init(){
 
     add(yearRow())
 
+    // imdbb-mainrows: выключатели встроенных рядов главной (TMDB), ряды строит tmdb.js
+    let imdbbMainRows = [['now_watch','title_now_watch'],['trend_day','title_trend_day'],['trend_week','title_trend_week'],['upcoming','title_upcoming'],['popular_movie','title_popular_movie'],['popular_tv','title_popular_tv'],['top_movie','title_top_movie'],['top_tv','title_top_tv']]
+
+    imdbbMainRows.forEach(r=>add({name: 'tmdb_' + r[0], title: Lang.translate(r[1]), call: ()=>{}}))
+
     Lampa.Settings.listener.follow('open', (e) => {
         if (e.name == 'main') settings()
     })
