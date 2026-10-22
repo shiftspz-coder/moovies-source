@@ -30,6 +30,10 @@ function imdbRange(){
     return {min: a, max: b}
 }
 
+function tsortPick(){
+    return data.tsort.items.find(s=>s.selected) || data.tsort.items[0]
+}
+
 /**
  * Главное меню фильтрации
  */
@@ -45,6 +49,7 @@ function main(){
     },data.type].concat(Storage.field('source') == 'cub' ? [data.rating] : [data.imdb_from, data.imdb_to], [data['genres_'+type],data.language].concat(Storage.field('source') == 'cub' ? [data.year] : [data.year_from, data.year_to]))
 
     if(Storage.field('source') == 'cub') items.push(data.pgrating,data.sort,data.quality)
+    else items.push(data.tsort)
 
     items.forEach(itm=>{
         itm.title = Lang.translate(itm.title)
@@ -97,8 +102,9 @@ function queryForTMDB(){
     if(yr.min) query.push(yneed + '.gte=' + yr.min + '-01-01')
     if(yr.max) query.push(yneed + '.lte=' + yr.max + '-12-31')
 
-    query.push('sort_by=vote_average.desc')
-    query.push('vote_count.gte=200')
+    let ts = tsortPick()
+    query.push('sort_by=' + (ts.f == 'date' ? yneed : ts.f) + '.' + ts.d)
+    query.push('vote_count.gte=' + (ts.f == 'date' ? 50 : 200))
 
     data['genres_'+type].items.forEach(a=>{
         if(a.checked)  genres.push(a.id)
@@ -213,7 +219,8 @@ function search(){
         card_type: true,
         imdb_min: source == 'cub' ? 0 : imdbRange().min,
         imdb_max: source == 'cub' ? 0 : imdbRange().max,
-        imdb_sort: source == 'cub' ? 0 : 1,
+        imdb_sort: source == 'cub' ? 0 : (tsortPick().f == 'vote_average' ? 1 : 0),
+        imdb_dir: source == 'cub' ? '' : (tsortPick().f == 'vote_average' ? tsortPick().d : ''),
         page: 1
     }
 

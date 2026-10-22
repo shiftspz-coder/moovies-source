@@ -385,6 +385,18 @@ data.sort = {
     ]
 }
 
+data.tsort = {
+    title: '#{filter_sorted}',
+    items: [
+        {title: 'Рейтинг IMDb: с высокого', f: 'vote_average', d: 'desc', selected: true},
+        {title: 'Рейтинг IMDb: с низкого', f: 'vote_average', d: 'asc'},
+        {title: 'Дата выхода: с поздней', f: 'date', d: 'desc'},
+        {title: 'Дата выхода: с ранней', f: 'date', d: 'asc'},
+        {title: 'Популярность', f: 'popularity', d: 'desc'},
+        {title: 'Число голосов', f: 'vote_count', d: 'desc'}
+    ]
+}
+
 data.quality = {
     title: '#{player_quality}',
     items: [

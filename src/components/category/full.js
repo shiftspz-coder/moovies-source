@@ -31,7 +31,7 @@ function imdbLister(object){
 
             if(!kept.length) return err && err()
 
-            if(sortOn) kept.sort(function(a, b){ return b.r - a.r })
+            if(sortOn) kept.sort(function(a, b){ return object.imdb_dir == 'asc' ? (a.r || 99) - (b.r || 99) : b.r - a.r })
 
             ok(Object.assign({}, last, {results: kept.map(function(x){ return x.m }), page: page}))
         }
