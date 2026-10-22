@@ -974,3 +974,7 @@ html body .imdbb-lgtx{font-family:"ImdbbCond","Oswald",Impact,"Arial Narrow",san
 html body .imdbb-hero__logo .imdbb-lgtx{font-size:3.4em; max-width:9em}
 html body .full-start-new__title .imdbb-lgtx{font-size:2.6em; max-width:100%}
 html body .imdbb-lgw .imdbb-lgtx{font-size:1.35em}
+
+/*! imdbb-lgfit */
+html body .imdbb-lgw .imdbb-lgt.imdbb-lgtx{max-width:calc(100% - 1.2em)!important; white-space:normal!important; overflow:visible!important; text-overflow:clip!important; text-align:left; overflow-wrap:break-word}
+html body.imdbb-lg-b .imdbb-lgw .imdbb-lgt.imdbb-lgtx{max-width:90%!important; text-align:center}
