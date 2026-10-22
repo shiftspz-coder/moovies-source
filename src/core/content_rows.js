@@ -20,6 +20,7 @@ function init(){
     })
 
     add(yearRow())
+    add(newRelRow())
 
     // imdbb-mainrows: выключатели встроенных рядов главной (TMDB), ряды строит tmdb.js
     let imdbbMainRows = [['now_watch','title_now_watch'],['trend_day','title_trend_day'],['trend_week','title_trend_week'],['upcoming','title_upcoming'],['popular_movie','title_popular_movie'],['popular_tv','title_popular_tv'],['top_movie','title_top_movie'],['top_tv','title_top_tv']]
@@ -56,6 +57,28 @@ function yearRow(){
             return function(call){
                 TMDB.get('discover/movie?primary_release_date.gte=' + from + '&primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc', params, (json)=>{
                     json.title = full ? 'Релизы ' + from.slice(0,4) : 'Релизы ' + from + ' — ' + to
+
+                    call(json)
+                }, call)
+            }
+        }
+    }
+}
+
+// imdbb-newrel: новинки по дате выхода, от сегодняшнего дня назад
+function newRelRow(){
+    return {
+        name: 'new_releases',
+        title: 'Новинки по дате',
+        index: 0,
+        screen: ['main'],
+        call: (params)=>{
+            let d = new Date()
+            let to = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2)
+
+            return function(call){
+                TMDB.get('discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=50', params, (json)=>{
+                    json.title = 'Новинки по дате'
 
                     call(json)
                 }, call)
