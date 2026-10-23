@@ -1,6 +1,10 @@
-/*! imdbb-trailer-v4 */
+/*! imdbb-trailer-v5 */
 const BAD = 'imdbb_tr_bad'
-let S = {id: null, key: null, ctx: null, comp: null, root: null, frame: null, t0: 0, playing: false, pend: null, done: null, doneAt: 0, tpend: null, tfail: null, tend: null, poll: null, shown: false}
+const KEYS = 'imdbb_tr_keys'
+const WEEK = 604800000
+let S = {id: null, key: null, ctx: null, comp: null, active: false, t0: 0, playing: false, reused: false, pend: null, done: null, doneAt: 0, tpend: null, tfail: null, tend: null, poll: null}
+let P = {root: null, frame: null, alive: false}
+let noReuse = false
 let vc = {}
 let CSS = '.imdbb-tr{position:absolute;left:0;top:0;width:100%;height:100%;overflow:hidden;opacity:0;transition:opacity .7s ease;pointer-events:none}.imdbb-tr.on{opacity:1}.imdbb-tr iframe{position:absolute;left:50%;top:50%;border:0;transform:translate(-50%,-50%);pointer-events:none}'
 
@@ -16,6 +20,7 @@ function zoom(){ let v = parseFloat(get('imdbb_tr_zoom', '1.3')); return v >= 1 
 function qual(){ let v = String(get('imdbb_tr_q', 'hd1080')); return v == 'hd720' || v == 'hd1080' ? v : '' }
 function qs(){ let q = qual(); return q ? '&vq=' + q : '' }
 function sound(){ let v = get('imdbb_tr_sound', 'false'); return v === true || v === 'true' }
+function pkOf(d){ return (d.original_name ? 'tv' : 'movie') + ':' + d.id }
 
 function pick(list){
   let lg = ''
@@ -26,16 +31,70 @@ function pick(list){
   return a.length ? a[0].key : null
 }
 
+function kload(){ try{ return JSON.parse(localStorage.getItem(KEYS) || '{}') }catch(e){ return {} } }
+function kget(pk){ let o = kload()[pk]; return o && o.t > Date.now() - WEEK && o.l && o.l.length ? o.l : null }
+function kput(pk, list){
+  try{
+    if(!list || !list.length) return
+    let o = kload(), n = Date.now(), ks = Object.keys(o)
+    ks.forEach(k => { if(!o[k] || o[k].t < n - WEEK) delete o[k] })
+    ks = Object.keys(o)
+    if(ks.length > 150){ ks.sort((a, b) => o[a].t - o[b].t); ks.slice(0, ks.length - 150).forEach(k => delete o[k]) }
+    o[pk] = {t: n, l: list.slice(0, 15).map(r => ({key: r.key, site: r.site, type: r.type, iso_639_1: r.iso_639_1, official: r.official, published_at: r.published_at}))}
+    localStorage.setItem(KEYS, JSON.stringify(o))
+  }catch(e){}
+}
+
+function warm(){
+  try{
+    ['https://www.youtube.com', 'https://i.ytimg.com', 'https://www.google.com'].forEach(function(u){
+      if(document.querySelector('link[data-imdbb-tr="' + u + '"]')) return
+      let l = document.createElement('link')
+      l.rel = 'preconnect'; l.href = u; l.setAttribute('data-imdbb-tr', u)
+      document.head.appendChild(l)
+    })
+  }catch(e){}
+}
+
 function cancelPend(){ clearTimeout(S.tpend); S.pend = null }
+
+function cmd(f, a){
+  try{
+    let w = P.frame && P.frame.contentWindow
+    if(w) w.postMessage(JSON.stringify({event: 'command', func: f, args: a || [], id: 1, channel: 'widget'}), '*')
+  }catch(e){}
+}
+
+function talk(){
+  try{
+    let w = P.frame && P.frame.contentWindow
+    if(!w) return
+    w.postMessage(JSON.stringify({event: 'listening', id: 1, channel: 'widget'}), '*')
+    cmd('addEventListener', ['onStateChange'])
+    cmd('addEventListener', ['onError'])
+    cmd('unloadModule', ['captions'])
+    cmd('unloadModule', ['cc'])
+    let q = qual()
+    if(q){ cmd('setPlaybackQuality', [q]); cmd('setPlaybackQualityRange', [q, q]) }
+    if(S.playing){ if(sound()){ cmd('unMute'); cmd('setVolume', [70]) } else cmd('mute') }
+  }catch(e){}
+}
+
+function destroyP(){
+  window.removeEventListener('message', onMsg)
+  try{ if(P.root) P.root.remove() }catch(e){}
+  P.root = null; P.frame = null; P.alive = false
+}
 
 function stop(instant){
   clearTimeout(S.tfail); clearTimeout(S.tend); clearInterval(S.poll)
-  window.removeEventListener('message', onMsg)
-  let root = S.root
-  S.root = null; S.frame = null; S.id = null; S.key = null; S.ctx = null; S.comp = null; S.playing = false
+  S.active = false; S.id = null; S.key = null; S.ctx = null; S.comp = null; S.playing = false; S.reused = false
+  let root = P.root
   if(!root) return
-  if(instant){ try{ root.remove() }catch(e){} }
-  else{ root.classList.remove('on'); setTimeout(function(){ try{ root.remove() }catch(e){} }, 800) }
+  if(noReuse || !P.alive){ destroyP(); return }
+  if(instant){ root.style.transition = 'none'; root.classList.remove('on'); cmd('stopVideo'); return }
+  root.classList.remove('on')
+  setTimeout(function(){ if(!S.active) cmd('stopVideo') }, 800)
 }
 
 function fail(why, ms){
@@ -45,36 +104,24 @@ function fail(why, ms){
   stop(true)
 }
 
-function talk(){
-  try{
-    let w = S.frame && S.frame.contentWindow
-    if(!w) return
-    w.postMessage(JSON.stringify({event: 'listening', id: 1, channel: 'widget'}), '*')
-    ;['onStateChange', 'onError'].forEach(n => w.postMessage(JSON.stringify({event: 'command', func: 'addEventListener', args: [n], id: 1, channel: 'widget'}), '*'))
-    let cmd = (f, a) => w.postMessage(JSON.stringify({event: 'command', func: f, args: a || [], id: 1, channel: 'widget'}), '*')
-    cmd('unloadModule', ['captions']); cmd('unloadModule', ['cc'])
-    let q = qual()
-    if(q){ cmd('setPlaybackQuality', [q]); cmd('setPlaybackQualityRange', [q, q]) }
-    if(S.playing && sound()){ cmd('unMute'); cmd('setVolume', [70]) }
-  }catch(e){}
-}
-
 function playing(){
-  if(S.playing) return
+  if(S.playing || !P.root) return
   S.playing = true
   clearTimeout(S.tfail)
-  S.root.classList.add('on')
-  try{ talk(); setTimeout(talk, 1500) }catch(e){}
-  if(!S.shown){ S.shown = true; noty('Трейлер запущен за ' + (Date.now() - S.t0) + ' мс') }
+  P.root.style.transition = ''
+  P.root.classList.add('on')
   S.tend = setTimeout(function(){ S.done = S.id; S.doneAt = Date.now(); stop(false) }, 45000)
+  try{ talk(); setTimeout(talk, 1500) }catch(e){}
 }
 
 function onMsg(e){
   try{
-    if(!S.frame || e.source !== S.frame.contentWindow) return
+    if(!P.frame || e.source !== P.frame.contentWindow) return
+    P.alive = true
+    if(!S.active) return
     let d = typeof e.data == 'string' ? JSON.parse(e.data) : e.data
     if(!d) return
-    if(d.event == 'onError') return fail('ошибка ' + d.info, [101, 150, 153].indexOf(d.info) >= 0 ? 604800000 : 86400000)
+    if(d.event == 'onError') return fail('ошибка ' + d.info, [101, 150, 153].indexOf(d.info) >= 0 ? WEEK : 86400000)
     let st = d.event == 'onStateChange' ? d.info : (d.event == 'infoDelivery' && d.info && typeof d.info.playerState == 'number' ? d.info.playerState : null)
     if(st === 1) playing()
     else if(st === 0 && S.playing){ S.done = S.id; S.doneAt = Date.now(); stop(false) }
@@ -96,46 +143,68 @@ function watch(){
   }catch(e){}
 }
 
+function reuseFail(id, key, ctx, comp){
+  noReuse = true
+  stop(true)
+  start(id, key, ctx, comp)
+}
+
 function start(id, key, ctx, comp){
   stop(true)
   let bg = document.querySelector('.background')
   if(!bg){ noty('Трейлер: не найден слой фона'); return }
   if(!document.getElementById('imdbb-tr-css')){ let s = document.createElement('style'); s.id = 'imdbb-tr-css'; s.textContent = CSS; document.head.appendChild(s) }
+  if(P.root && !P.root.isConnected) destroyP()
   let w = window.innerWidth, h = window.innerHeight, W = w, H = w * 9 / 16
   if(H < h){ H = h; W = h * 16 / 9 }
+  let z = zoom(), fw = Math.ceil(W * z) + 'px', fh = Math.ceil(H * z) + 'px', tf = 'translate(-50%,-' + (z > 1.15 ? 52.5 : 50) + '%)'
+  S.id = id; S.key = key; S.ctx = ctx; S.comp = comp; S.active = true; S.t0 = Date.now(); S.playing = false
+  window.addEventListener('message', onMsg)
+  S.poll = setInterval(watch, 700)
+  if(P.root && P.alive && !noReuse){
+    S.reused = true
+    P.frame.style.width = fw; P.frame.style.height = fh; P.frame.style.transform = tf
+    cmd('mute')
+    let q = qual()
+    cmd('loadVideoById', q ? [key, 0, q] : [key])
+    setTimeout(talk, 600)
+    S.tfail = setTimeout(function(){ reuseFail(id, key, ctx, comp) }, 6000)
+    return
+  }
+  destroyP()
+  window.addEventListener('message', onMsg)
   let root = document.createElement('div')
   root.className = 'imdbb-tr'
   let fr = document.createElement('iframe')
   fr.setAttribute('tabindex', '-1')
   fr.setAttribute('allow', 'autoplay; encrypted-media')
   fr.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin')
-  let z = zoom()
-  fr.style.width = Math.ceil(W * z) + 'px'
-  fr.style.height = Math.ceil(H * z) + 'px'
-  fr.style.transform = 'translate(-50%,-' + (z > 1.15 ? 52.5 : 50) + '%)'
+  fr.style.width = fw; fr.style.height = fh; fr.style.transform = tf
   root.appendChild(fr)
   bg.appendChild(root)
-  S.id = id; S.key = key; S.ctx = ctx; S.comp = comp; S.root = root; S.frame = fr; S.t0 = Date.now(); S.playing = false
-  window.addEventListener('message', onMsg)
+  P.root = root; P.frame = fr; P.alive = false
   fr.onload = function(){ talk(); setTimeout(talk, 400); setTimeout(talk, 1200) }
   fr.src = 'https://www.youtube.com/embed/' + key + '?autoplay=1&mute=1&cc_load_policy=0' + qs() + '&controls=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin)
   S.tfail = setTimeout(function(){ fail('нет ответа за 15 с', 0) }, 15000)
-  S.poll = setInterval(watch, 700)
 }
 
 function fetchVideos(d, cb){
-  let L = window.Lampa, method = d.original_name ? 'tv' : 'movie', pk = method + ':' + d.id
+  let L = window.Lampa, pk = pkOf(d)
   if(vc[pk]) return cb(vc[pk])
+  let c = kget(pk)
+  if(c){ vc[pk] = c; return cb(c) }
   if(!L.Api || !L.Api.full) return
-  L.Api.full({id: d.id, method: method, card: d, url: '', component: 'full', source: d.source || L.Storage.field('source'), page: 1}, function(data){
-    vc[pk] = (data && data.videos && data.videos.results) || []
-    cb(vc[pk])
+  L.Api.full({id: d.id, method: pk.split(':')[0], card: d, url: '', component: 'full', source: d.source || L.Storage.field('source'), page: 1}, function(data){
+    let l = (data && data.videos && data.videos.results) || []
+    vc[pk] = l; kput(pk, l)
+    cb(l)
   }, function(){})
 }
 
 function schedule(id, ctx, comp, getList){
   cancelPend()
   if(S.id) stop(true)
+  warm()
   S.pend = id
   S.tpend = setTimeout(function(){
     if(S.pend !== id) return
@@ -175,13 +244,15 @@ function onFull(e){
     if(id === String(S.id)) return
     if(id === S.done && Date.now() - S.doneAt < 120000) return
     S.done = null
-    schedule(id, 'full', 'full', function(cb){ cb((data.videos && data.videos.results) || []) })
+    let l = (data.videos && data.videos.results) || []
+    if(l.length){ vc[pkOf(mv)] = l; kput(pkOf(mv), l) }
+    schedule(id, 'full', 'full', function(cb){ cb(l) })
   }catch(x){}
 }
 
 function settings(){
   let A = window.Lampa.SettingsApi
-  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_mode', type: 'select', values: {off: 'Выкл', card: 'Только карточка', main: 'Только главная', all: 'Везде'}, default: 'off'}, field: {name: 'Трейлер на фоне', description: 'Беззвучный трейлер YouTube вместо фона после паузы на фильме. Нужен доступ к YouTube'}})
+  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_mode', type: 'select', values: {off: 'Выкл', card: 'Только карточка', main: 'Только главная', all: 'Везде'}, default: 'off'}, field: {name: 'Трейлер на фоне', description: 'Трейлер YouTube вместо фона после паузы на фильме. Нужен доступ к YouTube'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_delay', type: 'select', values: {'0': 'Сразу', '2': '2 с', '4': '4 с', '6': '6 с', '8': '8 с'}, default: '0'}, field: {name: 'Трейлер: задержка', description: 'Сколько ждать на фильме до запуска трейлера. «Сразу» грузит плеер при каждой остановке, на слабом ТВ выбери 2 с'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_noty', type: 'trigger', default: true}, field: {name: 'Трейлер: показывать результат', description: 'Уведомление, если трейлер не запустился'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_zoom', type: 'select', values: {'1.1': 'Мало (x1.1)', '1.3': 'Средний (x1.3)', '1.5': 'Сильный (x1.5)'}, default: '1.3'}, field: {name: 'Трейлер: масштаб', description: 'Увеличение кадра: убирает чёрные полосы, вшитые субтитры и надписи YouTube по краям, но обрезает края'}})
@@ -197,10 +268,11 @@ let boot = setInterval(function(){
     clearInterval(boot)
     try{ settings() }catch(e){}
     try{ L.Listener.follow('full', onFull) }catch(e){}
+    try{ if(mode() != 'off') warm() }catch(e){}
   }
   else if(tries > 120) clearInterval(boot)
 }, 500)
 
-window.__imdbbTr = {focus: focus, stop: function(){ cancelPend(); stop(true) }, v: 'imdbb_tr4'}
+window.__imdbbTr = {focus: focus, stop: function(){ cancelPend(); stop(true) }, v: 'imdbb_tr5'}
 
 export default {focus, stop}
