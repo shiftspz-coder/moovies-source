@@ -415,7 +415,7 @@ export default function(main){
                 }
                 catch(e){}
                 load(d, function(info){ if(cur === d){ render(d, info, curEl); unwait(d) } })
-                prefetch(curEl); preFull(d)
+                prefetch(curEl); preFull(d); try{ window.__imdbbTr && window.__imdbbTr.focus(d) }catch(e){}
                 timer2 = setTimeout(function(){ if(cur === d){ render(d, cache[ckey(d)] || null, curEl); unwait(d) } }, 1800)
             }, 250)
         }

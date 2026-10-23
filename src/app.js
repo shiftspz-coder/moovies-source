@@ -112,6 +112,8 @@ import './core/moovies_server'
 import ImdbbBell from './core/imdbb_bell'
 import ImdbbSync from './core/imdbb_sync'
 import ImdbbSnow from './core/imdbb_snow'
+import ImdbbTrailer from './core/imdbb_trailer'
+window.__imdbbTrMod = ImdbbTrailer
 import Emit from './utils/emit'
 import Router from './core/router'
 import Timer from './core/timer'
