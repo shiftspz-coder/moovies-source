@@ -1,4 +1,4 @@
-/*! imdbb-trailer-v1 */
+/*! imdbb-trailer-v2 */
 const BAD = 'imdbb_tr_bad'
 let S = {id: null, key: null, ctx: null, comp: null, root: null, frame: null, t0: 0, playing: false, pend: null, done: null, doneAt: 0, tpend: null, tfail: null, tend: null, poll: null, shown: false}
 let vc = {}
@@ -12,6 +12,9 @@ function noty(t){ try{ let n = get('imdbb_tr_noty', 'true'); if(n === false || n
 function bad(){ try{ return JSON.parse(localStorage.getItem(BAD) || '{}') }catch(e){ return {} } }
 function markBad(key, ms){ try{ let b = bad(), n = Date.now(); for(let k in b) if(b[k] < n) delete b[k]; b[key] = n + ms; localStorage.setItem(BAD, JSON.stringify(b)) }catch(e){} }
 function isBad(key){ let b = bad(); return !!(b[key] && b[key] > Date.now()) }
+function zoom(){ let v = parseFloat(get('imdbb_tr_zoom', '1.3')); return v >= 1 && v <= 1.8 ? v : 1.3 }
+function qual(){ let v = String(get('imdbb_tr_q', 'hd1080')); return v == 'hd720' || v == 'hd1080' ? v : '' }
+function qs(){ let q = qual(); return q ? '&vq=' + q : '' }
 
 function pick(list){
   let lg = ''
@@ -47,6 +50,10 @@ function talk(){
     if(!w) return
     w.postMessage(JSON.stringify({event: 'listening', id: 1, channel: 'widget'}), '*')
     ;['onStateChange', 'onError'].forEach(n => w.postMessage(JSON.stringify({event: 'command', func: 'addEventListener', args: [n], id: 1, channel: 'widget'}), '*'))
+    let cmd = (f, a) => w.postMessage(JSON.stringify({event: 'command', func: f, args: a || [], id: 1, channel: 'widget'}), '*')
+    cmd('unloadModule', ['captions']); cmd('unloadModule', ['cc'])
+    let q = qual()
+    if(q){ cmd('setPlaybackQuality', [q]); cmd('setPlaybackQualityRange', [q, q]) }
   }catch(e){}
 }
 
@@ -55,6 +62,7 @@ function playing(){
   S.playing = true
   clearTimeout(S.tfail)
   S.root.classList.add('on')
+  try{ talk(); setTimeout(talk, 1500) }catch(e){}
   if(!S.shown){ S.shown = true; noty('Трейлер запущен за ' + (Date.now() - S.t0) + ' мс') }
   S.tend = setTimeout(function(){ S.done = S.id; S.doneAt = Date.now(); stop(false) }, 45000)
 }
@@ -99,14 +107,16 @@ function start(id, key, ctx, comp){
   fr.setAttribute('tabindex', '-1')
   fr.setAttribute('allow', 'autoplay; encrypted-media')
   fr.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin')
-  fr.style.width = Math.ceil(W * 1.1) + 'px'
-  fr.style.height = Math.ceil(H * 1.1) + 'px'
+  let z = zoom()
+  fr.style.width = Math.ceil(W * z) + 'px'
+  fr.style.height = Math.ceil(H * z) + 'px'
+  fr.style.transform = 'translate(-50%,-' + (z > 1.15 ? 52.5 : 50) + '%)'
   root.appendChild(fr)
   bg.appendChild(root)
   S.id = id; S.key = key; S.ctx = ctx; S.comp = comp; S.root = root; S.frame = fr; S.t0 = Date.now(); S.playing = false
   window.addEventListener('message', onMsg)
   fr.onload = function(){ talk(); setTimeout(talk, 400); setTimeout(talk, 1200) }
-  fr.src = 'https://www.youtube.com/embed/' + key + '?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin)
+  fr.src = 'https://www.youtube.com/embed/' + key + '?autoplay=1&mute=1&cc_load_policy=0' + qs() + '&controls=0&disablekb=1&fs=0&iv_load_policy=3&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin)
   S.tfail = setTimeout(function(){ fail('нет ответа за 9 с', 86400000) }, 9000)
   S.poll = setInterval(watch, 700)
 }
@@ -172,6 +182,8 @@ function settings(){
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_mode', type: 'select', values: {off: 'Выкл', card: 'Только карточка', main: 'Только главная', all: 'Везде'}, default: 'off'}, field: {name: 'Трейлер на фоне', description: 'Беззвучный трейлер YouTube вместо фона после паузы на фильме. Нужен доступ к YouTube'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_delay', type: 'select', values: {'2': '2 с', '4': '4 с', '6': '6 с', '8': '8 с'}, default: '4'}, field: {name: 'Трейлер: задержка', description: 'Сколько ждать на фильме до запуска трейлера'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_noty', type: 'trigger', default: true}, field: {name: 'Трейлер: показывать результат', description: 'Уведомление, если трейлер не запустился (и один раз о первом удачном запуске)'}})
+  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_zoom', type: 'select', values: {'1.1': 'Мало (x1.1)', '1.3': 'Средний (x1.3)', '1.5': 'Сильный (x1.5)'}, default: '1.3'}, field: {name: 'Трейлер: масштаб', description: 'Увеличение кадра: убирает чёрные полосы, вшитые субтитры и надписи YouTube по краям, но обрезает края'}})
+  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_q', type: 'select', values: {auto: 'Авто', hd720: '720p', hd1080: '1080p'}, default: 'hd1080'}, field: {name: 'Трейлер: качество', description: 'Желаемое качество видео. YouTube может не послушаться; на слабом ТВ выбери 720p или Авто'}})
 }
 
 let tries = 0
