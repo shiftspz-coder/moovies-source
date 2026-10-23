@@ -20,6 +20,7 @@ function zoom(){ let v = parseFloat(get('imdbb_tr_zoom', '1.3')); return v >= 1 
 function qual(){ let v = String(get('imdbb_tr_q', 'hd1080')); return v == 'hd720' || v == 'hd1080' ? v : '' }
 function qs(){ let q = qual(); return q ? '&vq=' + q : '' }
 function sound(){ let v = get('imdbb_tr_sound', 'false'); return v === true || v === 'true' }
+function trFull(){ let v = get('imdbb_tr_full', 'true'); return !(v === false || v === 'false') }
 function pkOf(d){ return (d.original_name ? 'tv' : 'movie') + ':' + d.id }
 
 function pick(list){
@@ -100,7 +101,6 @@ function stop(instant){
 function fail(why, ms){
   let k = S.key
   if(k && ms > 0) markBad(k, ms)
-  noty('Трейлер не запустился: ' + why)
   stop(true)
 }
 
@@ -110,7 +110,7 @@ function playing(){
   clearTimeout(S.tfail)
   P.root.style.transition = ''
   P.root.classList.add('on')
-  S.tend = setTimeout(function(){ S.done = S.id; S.doneAt = Date.now(); stop(false) }, 45000)
+  if(!trFull()) S.tend = setTimeout(function(){ S.done = S.id; S.doneAt = Date.now(); stop(false) }, 45000)
   try{ talk(); setTimeout(talk, 1500) }catch(e){}
 }
 
@@ -257,6 +257,7 @@ function settings(){
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_noty', type: 'trigger', default: true}, field: {name: 'Трейлер: показывать результат', description: 'Уведомление, если трейлер не запустился'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_zoom', type: 'select', values: {'1.1': 'Мало (x1.1)', '1.3': 'Средний (x1.3)', '1.5': 'Сильный (x1.5)'}, default: '1.3'}, field: {name: 'Трейлер: масштаб', description: 'Увеличение кадра: убирает чёрные полосы, вшитые субтитры и надписи YouTube по краям, но обрезает края'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_q', type: 'select', values: {auto: 'Авто', hd720: '720p', hd1080: '1080p'}, default: 'hd1080'}, field: {name: 'Трейлер: качество', description: 'Желаемое качество видео. YouTube может не послушаться; на слабом ТВ выбери 720p или Авто'}})
+  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_full', type: 'trigger', default: true}, field: {name: 'Трейлер: ролик до конца', description: 'Играть ролик до конца. Выключено: 45 секунд, затем плавное затухание'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_sound', type: 'trigger', default: false}, field: {name: 'Трейлер: звук', description: 'Включать звук трейлера (громкость 70%). Стартует беззвучно, звук включается, когда видео пошло'}})
 }
 
