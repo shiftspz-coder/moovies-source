@@ -1,4 +1,4 @@
-/*! imdbb-trailer-v3 */
+/*! imdbb-trailer-v4 */
 const BAD = 'imdbb_tr_bad'
 let S = {id: null, key: null, ctx: null, comp: null, root: null, frame: null, t0: 0, playing: false, pend: null, done: null, doneAt: 0, tpend: null, tfail: null, tend: null, poll: null, shown: false}
 let vc = {}
@@ -6,7 +6,7 @@ let CSS = '.imdbb-tr{position:absolute;left:0;top:0;width:100%;height:100%;overf
 
 function get(k, d){ try{ let v = window.Lampa.Storage.get(k, d); return v === undefined || v === null || v === '' ? d : v }catch(e){ return d } }
 function mode(){ return String(get('imdbb_tr_mode', 'off')) }
-function delay(){ let v = parseInt(get('imdbb_tr_delay', '4'), 10); return (v >= 1 && v <= 10 ? v : 4) * 1000 }
+function delay(){ let v = parseInt(get('imdbb_tr_delay', '0'), 10); return (v >= 0 && v <= 10 ? v : 0) * 1000 }
 function active(){ try{ return window.Lampa.Activity.active() }catch(e){ return null } }
 function noty(t){ try{ let n = get('imdbb_tr_noty', 'true'); if(n === false || n === 'false') return; window.Lampa.Noty.show(t) }catch(e){} }
 function bad(){ try{ return JSON.parse(localStorage.getItem(BAD) || '{}') }catch(e){ return {} } }
@@ -182,7 +182,7 @@ function onFull(e){
 function settings(){
   let A = window.Lampa.SettingsApi
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_mode', type: 'select', values: {off: 'Выкл', card: 'Только карточка', main: 'Только главная', all: 'Везде'}, default: 'off'}, field: {name: 'Трейлер на фоне', description: 'Беззвучный трейлер YouTube вместо фона после паузы на фильме. Нужен доступ к YouTube'}})
-  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_delay', type: 'select', values: {'2': '2 с', '4': '4 с', '6': '6 с', '8': '8 с'}, default: '4'}, field: {name: 'Трейлер: задержка', description: 'Сколько ждать на фильме до запуска трейлера'}})
+  A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_delay', type: 'select', values: {'0': 'Сразу', '2': '2 с', '4': '4 с', '6': '6 с', '8': '8 с'}, default: '0'}, field: {name: 'Трейлер: задержка', description: 'Сколько ждать на фильме до запуска трейлера. «Сразу» грузит плеер при каждой остановке, на слабом ТВ выбери 2 с'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_noty', type: 'trigger', default: true}, field: {name: 'Трейлер: показывать результат', description: 'Уведомление, если трейлер не запустился'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_zoom', type: 'select', values: {'1.1': 'Мало (x1.1)', '1.3': 'Средний (x1.3)', '1.5': 'Сильный (x1.5)'}, default: '1.3'}, field: {name: 'Трейлер: масштаб', description: 'Увеличение кадра: убирает чёрные полосы, вшитые субтитры и надписи YouTube по краям, но обрезает края'}})
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_q', type: 'select', values: {auto: 'Авто', hd720: '720p', hd1080: '1080p'}, default: 'hd1080'}, field: {name: 'Трейлер: качество', description: 'Желаемое качество видео. YouTube может не послушаться; на слабом ТВ выбери 720p или Авто'}})
@@ -201,6 +201,6 @@ let boot = setInterval(function(){
   else if(tries > 120) clearInterval(boot)
 }, 500)
 
-window.__imdbbTr = {focus: focus, stop: function(){ cancelPend(); stop(true) }}
+window.__imdbbTr = {focus: focus, stop: function(){ cancelPend(); stop(true) }, v: 'imdbb_tr4'}
 
 export default {focus, stop}
