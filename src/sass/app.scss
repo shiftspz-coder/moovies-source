@@ -1023,3 +1023,8 @@ html body[class] .full-start-new__title .imdbb-lgtx{display:-webkit-box!importan
 .imdbb-fr__f{z-index:3;color:var(--c);clip-path:inset(52% 0 0 0)}
 .imdbb-fr__n{position:absolute;right:.5em;bottom:.5em;z-index:4;display:flex;align-items:center;background:rgba(0,0,0,.65);color:#EF9F27;border-radius:.4em;padding:.2em .5em;font-size:1em;line-height:1.2}
 .imdbb-fr__n svg{width:.8em;height:1.1em;margin-right:.3em;flex:none}
+
+/*! imdbb-frfix */
+.card.imdbb-fr{--fs:9}
+.card.imdbb-fr .imdbb-fr__b,.card.imdbb-fr .imdbb-fr__f{bottom:0;margin-right:calc(var(--fs) * -.12em)}
+.card.imdbb-fr .imdbb-fr__f{-webkit-clip-path:none;clip-path:none}
