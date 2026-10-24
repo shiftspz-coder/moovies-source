@@ -265,6 +265,12 @@ function init(){
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',
+            param: {name: 'imdbb_srh_hist', type: 'select', values: {'off': 'Как сейчас', 'line': 'Одна строка', 'chips': 'Контурные чипы', 'three': 'Три последних', 'hide': 'Скрыта при фокусе в ряду'}, default: 'off'},
+            field: {name: 'Строка истории поиска', description: 'Вид истории запросов над результатами (широкий поиск)'}
+        })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
             param: {name: 'imdbb_srh_bg', type: 'select', values: {'dark': 'Тёмный', 'gray': 'Серый', 'off': 'Как раньше'}, default: 'dark'},
             field: {name: 'Фон пустого поиска', description: 'Фон с логотипом, пока в поиске нет результатов'}
         })

@@ -6,6 +6,7 @@ function clean(){
     try{ if(S.layer && S.layer.parentNode) S.layer.parentNode.removeChild(S.layer) }catch(e){}
     try{ if(S.timer) clearInterval(S.timer) }catch(e){}
     S.timer = null
+    try{ if(S.t2) clearInterval(S.t2); S.t2 = null; ['line', 'chips', 'three', 'hide', 'cf'].forEach(function(k){ document.body.classList.remove('imdbb-sh-' + k) }) }catch(e){}
     S.layer = null
     S.inner = null
     S.up = null
@@ -51,6 +52,12 @@ function build(html, sources){
         S.up = up
         window.__imdbbSrhUpd = update
         window.__imdbbSrhBg = 0
+        let hv = 'off'
+        try{ hv = window.Lampa.Storage.get('imdbb_srh_hist', 'off') }catch(e){}
+        let bcl = document.body.classList
+        ;['line', 'chips', 'three', 'hide'].forEach(function(k){ bcl.toggle('imdbb-sh-' + k, hv === k) })
+        bcl.remove('imdbb-sh-cf')
+        if(hv === 'hide') S.t2 = setInterval(function(){ try{ bcl.toggle('imdbb-sh-cf', !!(S.layer && S.layer.querySelector('.card.focus'))) }catch(e){} }, 200)
         let bgm = 'dark'
         try{ bgm = window.Lampa.Storage.get('imdbb_srh_bg', 'dark') }catch(e){}
         if(bgm === 'dark' || bgm === 'gray'){
