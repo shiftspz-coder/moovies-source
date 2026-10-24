@@ -133,6 +133,9 @@ function watch(){
     let L = window.Lampa, a = active(), m = mode()
     if(document.hidden || (L.Player && L.Player.opened && L.Player.opened()) || document.body.classList.contains('menu--open')) return stop(true)
     if(!a) return
+    let so = document.body.classList.contains('search--open'), sid = window.__imdbbTrSid ? String(window.__imdbbTrSid) : null
+    if(so && S.id && String(S.id) !== sid) return stop(true)
+    if(!so && S.id && sid && String(S.id) === sid){ window.__imdbbTrSid = null; return stop(true) }
     let isCard = a.component == 'full' && String(a.id) == String(S.id)
     if(S.ctx == 'home'){
       if(a.component == S.comp && (m == 'main' || m == 'all')) return
@@ -279,6 +282,7 @@ function anyFocus(d){
     if(mode() != 'all') return
     let a = active()
     if(!a || a.component == 'full') return
+    if(document.body.classList.contains('search--open')) window.__imdbbTrSid = d && d.id ? String(d.id) : null
     focus(d)
   }catch(e){}
 }
