@@ -53,41 +53,4 @@ function build(html, sources){
     catch(e){ return false }
 }
 
-
-function imdbbSrhDbg3(){
-    try{
-        if(!document.body.classList.contains('search--open')){ window.__imdbbCornDone = 0; return }
-        if(window.__imdbbCornDone) return
-        window.__imdbbCornDone = 1
-        var W = innerWidth, H = innerHeight, L = ['ПОИСК угол 40x30, экран ' + W + 'x' + H], n = 0
-        var nm = function(e){ var c = e.className && e.className.baseVal !== undefined ? e.className.baseVal : e.className; return e.tagName.toLowerCase() + '.' + String(c || '').slice(0, 30) }
-        var all = document.querySelectorAll('html, html *')
-        for(var i = 0; i < all.length && n < 14; i++){
-            var e = all[i], b = e.getBoundingClientRect()
-            if(b.width <= 0 || b.height <= 0 || b.left > 40 || b.right < 0 || b.top > H || b.bottom < H - 30) continue
-            var cs = getComputedStyle(e), ps = '', pp = ['::before', '::after']
-            for(var z = 0; z < 2; z++){
-                var st = getComputedStyle(e, pp[z])
-                if(st.content && st.content !== 'none' && st.content !== 'normal' && st.display !== 'none') ps += pp[z] + ' w' + st.width + ' h' + st.height + ' bg' + st.backgroundColor + ' '
-            }
-            if((b.width > 300 || b.height > 200) && !ps) continue
-            L.push(nm(e) + ' ' + Math.round(b.left) + ',' + Math.round(b.top) + ' ' + Math.round(b.width) + 'x' + Math.round(b.height) + ' bg ' + cs.backgroundColor + ' op ' + cs.opacity + ' pe ' + cs.pointerEvents + ' ' + cs.position + (ps ? ' ' + ps : ''))
-            n++
-        }
-        if(!n) L.push('ничего')
-        var o = document.getElementById('imdbb-srh-dbg3')
-        if(!o){
-            o = document.createElement('div')
-            o.id = 'imdbb-srh-dbg3'
-            o.style.cssText = 'position:fixed;top:30%;right:1%;max-width:75%;z-index:99999;background:rgba(0,0,0,.9);color:#fff;font:15px/1.25 monospace;padding:6px 10px;white-space:pre-wrap;word-break:break-all'
-            document.body.appendChild(o)
-        }
-        o.textContent = L.join('\n')
-        clearTimeout(window.__imdbbCornT)
-        window.__imdbbCornT = setTimeout(function(){ try{ o.parentNode && o.parentNode.removeChild(o) }catch(e){} }, 30000)
-    }
-    catch(e){}
-}
-setInterval(imdbbSrhDbg3, 2000)
-
 export default {build, clean, update}

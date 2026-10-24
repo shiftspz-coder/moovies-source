@@ -1040,3 +1040,7 @@ html body[class] .full-start-new__title .imdbb-lgtx{display:-webkit-box!importan
 
 /*! imdbb-srh3 */
 .imdbb-home.imdbb-srh-layer>.scroll{bottom:calc(var(--imdbb-bot) - 2.9em)!important}
+
+/*! imdbb-srh4 */
+.imdbb-srh-layer>.scroll>.imdbb-srh-in,.imdbb-srh-layer>.scroll>.imdbb-srh-in>div{width:100%!important; max-width:100%!important; box-sizing:border-box}
+body.imdbb-search-wide .search .search__sources{display:none!important}
