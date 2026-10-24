@@ -22,6 +22,7 @@ function init(){
 
     add(newRelRow())
     add(bookmarksRow())
+    add(fireTopRow())
 
     // imdbb-mainrows: выключатели встроенных рядов главной (TMDB), ряды строит tmdb.js
     let imdbbMainRows = [['now_watch','title_now_watch'],['trend_day','title_trend_day'],['trend_week','title_trend_week'],['upcoming','title_upcoming'],['popular_movie','title_popular_movie'],['popular_tv','title_popular_tv'],['top_movie','title_top_movie'],['top_tv','title_top_tv']]
@@ -62,6 +63,65 @@ function newRelRow(){
 
                     call(json)
                 }, call)
+            }
+        }
+    }
+}
+
+// imdbb-firetop: ряд «Топ по огонькам»: топ фильмов за 3 года по реакции «огонь» CUB (fire_top.json собирает VPS раз в сутки)
+function fireTopLoad(ok, fail){
+    let C = window.__imdbbFt
+
+    if(C && Date.now() - C.t < 1800000) return ok(C.d)
+
+    let base = location.origin + location.pathname.replace(/[^\/]*$/, '')
+    let x = new XMLHttpRequest()
+
+    x.open('GET', base + 'fire_top.json?t=' + Math.floor(Date.now() / 3600000), true)
+    x.timeout = 8000
+    x.onload = ()=>{
+        try{
+            let d = JSON.parse(x.responseText)
+
+            if(!d || !d.results || !d.results.length) return fail()
+
+            window.__imdbbFt = {t: Date.now(), d: d}
+
+            ok(d)
+        }
+        catch(e){ fail() }
+    }
+    x.onerror = ()=>fail()
+    x.ontimeout = ()=>fail()
+    x.send()
+}
+
+function fireTopRow(){
+    return {
+        name: 'fire_top',
+        title: 'Топ по огонькам',
+        index: 2,
+        screen: ['main'],
+        call: (params)=>{
+            return function(call){
+                fireTopLoad((d)=>{
+                    let N = 20
+                    let inf = typeof window.imdbbInf === 'function' ? window.imdbbInf() : true
+                    let list = d.results.map((m, i)=>{
+                        let r = JSON.parse(JSON.stringify(m))
+
+                        r.source = 'tmdb'
+                        r.imdbb_fire = m.fire
+                        r.imdbb_fr = i < 3 ? i + 1 : 0
+
+                        return r
+                    })
+                    let dd = {title: 'Топ по огонькам', results: list.slice(0, N), page: 1, total_pages: Math.ceil(list.length / N)}
+
+                    if(inf && dd.total_pages > 1) dd.imdbb_next = (page, ok2, er)=>{ ok2(list.slice((page - 1) * N, page * N)) }
+
+                    call(dd)
+                }, ()=>call())
             }
         }
     }

@@ -21,6 +21,34 @@ import Account from '../core/account/account'
  * @param {object} data
  * @param {{isparser:boolean, card_small:boolean, card_category:boolean, card_collection:boolean, card_wide:true}} params 
  */
+// imdbb-firetop: цифры 1-3 и огоньки на карточках ряда «Топ по огонькам»
+function imdbbFireTop(card, data){
+    let r = data.imdbb_fr
+
+    if(!(r >= 1 && r <= 3)) return
+
+    card.classList.add('imdbb-fr', 'imdbb-fr' + r)
+
+    let view = card.querySelector('.card__view') || card
+    let b = document.createElement('span')
+    let f = document.createElement('span')
+    let n = document.createElement('span')
+
+    b.className = 'imdbb-fr__b'
+    b.textContent = r
+    f.className = 'imdbb-fr__f'
+    f.textContent = r
+    n.className = 'imdbb-fr__n'
+
+    if(data.imdbb_fire) n.textContent = ' ' + String(data.imdbb_fire).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0')
+
+    try{ let ic = Template.js('icon_fire'); if(ic) n.insertBefore(ic, n.firstChild) }catch(e){}
+
+    view.appendChild(b)
+    view.appendChild(f)
+    view.appendChild(n)
+}
+
 function Card(data, params = {}){
     console.warn('Card is deprecated')
 
@@ -44,6 +72,7 @@ function Card(data, params = {}){
      */
     this.build = function(){
         this.card    = Template.js(params.isparser ? 'card_parser' : 'card',data)
+        try{ if(data && data.imdbb_fr) imdbbFireTop(this.card, data) }catch(e){}
         this.img     = this.card.querySelector('.card__img') || {}
 
         this.card.card_data = data
