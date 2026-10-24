@@ -89,7 +89,7 @@ function destroyP(){
 
 function stop(instant){
   clearTimeout(S.tfail); clearTimeout(S.tend); clearInterval(S.poll)
-  S.active = false; S.id = null; S.key = null; S.ctx = null; S.comp = null; S.playing = false; S.reused = false
+  S.active = false; S.id = null; S.key = null; S.ctx = null; S.comp = null; S.playing = false; S.reused = false; S.paused = false; try{ trpHide() }catch(e){}
   let root = P.root
   if(!root) return
   if(noReuse || !P.alive){ destroyP(); return }
@@ -106,7 +106,7 @@ function fail(why, ms){
 
 function playing(){
   if(S.playing || !P.root) return
-  S.playing = true
+  S.playing = true; try{ trpUpd() }catch(e){}
   clearTimeout(S.tfail)
   P.root.style.transition = ''
   P.root.classList.add('on')
@@ -123,7 +123,7 @@ function onMsg(e){
     if(!d) return
     if(d.event == 'onError') return fail('ошибка ' + d.info, [101, 150, 153].indexOf(d.info) >= 0 ? WEEK : 86400000)
     let st = d.event == 'onStateChange' ? d.info : (d.event == 'infoDelivery' && d.info && typeof d.info.playerState == 'number' ? d.info.playerState : null)
-    if(st === 1) playing()
+    if(st === 1){ if(S.paused){ S.paused = false; try{ trpUpd() }catch(e){} } playing() }
     else if(st === 0 && S.playing){ S.done = S.id; S.doneAt = Date.now(); stop(false) }
   }catch(x){}
 }
@@ -264,6 +264,102 @@ function settings(){
   A.addParam({component: 'imdbb', param: {name: 'imdbb_tr_sound', type: 'trigger', default: false}, field: {name: 'Трейлер: звук', description: 'Включать звук трейлера (громкость 70%). Стартует беззвучно, звук включается, когда видео пошло'}})
 }
 
+
+;/* imdbb-trpause2 */
+window.__imdbbTrp2 = 1
+let TRP = {f: false, prev: '', orig: null, el: null}
+let TRP_IDLE = 0.18, TRP_FOCUS = 0.6, TRP_PAUSE = 0.5, TRP_PFOC = 0.8
+function trpEn(){ try{ let e = window.Lampa.Controller.enabled(); return e && e.name ? String(e.name) : '' }catch(x){ return '' } }
+function trpEl(){
+  try{
+    if(TRP.el && document.body.contains(TRP.el)) return TRP.el
+    if(!document.getElementById('imdbb-trp-css')){
+      let st = document.createElement('style')
+      st.id = 'imdbb-trp-css'
+      st.textContent = '.imdbb-trp{position:fixed;left:50%;top:50%;width:6em;height:6em;margin:-3em 0 0 -3em;font-size:1em;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s;pointer-events:none;z-index:40}'
+        + '.imdbb-trp i{display:block;width:.9em;height:3em;margin:0 .45em;border-radius:.2em;background:#fff}'
+        + '.imdbb-trp b{display:none;width:0;height:0;margin-left:.5em;border-top:1.6em solid transparent;border-bottom:1.6em solid transparent;border-left:2.6em solid #fff}'
+        + '.imdbb-trp.pz i{display:none}.imdbb-trp.pz b{display:block}'
+        + '.imdbb-trp.on{opacity:' + TRP_IDLE + '}'
+        + '.imdbb-trp.on.f{opacity:' + TRP_FOCUS + '}'
+        + '.imdbb-trp.on.pz{opacity:' + TRP_PAUSE + '}'
+        + '.imdbb-trp.on.pz.f{opacity:' + TRP_PFOC + '}'
+      document.head.appendChild(st)
+    }
+    let el = document.createElement('div')
+    el.className = 'imdbb-trp'
+    el.innerHTML = '<i></i><i></i><b></b>'
+    document.body.appendChild(el)
+    TRP.el = el
+    return el
+  }catch(x){ return {classList: {toggle: function(){}, remove: function(){}}} }
+}
+function trpUpd(){
+  let el = trpEl(), show = !!(S.active && S.playing && P.root)
+  el.classList.toggle('on', show)
+  el.classList.toggle('pz', show && !!S.paused)
+  el.classList.toggle('f', show && !!TRP.f)
+}
+function trpBack(){
+  TRP.f = false
+  let C = window.Lampa.Controller, o = TRP.orig || C.toggle
+  try{ o.call(C, TRP.prev || 'content') }catch(e){ try{ o.call(C, 'content') }catch(x){} }
+  trpUpd()
+}
+function trpHide(){
+  if(TRP.f && trpEn() == 'imdbb_trpause') trpBack()
+  TRP.f = false
+  if(TRP.el) TRP.el.classList.remove('on', 'pz', 'f')
+}
+function trpToggle(){
+  if(!S.active || !S.playing || !P.root) return
+  if(S.paused){
+    S.paused = false
+    cmd('playVideo')
+    if(!trFull()){ clearTimeout(S.tend); S.tend = setTimeout(function(){ S.done = S.id; S.doneAt = Date.now(); stop(false) }, 45000) }
+  }
+  else{
+    S.paused = true
+    clearTimeout(S.tend)
+    cmd('pauseVideo')
+  }
+  trpUpd()
+}
+function trpCan(){
+  if(!S.active || !S.playing || !P.root) return false
+  let L = window.Lampa, b = document.body.classList
+  if(b.contains('menu--open') || b.contains('search--open')) return false
+  if(L.Player && L.Player.opened && L.Player.opened()) return false
+  let a = active(), n = trpEn()
+  if(!a || !n) return false
+  if(a.component != 'full' && a.component != S.comp) return false
+  if(n == 'head' || n == 'menu' || n == 'imdbb_trpause' || /setting|modal|select|keyboard|search|notice|console|filter/.test(n)) return false
+  return true
+}
+function trpInstall(){
+  let C = window.Lampa.Controller
+  if(!C || C.__imdbbTrpI || typeof C.toggle != 'function' || typeof C.add != 'function') return
+  C.__imdbbTrpI = 1
+  let orig = C.toggle
+  TRP.orig = orig
+  C.add('imdbb_trpause', {
+    toggle: function(){ TRP.f = true; trpUpd() },
+    up: function(){ TRP.f = false; trpUpd(); orig.call(C, 'head') },
+    down: function(){ trpBack() },
+    back: function(){ trpBack() },
+    enter: function(){ trpToggle() },
+    left: function(){},
+    right: function(){}
+  })
+  C.toggle = function(name){
+    try{
+      if(name == 'head' && trpCan()){ TRP.prev = trpEn(); return orig.call(C, 'imdbb_trpause') }
+      if(name != 'imdbb_trpause' && TRP.f){ TRP.f = false; trpUpd() }
+    }catch(e){}
+    return orig.apply(C, arguments)
+  }
+}
+
 let tries = 0
 let boot = setInterval(function(){
   tries++
@@ -271,6 +367,7 @@ let boot = setInterval(function(){
   if(L && L.Listener && L.SettingsApi && L.Storage && L.Activity){
     clearInterval(boot)
     try{ settings() }catch(e){}
+    try{ trpInstall() }catch(e){}
     try{ L.Listener.follow('full', onFull) }catch(e){}
     try{ if(mode() != 'off') warm() }catch(e){}
   }
