@@ -265,6 +265,12 @@ function init(){
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',
+            param: {name: 'imdbb_srh_bg', type: 'select', values: {'dark': 'Тёмный', 'gray': 'Серый', 'off': 'Как раньше'}, default: 'dark'},
+            field: {name: 'Фон пустого поиска', description: 'Фон с логотипом, пока в поиске нет результатов'}
+        })
+
+        Lp.SettingsApi.addParam({
+            component: 'imdbb',
             param: {name: 'imdbb_dim_main', type: 'select', values: {'0': 'Нет', '25': '25%', '50': '50%', '75': '75%', '100': 'Стандартное'}, default: '100'},
             field: {name: 'Затемнение: главная и ряды', description: 'Не действует, если включено «Убрать затемнение фона»'}
         })

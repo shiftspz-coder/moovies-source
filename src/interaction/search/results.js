@@ -160,6 +160,7 @@ function Results(source){
                 })
             },
             onInstance: (item, item_data)=>{
+                try{ if(!window.__imdbbSrhBg && document.body.classList.contains('imdbb-search-wide') && item_data && !item_data.profile_path && !item_data.known_for && item_data.media_type !== 'person'){ window.__imdbbSrhBg = 1; window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)); window.__imdbbSb = 0 } }catch(e){ window.__imdbbSb = 0 }
                 item.use({
                     onFocus: ()=>{
                         try{ window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)) }catch(e){} window.__imdbbSb = 0; try{ if(item_data && item_data.id && (item_data.title || item_data.name) && window.__imdbbTrAny) window.__imdbbTrAny(item_data) }catch(e){}

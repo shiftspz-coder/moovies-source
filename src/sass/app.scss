@@ -1044,3 +1044,10 @@ html body[class] .full-start-new__title .imdbb-lgtx{display:-webkit-box!importan
 /*! imdbb-srh4 */
 .imdbb-srh-layer>.scroll>.imdbb-srh-in,.imdbb-srh-layer>.scroll>.imdbb-srh-in>div{width:100%!important; max-width:100%!important; box-sizing:border-box}
 body.imdbb-search-wide .search .search__sources{display:none!important}
+
+/*! imdbb-srh5 */
+.imdbb-srh-empty{position:absolute; left:0; top:0; right:0; bottom:0; z-index:0; display:flex; align-items:center; justify-content:center; pointer-events:none}
+.imdbb-srh-empty[data-m="dark"]{background:#0e0e11}
+.imdbb-srh-empty[data-m="gray"]{background:#55555a}
+.imdbb-srh-empty img{width:18em; max-width:40%; opacity:.9}
+.imdbb-srh-layer.imdbb-srh-has .imdbb-srh-empty{display:none}
