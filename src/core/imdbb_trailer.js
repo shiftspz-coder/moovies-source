@@ -274,6 +274,15 @@ let boot = setInterval(function(){
   else if(tries > 120) clearInterval(boot)
 }, 500)
 
+function anyFocus(d){
+  try{
+    if(mode() != 'all') return
+    let a = active()
+    if(!a || a.component == 'full') return
+    focus(d)
+  }catch(e){}
+}
+window.__imdbbTrAny = anyFocus
 window.__imdbbTr = {focus: focus, stop: function(){ cancelPend(); stop(true) }, v: 'imdbb_tr5'}
 
 export default {focus, stop}
