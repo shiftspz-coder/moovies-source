@@ -1028,3 +1028,8 @@ html body[class] .full-start-new__title .imdbb-lgtx{display:-webkit-box!importan
 .card.imdbb-fr{--fs:9}
 .card.imdbb-fr .imdbb-fr__b,.card.imdbb-fr .imdbb-fr__f{bottom:0;margin-right:calc(var(--fs) * -.12em)}
 .card.imdbb-fr .imdbb-fr__f{-webkit-clip-path:none;clip-path:none}
+
+/*! imdbb-frfix2 */
+.card.imdbb-fr{--fs:7}
+.card.imdbb-fr .imdbb-fr__b,.card.imdbb-fr .imdbb-fr__f{margin-right:-.2em;bottom:-.08em}
+.card.imdbb-fr .imdbb-fr__f{-webkit-clip-path:inset(52% 0 0 0);clip-path:inset(52% 0 0 0)}
