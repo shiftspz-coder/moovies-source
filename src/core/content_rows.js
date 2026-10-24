@@ -29,7 +29,7 @@ function init(){
     imdbbMainRows.forEach(r=>add({name: 'tmdb_' + r[0], title: Lang.translate(r[1]), call: ()=>{}}))
 
     // imdbb-rowtoggle2: выключатели рядов «по актёрам» и «по жанрам» главной TMDB
-    ;[['persons', 'Ряд «Актёры» (фильмы по актёрам)'], ['genres', 'Ряды по жанрам']].forEach(r=>add({name: 'tmdb_' + r[0], title: r[1], call: ()=>{}}))
+    ;[['persons', 'Ряд «Актёры» (фильмы по актёрам)'], ['genres', 'Ряды по жанрам'], ['keywords', 'Ряды по темам (сиквелы, зомби, детективы и др.)']].forEach(r=>add({name: 'tmdb_' + r[0], title: r[1], call: ()=>{}}))
 
     Lampa.Settings.listener.follow('open', (e) => {
         if (e.name == 'main') settings()

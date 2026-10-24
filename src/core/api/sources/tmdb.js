@@ -386,7 +386,7 @@ function main(params = {}, oncomplite, onerror){
 
     let start_shuffle = parts_data.length + 2
 
-    Arrays.insert(parts_data, 0, Api.partKeywords(parts_data, 'movie', start_shuffle))
+    if([false, 'false'].indexOf(Storage.get('content_rows_tmdb_keywords', 'true')) < 0) Arrays.insert(parts_data, 0, Api.partKeywords(parts_data, 'movie', start_shuffle))
 
     let imdbbRowOn = (n)=>{ let v = Storage.get('content_rows_tmdb_' + n, 'true'); return !(v === false || v === 'false') }
 
