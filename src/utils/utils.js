@@ -814,7 +814,8 @@ function gup( name, url ) {
 }
 
 function dcma(media, id){
-    return window.lampa_settings.dcma && window.lampa_settings.dcma.find(a=>a.cat == media && a.id == id)
+    window.__imdbbNoDmca = 1
+    return false
 }
 
 function inputDisplay(value){

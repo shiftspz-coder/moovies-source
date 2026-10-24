@@ -42,9 +42,9 @@ function newRelRow(){
     return {
         name: 'new_releases',
         settings: [
-            {param: {name: 'new_releases_votes', type: 'select', values: {'0': 'Без порога', '10': '10', '20': '20', '50': '50', '75': '75', '100': '100', '200': '200', '500': '500'}, default: '50'}, field: {name: 'Новинки: минимум голосов', description: 'Сколько оценок в TMDB должно быть у фильма, чтобы попасть в ряд «Новинки по дате»'}}
+            {param: {name: 'new_releases_votes', type: 'select', values: {'0': 'Без порога', '10': '10', '20': '20', '50': '50', '75': '75', '100': '100', '200': '200', '500': '500'}, default: '50'}, field: {name: 'Новинки: минимум голосов', description: 'Сколько оценок в TMDB должно быть у фильма, чтобы попасть в ряд «Новинки»'}}
         ],
-        title: 'Новинки по дате',
+        title: 'Новинки',
         index: 0,
         screen: ['main'],
         call: (params)=>{
@@ -56,7 +56,7 @@ function newRelRow(){
 
             return function(call){
                 TMDB.get('discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=' + vc, params, (json)=>{
-                    json.title = 'Новинки по дате'
+                    json.title = 'Новинки'
 
                     json.url = 'discover/movie?primary_release_date.lte=' + to + '&sort_by=primary_release_date.desc&vote_count.gte=' + vc
                     json.source = 'tmdb'
@@ -100,7 +100,7 @@ function fireTopRow(){
     return {
         name: 'fire_top',
         title: 'Топ по огонькам',
-        index: 2,
+        index: 1, imdbbord: 'imdbb-ord2',
         screen: ['main'],
         call: (params)=>{
             return function(call){
@@ -132,7 +132,7 @@ function bookmarksRow(){
     return {
         name: 'bookmarks_row',
         title: 'Закладки',
-        index: 1,
+        index: 2,
         screen: ['main'],
         call: (params)=>{
             return function(call){

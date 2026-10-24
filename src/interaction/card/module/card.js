@@ -3,35 +3,6 @@ import TMDBApi from '../../../core/tmdb/tmdb'
 import Template from '../../template'
 import VPN from '../../../core/vpn'
 
-// imdbb-firetop2: цифры 1-3 и огоньки на карточках ряда «Топ по огонькам» (модульная карточка)
-function imdbbFireTop2(html, data){
-    let card = (html && html[0]) || html
-    let r = data && data.imdbb_fr
-
-    if(!card || !card.classList || !(r >= 1 && r <= 3)) return
-
-    card.classList.add('imdbb-fr', 'imdbb-fr' + r)
-
-    let view = card.querySelector('.card__view') || card
-    let b = document.createElement('span')
-    let f = document.createElement('span')
-    let n = document.createElement('span')
-
-    b.className = 'imdbb-fr__b'
-    b.textContent = r
-    f.className = 'imdbb-fr__f'
-    f.textContent = r
-    n.className = 'imdbb-fr__n'
-
-    if(data.imdbb_fire) n.textContent = ' ' + String(data.imdbb_fire).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0')
-
-    try{ let ic = Template.js('icon_fire'); if(ic) n.insertBefore((ic[0] || ic), n.firstChild) }catch(e){}
-
-    view.appendChild(b)
-    view.appendChild(f)
-    view.appendChild(n)
-}
-
 export default {
     onInit: function(){
         this.getPosterPath = ()=>{
@@ -53,7 +24,6 @@ export default {
     },
     onCreate: function(){
         this.html    = Template.js('card')
-        ;try{ if(this.data && this.data.imdbb_fr) imdbbFireTop2(this.html, this.data) }catch(e){ console.log('imdbb-fr', e) }
         this.img     = this.html.find('.card__img') || {}
 
         this.img_errors = 0
