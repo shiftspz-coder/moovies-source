@@ -50,8 +50,55 @@ function addParam(data){
  * @param {string} component 
  * @returns {[{component:string, param:{name:string, type:string, values:string|object, default:string|boolean}, field:{name:string, description:string|undefined}, onRender:((item)=>void)|undefined, onChange?:((e)=>void)|undefined}]}
  */
+// imdbb-setord: порядок и заголовки раздела IMDb+ (не зависит от порядка загрузки модулей)
+const IMDBB_ORD = [
+    ['Главная и карточки', ['imdbb_infinite', 'imdbb_swipe', 'imdbb_visible']],
+    ['Внешний вид', ['imdbb_style', 'imdbb_lgx', 'imdbb_rate_style', 'imdbb_badge_style', 'imdbb_st_style', 'imdbb_st_pos', 'imdbb_dim_off', 'imdbb_dim_main', 'imdbb_dim_card']],
+    ['Трейлеры', ['imdbb_tr_mode', 'imdbb_tr_full', 'imdbb_tr_delay', 'imdbb_tr_zoom', 'imdbb_tr_q', 'imdbb_tr_sound', 'imdbb_tr_noty']],
+    ['Качество и фильтры', ['imdbb_flt', 'imdbb_trk', 'imdbb_kp_both', 'imdbb_lgbt_block']],
+    ['Синхронизация', ['imdbb_sync', 'imdbb_bell']]
+]
+
+function imdbbOrder(list){
+    try{
+        let used = {}
+        let out  = []
+        let head = (i, name)=>({component: 'imdbb', param: {name: 'imdbb_grp_' + i, type: 'title'}, field: {name: name}})
+
+        IMDBB_ORD.forEach((g, gi)=>{
+            let items = []
+
+            g[1].forEach(n=>{
+                list.forEach(e=>{
+                    if(e && e.param && e.param.name === n){
+                        used[n] = true
+                        items.push(e)
+                    }
+                })
+            })
+
+            if(items.length){
+                out.push(head(gi, g[0]))
+                out = out.concat(items)
+            }
+        })
+
+        let rest = list.filter(e=>!(e && e.param && used[e.param.name]))
+
+        if(rest.length){
+            out.push(head('rest', 'Прочее'))
+            out = out.concat(rest)
+        }
+
+        return out
+    }
+    catch(e){
+        return list
+    }
+}
+
 function getParam(component){
-    return params[component]
+    return component === 'imdbb' && params[component] ? imdbbOrder(params[component]) : params[component]
 }
 /**
  * Удалить параметры
