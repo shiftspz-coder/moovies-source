@@ -266,9 +266,9 @@ function settings(){
 
 
 ;/* imdbb-trpause2 */
-window.__imdbbTrp2 = 1
+window.__imdbbTrp2 = 1; window.__imdbbTrp3 = 1
 let TRP = {f: false, prev: '', orig: null, el: null}
-let TRP_IDLE = 0.18, TRP_FOCUS = 0.6, TRP_PAUSE = 0.5, TRP_PFOC = 0.8
+let TRP_IDLE = 0, TRP_FOCUS = 0.6, TRP_PAUSE = 0.5, TRP_PFOC = 0.8
 function trpEn(){ try{ let e = window.Lampa.Controller.enabled(); return e && e.name ? String(e.name) : '' }catch(x){ return '' } }
 function trpEl(){
   try{
@@ -347,7 +347,7 @@ function trpInstall(){
     up: function(){ TRP.f = false; trpUpd(); orig.call(C, 'head') },
     down: function(){ trpBack() },
     back: function(){ trpBack() },
-    enter: function(){ trpToggle() },
+    enter: function(){ let was = S.paused; trpToggle(); if(was && !S.paused) trpBack() },
     left: function(){},
     right: function(){}
   })
