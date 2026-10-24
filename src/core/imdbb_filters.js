@@ -104,7 +104,7 @@ function init(){
 
         L.SettingsApi.addComponent({
             component: 'imdbb',
-            before: noacc ? 'interface' : 'account',
+            before: 'interface',
             name: 'IMDb+',
             icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
         })

@@ -53,6 +53,8 @@ function Main(){
             }
         }
 
+        comp.find('[data-component="imdbb"]').first().prependTo(comp)
+
         comp.find('.selector').unbind('hover:focus').on('hover:focus',(event)=>{
             last = event.target
 
