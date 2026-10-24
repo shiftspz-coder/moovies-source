@@ -1,6 +1,7 @@
 import Sources from './sources'
 import History from './history'
 import Template from '../template'
+import ImdbbSrh from './imdbb_srh'
 import Controller from '../../core/controller'
 import Keybord from '../keyboard/keyboard'
 import Storage from '../../core/storage/storage'
@@ -66,6 +67,7 @@ function toggle(){
 }
 
 function scrollTo(element){
+    try{ if(element && document.body.classList.contains('imdbb-search-wide')){ let el0 = element[0] || element; if(el0 && el0.nodeType === 1 && !scroll.render(true).contains(el0)) return } }catch(e){}
     scroll.update(element ? element : search.find('.search__input'),true)
 }
 
@@ -124,7 +126,7 @@ function createSources(){
     })
 
     search.find('.search__sources').append(sources.tabs())
-    search.find('.search__results').append(sources.render())
+    if(!ImdbbSrh.build(html, sources)) search.find('.search__results').append(sources.render())
 }
 
 function createHistory(){
@@ -207,6 +209,7 @@ function destroy(){
 
     $('body').toggleClass('ambience--enable',false)
     $('body').toggleClass('search--open',false)
+    try{ ImdbbSrh.clean() }catch(e){}
     $('body').toggleClass('imdbb-search-wide',false)
 
     if(params.onBack) params.onBack()

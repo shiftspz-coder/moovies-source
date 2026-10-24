@@ -163,6 +163,7 @@ function Results(source){
                 item.use({
                     onFocus: ()=>{
                         try{ window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)) }catch(e){} window.__imdbbSb = 0; try{ if(item_data && item_data.id && (item_data.title || item_data.name) && window.__imdbbTrAny) window.__imdbbTrAny(item_data) }catch(e){}
+                        try{ window.__imdbbSrhUpd && window.__imdbbSrhUpd(item, item_data) }catch(e){}
                     },
                     onEnter: ()=>{ try{ window.__imdbbSbU = Date.now() + 1500 }catch(e){}
                         if(source.onSelect){

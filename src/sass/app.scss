@@ -1033,3 +1033,7 @@ html body[class] .full-start-new__title .imdbb-lgtx{display:-webkit-box!importan
 .card.imdbb-fr{--fs:7}
 .card.imdbb-fr .imdbb-fr__b,.card.imdbb-fr .imdbb-fr__f{margin-right:-.2em;bottom:-.08em}
 .card.imdbb-fr .imdbb-fr__f{-webkit-clip-path:inset(52% 0 0 0);clip-path:inset(52% 0 0 0)}
+
+/*! imdbb-srh1 */
+.imdbb-home.imdbb-srh-layer{position:fixed!important; left:0; top:0; right:0; bottom:0; height:auto!important; z-index:49; background:none}
+.imdbb-srh-layer>.scroll>.imdbb-srh-in{position:relative; transition:transform .25s ease; will-change:transform}
