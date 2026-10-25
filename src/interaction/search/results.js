@@ -36,7 +36,7 @@ function Results(source){
 
             source.onRecall && source.onRecall(data, last_query); try{ let lq = window.__imdbbLastQ && window.__imdbbLastQ[source_name]; if(lq && !last_query && window.__imdbbSrhNoHv && Date.now() < window.__imdbbSrhNoHv) query = lq }catch(e){}
 
-            try{ window.__imdbbDbg2('build#1 ' + String(source_name||'')) }catch(e){} data.forEach(this.build.bind(this))
+            data.forEach(this.build.bind(this))
 
             this.listener.send('finded',{count: this.count(data), data})
         }).catch(()=>{})
@@ -47,7 +47,7 @@ function Results(source){
     }
 
     this.loading = function(){
-        try{ window.__imdbbDbg2('loading') }catch(e){} this.listener.send('start')
+        this.listener.send('start')
 
         html.empty().append($('<div><div class="broadcast__text">'+Lang.translate('search_searching')+'</div><div class="broadcast__scan"><div></div></div></div>'))
     }
@@ -84,7 +84,7 @@ function Results(source){
                         Cache.rewriteData('other', source_name + '_' + value, copy).catch(()=>{})
                         Cache.rewriteData('other', source_name + '_last', copy).catch(()=>{}); try{ (window.__imdbbLastQ = window.__imdbbLastQ || {})[source_name] = value }catch(e){}
 
-                        try{ window.__imdbbDbg2('build#2 ' + String(source_name||'')) }catch(e){} data.forEach(this.build.bind(this))
+                        data.forEach(this.build.bind(this))
                     }
                     else this.empty()
 
@@ -233,7 +233,7 @@ function Results(source){
 
         items = []
 
-        try{ window.__imdbbDbg2('clear') }catch(e){} this.listener.send('clear')
+        this.listener.send('clear')
     }
 
     this.toggle = function(){
