@@ -30,7 +30,7 @@ let html = Template.elem('div', {class: 'main-search'}),
 /* возврат из карточки обратно в поиск */
 let imdbbArm = null, imdbbArmSub = false
 
-function imdbbSrhBackReset(){ imdbbArm = null }
+function imdbbSrhBackReset(){ imdbbArm = null; window.__imdbbSrhWant = null }
 
 function imdbbSrhBackArm(q, ok){
     imdbbArm = null
@@ -46,7 +46,7 @@ function imdbbSrhBackArm(q, ok){
                 if(!a || !a.obj) return
                 if(AA.active() === a.obj){
                     imdbbArm = null
-                    ;(function(f){ try{ (window.requestAnimationFrame||setTimeout)(f) }catch(e){ setTimeout(f,0) } })(function(){ try{ open({input: a.q}) }catch(err){} }) ;window.__imdbbSrhBackRaf = 1
+                    ;(function(f){ try{ (window.requestAnimationFrame||setTimeout)(f) }catch(e){ setTimeout(f,0) } })(function(){ try{ window.__imdbbSrhNoHv = Date.now() + 1500; open({input: a.q}); window.__imdbbSrhWant = window.__imdbbSrhLast ? {k: window.__imdbbSrhLast.k, exp: Date.now() + 15000} : null }catch(err){} }) ;window.__imdbbSrhBackRaf = 1
                 }
                 else if(AA.all().indexOf(a.obj) < 0) imdbbArm = null
             }
@@ -214,6 +214,8 @@ function createKeyboard(){
     })
 
     keyboard.listener.follow('hover',()=>{
+        if(window.__imdbbSrhNoHv && Date.now() < window.__imdbbSrhNoHv) return
+
         input.length <= 2 ? sources.cancel() : sources.search(input)
     })
 

@@ -159,14 +159,14 @@ function Results(source){
                     this.listener.send('select')
                 })
             },
-            onInstance: (item, item_data)=>{
+            onInstance: (item, item_data)=>{ try{ let w = window.__imdbbSrhWant; if(w && Date.now() < w.exp && item_data && item_data.id && (item_data.id + (item_data.name && !item_data.title ? 't' : 'm')) === w.k && !line.__imdbbWF){ line.__imdbbWF = 1; line.last = item.render(true); if(items.indexOf(line) >= 0){ window.__imdbbSrhWant = null; active = items.indexOf(line); setTimeout(()=>{ try{ this.toggle() }catch(e){} }, 50) } } }catch(e){}
                 try{ if(!window.__imdbbSrhBg && document.body.classList.contains('imdbb-search-wide') && item_data && !item_data.profile_path && !item_data.known_for && item_data.media_type !== 'person'){ window.__imdbbSrhBg = 1; window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)); window.__imdbbSb = 0 } }catch(e){ window.__imdbbSb = 0 }
                 item.use({
                     onFocus: ()=>{
                         try{ window.__imdbbSb = 1; Background.change(Utils.cardImgBackground(item_data)) }catch(e){} window.__imdbbSb = 0; try{ if(item_data && item_data.id && (item_data.title || item_data.name) && window.__imdbbTrAny) window.__imdbbTrAny(item_data) }catch(e){}
                         try{ window.__imdbbSrhUpd && window.__imdbbSrhUpd(item, item_data) }catch(e){}
                     },
-                    onEnter: ()=>{ try{ window.__imdbbSbU = Date.now() + 1500 }catch(e){}
+                    onEnter: ()=>{ try{ window.__imdbbSbU = Date.now() + 1500 }catch(e){} try{ window.__imdbbSrhLast = {k: (item_data.id + (item_data.name && !item_data.title ? 't' : 'm'))} }catch(e){}
                         if(source.onSelect){
                             source.onSelect({data, line, query, element: item_data, item_data},()=>{
                                 this.listener.send('select')
@@ -186,7 +186,7 @@ function Results(source){
 
         line.create()
 
-        items.push(line)
+        items.push(line); try{ if(line.__imdbbWF){ window.__imdbbSrhWant = null; active = items.length - 1; setTimeout(()=>{ try{ this.toggle() }catch(e){} }, 50) } }catch(e){}
 
         html.append(line.render(true))
     }
