@@ -36,7 +36,7 @@ function Results(source){
 
             source.onRecall && source.onRecall(data, last_query)
 
-            data.forEach(this.build.bind(this))
+            try{ window.__imdbbDbg2('build#1 ' + String(source_name||'')) }catch(e){} data.forEach(this.build.bind(this))
 
             this.listener.send('finded',{count: this.count(data), data})
         }).catch(()=>{})
@@ -47,7 +47,7 @@ function Results(source){
     }
 
     this.loading = function(){
-        this.listener.send('start')
+        try{ window.__imdbbDbg2('loading') }catch(e){} this.listener.send('start')
 
         html.empty().append($('<div><div class="broadcast__text">'+Lang.translate('search_searching')+'</div><div class="broadcast__scan"><div></div></div></div>'))
     }
@@ -84,7 +84,7 @@ function Results(source){
                         Cache.rewriteData('other', source_name + '_' + value, copy).catch(()=>{})
                         Cache.rewriteData('other', source_name + '_last', copy).catch(()=>{})
 
-                        data.forEach(this.build.bind(this))
+                        try{ window.__imdbbDbg2('build#2 ' + String(source_name||'')) }catch(e){} data.forEach(this.build.bind(this))
                     }
                     else this.empty()
 
@@ -233,7 +233,7 @@ function Results(source){
 
         items = []
 
-        this.listener.send('clear')
+        try{ window.__imdbbDbg2('clear') }catch(e){} this.listener.send('clear')
     }
 
     this.toggle = function(){

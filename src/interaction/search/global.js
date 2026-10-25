@@ -58,6 +58,7 @@ function imdbbSrhBackArm(q, ok){
     }, 800)
 }
 
+;window.__imdbbDbg2 = window.__imdbbDbg2 || (function(){ var t0=0, L=[], el=null, tm=0; return function(tag, rst){ try{ var n=performance.now(); if(rst || !t0){ t0=n; L=[]; clearTimeout(tm); tm=setTimeout(function(){ try{ if(el&&el.parentNode) el.parentNode.removeChild(el); el=null }catch(e){} }, 30000) } L.push(Math.round(n-t0)+' '+tag); if(!el || !el.parentNode){ el=document.createElement('div'); el.style.cssText='position:fixed;left:8px;top:8px;z-index:99999;background:rgba(0,0,0,.85);color:#0f0;font:20px/1.25 monospace;padding:6px 10px;pointer-events:none;white-space:pre'; document.body.appendChild(el) } el.textContent=L.slice(-16).join('\n') }catch(e){} } })();
 function init(){
     let imdbbSe = Head.addIcon(Template.string('icon_search'), open).addClass('open--search')
 
@@ -82,6 +83,7 @@ function open(use_params = {}){
 
     Layer.update(html)
 
+    try{ window.__imdbbDbg2('open', 1) }catch(e){}
     listener.send('open')
 }
 
@@ -194,6 +196,7 @@ function createKeyboard(){
     keyboard.create()
     
     keyboard.listener.follow('change',(event)=>{
+        try{ window.__imdbbDbg2('change ' + String(event.value||'').length) }catch(e){}
         input = event.value
 
         if(input){
@@ -214,6 +217,7 @@ function createKeyboard(){
     })
 
     keyboard.listener.follow('hover',()=>{
+        try{ window.__imdbbDbg2('hover') }catch(e){} 
         if(window.__imdbbSrhNoHv && Date.now() < window.__imdbbSrhNoHv) return
 
         input.length <= 2 ? sources.cancel() : sources.search(input)

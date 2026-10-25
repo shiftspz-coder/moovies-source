@@ -179,7 +179,7 @@ function Sources(params = {}){
         Controller.toggle('search_sources')
     }
 
-    this.search = function(query, immediately){
+    this.search = function(query, immediately){ try{ window.__imdbbDbg2('src.search ' + String(query||'').length) }catch(e){}
         results.forEach(result => result.cancel())
 
         if(!stop_keys.find(k=>k == query.toLowerCase().trim())){
