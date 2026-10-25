@@ -46,7 +46,7 @@ function imdbbSrhBackArm(q, ok){
                 if(!a || !a.obj) return
                 if(AA.active() === a.obj){
                     imdbbArm = null
-                    ;(function(f){ try{ (window.requestAnimationFrame||setTimeout)(f) }catch(e){ setTimeout(f,0) } })(function(){ try{ open({input: a.q}) }catch(err){} }) /* __imdbbSrhBackRaf */
+                    ;(function(f){ try{ (window.requestAnimationFrame||setTimeout)(f) }catch(e){ setTimeout(f,0) } })(function(){ try{ open({input: a.q}) }catch(err){} }) ;window.__imdbbSrhBackRaf = 1
                 }
                 else if(AA.all().indexOf(a.obj) < 0) imdbbArm = null
             }

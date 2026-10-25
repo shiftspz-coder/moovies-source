@@ -66,7 +66,7 @@ function build(html, sources){
             cv.setAttribute('data-m', bgm)
             cv.innerHTML = '<img src="img/logo.svg" alt="">'
             layer.insertBefore(cv, layer.firstChild)
-            S.timer = setInterval(function(){ try{ if(S.layer) S.layer.classList.toggle('imdbb-srh-has', !!S.layer.querySelector('.card')) }catch(e){} }, 300)
+            window.__imdbbSrhFast = 1; S.timer = setInterval(function(){ try{ if(S.layer) S.layer.classList.toggle('imdbb-srh-has', !!S.layer.querySelector('.card')) }catch(e){} }, 100)
         }
         return true
     }
