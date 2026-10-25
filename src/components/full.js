@@ -51,6 +51,7 @@ function imdbbFsecBg(item, d){
     if(!im.getAttribute('data-imdbb-orig')) im.setAttribute('data-imdbb-orig', im.getAttribute('src') || '')
     let u = L.TMDB.image('t/p/w1280' + d.backdrop_path)
     if(im.getAttribute('src') !== u) im.setAttribute('src', u)
+    try{ Background.change(Utils.cardImgBackgroundBlur(d)) }catch(e){}
     if(root.__imdbbFw) return
     root.__imdbbFw = setInterval(function(){
         try{
@@ -58,6 +59,7 @@ function imdbbFsecBg(item, d){
             if(root.querySelector('.imdbb-fsec .focus')) return
             let o = im.getAttribute('data-imdbb-orig')
             if(o && im.getAttribute('src') !== o) im.setAttribute('src', o)
+            try{ if(window.__imdbbCardBg) Background.change(window.__imdbbCardBg) }catch(e){}
             clearInterval(root.__imdbbFw); root.__imdbbFw = 0
         }
         catch(e){}
@@ -295,7 +297,7 @@ if(document.body.classList.contains('imdbb-compact')){ this.rows = this.rows.fil
             if(!this.tv) this.emit('scroll', 0)
         },
         onStart: function(){
-            this.props.get('movie') && Background.immediately(Utils.cardImgBackgroundBlur(this.props.get('movie')))
+            this.props.get('movie') && (window.__imdbbCardBg = Utils.cardImgBackgroundBlur(this.props.get('movie')), Background.immediately(window.__imdbbCardBg))
         },
         onScroll: function(position){
             let size = this.tv ? Math.min(this.active + this.view, this.rows.length) : this.rows.length
