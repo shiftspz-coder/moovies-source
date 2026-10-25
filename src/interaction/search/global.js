@@ -27,6 +27,37 @@ let html = Template.elem('div', {class: 'main-search'}),
     additional = [],
     listener = Subscribe()
 
+/* возврат из карточки обратно в поиск */
+let imdbbArm = null, imdbbArmSub = false
+
+function imdbbSrhBackReset(){ imdbbArm = null }
+
+function imdbbSrhBackArm(q, ok){
+    imdbbArm = null
+    let A = window.Lampa && window.Lampa.Activity
+    if(!ok || !q || !A || !A.all || !A.active) return
+    let base = A.all().length
+    if(!imdbbArmSub && A.listener){
+        imdbbArmSub = true
+        window.__imdbbSrhBackOn = true
+        A.listener.follow('backward', function(){
+            try{
+                let a = imdbbArm, AA = window.Lampa.Activity
+                if(!a || !a.obj) return
+                if(AA.active() === a.obj){
+                    imdbbArm = null
+                    setTimeout(function(){ try{ open({input: a.q}) }catch(err){} }, 250)
+                }
+                else if(AA.all().indexOf(a.obj) < 0) imdbbArm = null
+            }
+            catch(err){}
+        })
+    }
+    setTimeout(function(){
+        try{ if(A.all().length === base + 1) imdbbArm = {q: q, obj: A.active()} }catch(err){}
+    }, 800)
+}
+
 function init(){
     let imdbbSe = Head.addIcon(Template.string('icon_search'), open).addClass('open--search')
 
@@ -37,6 +68,7 @@ function init(){
 }
 
 function open(use_params = {}){
+    try{ imdbbSrhBackReset() }catch(err){}
     params = use_params
 
     input = use_params.input || ''
@@ -122,7 +154,9 @@ function createSources(){
     sources.listener.follow('select',(e)=>{
         if(input) history.add(input)
 
+        let sb_q = input, sb_ok = !params.onBack
         destroy()
+        try{ imdbbSrhBackArm(sb_q, sb_ok) }catch(err){}
     })
 
     search.find('.search__sources').append(sources.tabs())
