@@ -46,7 +46,7 @@ function imdbbSrhBackArm(q, ok){
                 if(!a || !a.obj) return
                 if(AA.active() === a.obj){
                     imdbbArm = null
-                    setTimeout(function(){ try{ open({input: a.q}) }catch(err){} }, 250)
+                    ;(function(f){ try{ (window.requestAnimationFrame||setTimeout)(f) }catch(e){ setTimeout(f,0) } })(function(){ try{ open({input: a.q}) }catch(err){} }) /* __imdbbSrhBackRaf */
                 }
                 else if(AA.all().indexOf(a.obj) < 0) imdbbArm = null
             }
