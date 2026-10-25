@@ -34,7 +34,7 @@ function Results(source){
             
             html.empty()
 
-            source.onRecall && source.onRecall(data, last_query)
+            source.onRecall && source.onRecall(data, last_query); try{ let lq = window.__imdbbLastQ && window.__imdbbLastQ[source_name]; if(lq && !last_query && window.__imdbbSrhNoHv && Date.now() < window.__imdbbSrhNoHv) query = lq }catch(e){}
 
             try{ window.__imdbbDbg2('build#1 ' + String(source_name||'')) }catch(e){} data.forEach(this.build.bind(this))
 
@@ -82,7 +82,7 @@ function Results(source){
                         let copy = Arrays.clone(data)
 
                         Cache.rewriteData('other', source_name + '_' + value, copy).catch(()=>{})
-                        Cache.rewriteData('other', source_name + '_last', copy).catch(()=>{})
+                        Cache.rewriteData('other', source_name + '_last', copy).catch(()=>{}); try{ (window.__imdbbLastQ = window.__imdbbLastQ || {})[source_name] = value }catch(e){}
 
                         try{ window.__imdbbDbg2('build#2 ' + String(source_name||'')) }catch(e){} data.forEach(this.build.bind(this))
                     }
