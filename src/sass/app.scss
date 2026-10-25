@@ -967,3 +967,8 @@ body.imdbb-search-wide.imdbb-sh-chips .search-history-key.focus{opacity:1; borde
 
 /*! imdbb-srhtop */
 html body .imdbb-home.imdbb-srh-layer>.scroll{overflow:visible!important; clip-path:inset(-4px 0 0 0)}
+
+/*! imdbb-fsec */
+html body .imdbb-home.imdbb-fsec{display:flex; flex-direction:column; justify-content:flex-end; box-sizing:border-box; padding-bottom:var(--imdbb-bot)!important; margin:0!important}
+html body .imdbb-home.imdbb-fsec>.items-line__head{position:relative; z-index:1}
+html body .imdbb-home.imdbb-fsec>.items-line__body{position:relative; z-index:1}

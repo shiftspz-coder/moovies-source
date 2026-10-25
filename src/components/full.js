@@ -14,6 +14,7 @@ import Utils from '../utils/utils'
 import Layer from '../core/layer'
 import Platform from '../core/platform'
 import Main from '../interaction/items/main/main'
+import imdbbHome from '../interaction/items/main/imdbb_home'
 import MainModule from '../interaction/items/main/module/module'
 import Cards from './full/cards'
 import Background from '../interaction/background'
@@ -45,6 +46,27 @@ function component(object){
         module: MainModule.only('Items', 'Empty', 'Callback'),
         empty: {
             cub_button: true
+        }
+    })
+
+    ;comp.use({
+        onInstance: function(item){
+            try{
+                let d = item && item.data
+                if(!(d && d.imdbb_wrow)) return
+                item.use({
+                    onCreate: function(){
+                        try{
+                            let el = item.render(true)
+                            if(!el || !el.classList || el.classList.contains('imdbb-fsec')) return
+                            el.classList.add('imdbb-fsec')
+                            imdbbHome({object: {component: 'main'}, html: el, use: function(m){ try{ m.onInstance && m.onInstance(item) }catch(e){} }})
+                        }
+                        catch(e){ console.warn('imdbb_fsec', e.message) }
+                    }
+                })
+            }
+            catch(e){}
         }
     })
 
