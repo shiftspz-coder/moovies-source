@@ -972,3 +972,7 @@ html body .imdbb-home.imdbb-srh-layer>.scroll{overflow:visible!important; clip-p
 html body .imdbb-home.imdbb-fsec{display:flex; flex-direction:column; justify-content:flex-end; box-sizing:border-box; padding-bottom:var(--imdbb-bot)!important; margin:0!important}
 html body .imdbb-home.imdbb-fsec>.items-line__head{position:relative; z-index:1}
 html body .imdbb-home.imdbb-fsec>.items-line__body{position:relative; z-index:1}
+
+/*! imdbb-fsec2 */
+html body .imdbb-home.imdbb-fsec .items-line__body>.scroll{margin-left:0!important}
+html body .imdbb-home.imdbb-fsec .items-line__body .scroll__content{padding-left:var(--imdbb-x)!important}

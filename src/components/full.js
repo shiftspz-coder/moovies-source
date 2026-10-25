@@ -41,6 +41,29 @@ let components = {
  * @param {*} object 
  */
 
+function imdbbFsecBg(item, d){
+    if(!d || !d.backdrop_path) return
+    let L = window.Lampa
+    let el = item.render(true)
+    let root = (el && el.closest && el.closest('.activity')) || document
+    let im = root.querySelector('.full-start__background')
+    if(!im || !L || !L.TMDB) return
+    if(!im.getAttribute('data-imdbb-orig')) im.setAttribute('data-imdbb-orig', im.getAttribute('src') || '')
+    let u = L.TMDB.image('t/p/w1280' + d.backdrop_path)
+    if(im.getAttribute('src') !== u) im.setAttribute('src', u)
+    if(root.__imdbbFw) return
+    root.__imdbbFw = setInterval(function(){
+        try{
+            if(root !== document && !root.isConnected){ clearInterval(root.__imdbbFw); root.__imdbbFw = 0; return }
+            if(root.querySelector('.imdbb-fsec .focus')) return
+            let o = im.getAttribute('data-imdbb-orig')
+            if(o && im.getAttribute('src') !== o) im.setAttribute('src', o)
+            clearInterval(root.__imdbbFw); root.__imdbbFw = 0
+        }
+        catch(e){}
+    }, 400)
+}
+
 function component(object){
     let comp = Utils.createInstance(Main, object, {
         module: MainModule.only('Items', 'Empty', 'Callback'),
@@ -63,7 +86,8 @@ function component(object){
                             imdbbHome({object: {component: 'main'}, html: el, use: function(m){ try{ m.onInstance && m.onInstance(item) }catch(e){} }})
                         }
                         catch(e){ console.warn('imdbb_fsec', e.message) }
-                    }
+                    },
+                    onActive: function(card, d){ try{ imdbbFsecBg(item, d) }catch(e){} }
                 })
             }
             catch(e){}
