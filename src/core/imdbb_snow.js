@@ -293,16 +293,6 @@ function init(){
             field: {name: 'Проверка дорожек по файлу', description: 'Карточка: через TorrServer на устройстве читает начало файла лучшей раздачи и уточняет качество и дубляж'}
         })
 
-        let rsApply = function(){ try{ let v = parseInt(window.Lampa.Storage.get('imdbb_rate_style', '1'), 10); if(!(v >= 1 && v <= 20)) v = 1; let cl = document.body && document.body.classList; if(!cl) return; for(let n = 1; n <= 20; n++) cl.remove('imdbb-rs-' + n); cl.add('imdbb-rs-' + v) }catch(e){} }
-        rsApply(); setTimeout(rsApply, 800)
-        Lp.Listener.follow('app', function(e){ if(e.type === 'ready') rsApply() })
-
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_rate_style', type: 'select', values: {'1': '1. Кромка слева (как сейчас)', '2': '2. Подчёркивание цветом', '3': '3. Стекло', '4': '4. Одна рамка с разделителем', '5': '5. Кольца', '6': '6. Метка-значок сверху', '7': '7. Шкала под числом', '8': '8. Контурные рамки', '9': '9. Кромка сверху', '10': '10. Минимал: точка и линия', '11': '11. Стекло и точка', '12': '12. Тонкая линия, крупное число', '13': '13. Сплошная заливка', '14': '14. Дуга', '15': '15. Звезда в цвете', '16': '16. Метка вертикально сбоку', '17': '17. Число с /10', '18': '18. Капсула', '19': '19. Общая плашка, двухцветная кромка', '20': '20. Тонированные плашки'}, default: '1'},
-            field: {name: 'Вид оценок', description: 'Оформление блока оценок IMDb и КиноПоиск на главной и в карточке'},
-            onChange: function(){ rsApply() }
-        })
 
         let bsApply = function(){ try{ let v = String(window.Lampa.Storage.get('imdbb_badge_style', '0')); let cl = document.body && document.body.classList; if(!cl) return; if(v === 'a' || v === 'b' || v === 'c'){ v = 'd'; try{ window.Lampa.Storage.set('imdbb_badge_style', 'd') }catch(e){} } ['a', 'b', 'c', 'd', 'e'].forEach(function(k){ cl.remove('imdbb-bs-' + k) }); if(v === 'd' || v === 'e') cl.add('imdbb-bs-' + v) }catch(e){} }
         let stApply = function(){ try{ let cl = document.body && document.body.classList; if(!cl) return; let v = String(Lp.Storage.get('imdbb_st_style', '0')), p = String(Lp.Storage.get('imdbb_st_pos', '1')); ['0', 'p', 'w', 'f', 't'].forEach(function(x){ cl.remove('imdbb-st-' + x) }); ['1', '2', '3'].forEach(function(x){ cl.remove('imdbb-sp-' + x) }); if(['p', 'w', 'f', 't'].indexOf(v) < 0) v = '0'; if(['1', '2', '3'].indexOf(p) < 0) p = '1'; cl.add('imdbb-st-' + v); cl.add('imdbb-sp-' + p) }catch(e){} }
