@@ -242,7 +242,7 @@ function component(object){
     }
 
     this.buildSorted = function(){
-        let need   = Storage.get('torrents_sort','popular')
+        let need   = Storage.get('torrents_sort','Seeders')
         let select = [
             {
                 title: Lang.translate('title_popular'),
@@ -484,7 +484,7 @@ function component(object){
     }
 
     this.selectedSort = function(){
-        let select = Storage.get('torrents_sort','popular')
+        let select = Storage.get('torrents_sort','Seeders')
 
         filter.chosen('sort', [sort_translate[select]])
     }
