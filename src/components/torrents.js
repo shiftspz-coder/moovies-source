@@ -813,6 +813,7 @@ function component(object){
                     ffprobe_elem.append('<div class="m-general"><div>S'+general.season+'</div>'+(general.episodes ? '<div>' + general.episodes + '</div>' : '')+'</div>')
                 }
 
+                ;{ let vv = element.ffprobe.find(a=>a.codec_type == 'video'); if(vv && vv.width && !/^(TS|CAM)$/i.test(quality)){ let rq = Utils.qualityToText(Utils.resolutionToQuality(vv.width, vv.height, 'p')); if(rq) quality = rq } window.__imdbbRealRes = 1 }
                 if(quality) ffprobe_tags.push({media: 'resolution', value: quality})
 
                 if(general.hdr) ffprobe_tags.push({media: 'resolution', value: 'HDR'})
