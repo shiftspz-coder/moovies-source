@@ -164,6 +164,7 @@ function general(title) {
 
     let resolution = title.match(/\b(4K|UHD|2160p|1080p|720p|480p|360p)\b/i)
 
+    ;{ let low = title.match(/\b(1080p|720p|480p|360p)\b/i); if(resolution && low && /^(4k|uhd)$/i.test(resolution[1])) resolution = low }
     if(resolution) result.resolution = resolution_map[resolution[1].toLowerCase()] || resolution[1]
 
     return result

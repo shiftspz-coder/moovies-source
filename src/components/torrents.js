@@ -618,7 +618,7 @@ function component(object){
 
                     arr.forEach(a=>{
                         if(type == 'quality'){
-                            if(a == '4k' && test('(4k|uhd)[ |\\]|,|$]|2160[pр]|ultrahd')) any = true
+                            if(a == '4k'){ let vv = element.ffprobe && element.ffprobe.find(x=>x.codec_type == 'video'); if(vv && vv.width){ if(Utils.resolutionToQuality(vv.width, vv.height, 0) >= 2160) any = true } else if(test('(4k|uhd)[ |\\]|,|$]|2160[pр]|ultrahd') && !(test('1080[pр]|720[pр]|fullhd') && !test('2160[pр]'))) any = true }
                             if(a == '1080p' && test('fullhd|1080[pр]')) any = true
                             if(a == '720p' && test('720[pр]')) any = true
                         }
