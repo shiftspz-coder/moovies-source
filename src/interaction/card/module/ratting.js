@@ -4,7 +4,7 @@ import IMDb from '../../../utils/imdb'
 import Tracks from '../../../core/imdbb_tracks'
 
 const rates = {}
-const QKEY = 'imdbb_q2'
+const QKEY = 'imdbb_q3'
 const EKEY = 'imdbb_ep_f1'
 const ETTL = 6 * 3600e3
 const MAXQ = 3

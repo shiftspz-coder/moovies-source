@@ -25,7 +25,7 @@ import Buttons from './start/buttons'
 import ovx from '../../utils/imdbb_ov'
 import Tracks from '../../core/imdbb_tracks'
 
-const QKEY = 'imdbb_q2'
+const QKEY = 'imdbb_q3'
 const kpBoth = ()=>{ try{ return localStorage.getItem('imdbb_kp_both') === 'true' }catch(e){ return false } }
 
 function gate(h, k){
