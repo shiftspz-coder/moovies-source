@@ -1,6 +1,7 @@
 import Utils from '../../../utils/utils'
 import Template from '../../template'
 import IMDb from '../../../utils/imdb'
+import Tracks from '../../../core/imdbb_tracks'
 
 const rates = {}
 const QKEY = 'imdbb_q2'
@@ -94,7 +95,11 @@ function qsaveLater(){
 function qget(k){
     let c = qload()[k]
 
-    return c && c.t + c.l > Date.now() ? c : null
+    if(!(c && c.t + c.l > Date.now())) return null
+
+    let v = c.v ? Tracks.apply(c.v) : c.v; window.__imdbbQgTr = 1
+
+    return v === c.v ? c : {v: v, t: c.t, l: c.l}
 }
 
 function qset(k, v, l){
