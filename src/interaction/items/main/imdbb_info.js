@@ -37,7 +37,7 @@ export function metaHtml(d, info, o){
     let qm = window.__imdbbQm ? window.__imdbbQm(d) : []
     if(qm.length) qm.forEach(function(x){ parts.push('<span class="imdbb-hero__q" data-b="' + (window.__imdbbBk ? window.__imdbbBk(x) : '') + '">' + x + '</span>') })
     else if(o.ql) (Array.isArray(o.ql) ? o.ql : [o.ql]).forEach(function(x){ parts.push('<span class="imdbb-hero__q" data-qs="1">' + x + '</span>') })
-    if(o.ct) parts.push('<span class="imdbb-hero__c">' + esc(o.ct) + '</span>')
+    if(o.ct && !(info && info.genres && info.genres.length)) parts.push('<span class="imdbb-hero__c">' + esc(o.ct) + '</span>')
     let date = (info && (info.release_date || info.first_air_date)) || d.release_date || d.first_air_date || ''
     let dm = date.match(/^(\d{4})-(\d\d)-(\d\d)$/)
     let ds = dm ? dm[3] + '.' + dm[2] + '.' + dm[1] : date.slice(0, 4)
@@ -47,7 +47,7 @@ export function metaHtml(d, info, o){
         if(c) parts.push('<span>' + esc(MAP[c] || c) + '</span>')
         if(info.runtime > 0){ let rm = info.runtime; parts.push('<span>' + ('0' + Math.floor(rm / 60)).slice(-2) + ':' + ('0' + (rm % 60)).slice(-2) + '</span>') }
         let g = (info.genres || []).slice(0, 3).map(function(x){ let n = x.name + ''; return n.charAt(0).toUpperCase() + n.slice(1) }).join(', ')
-        if(g) parts.push('<span class="imdbb-hero__g">' + esc(g) + '</span>')
+        if(g) parts.push('<span class="imdbb-hero__g">' + esc(((window.__imdbbAgeG = 1) && o.ct ? o.ct + ' · ' : '') + g) + '</span>')
     }
     let sl0 = subLine(d, info, !!(o.rate && o.kp2))
     if(sl0) parts.push('<span class="imdbb-hero__sl">' + esc(sl0) + '</span>')
