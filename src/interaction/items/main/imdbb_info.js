@@ -47,7 +47,7 @@ export function metaHtml(d, info, o){
         if(c) parts.push('<span>' + esc(MAP[c] || c) + '</span>')
         if(info.runtime > 0){ let rm = info.runtime; parts.push('<span>' + ('0' + Math.floor(rm / 60)).slice(-2) + ':' + ('0' + (rm % 60)).slice(-2) + '</span>') }
         let g = (info.genres || []).slice(0, 3).map(function(x){ let n = x.name + ''; return n.charAt(0).toUpperCase() + n.slice(1) }).join(', ')
-        if(g) parts.push('<span class="imdbb-hero__g">' + esc(((window.__imdbbAgeG = 1) && o.ct ? o.ct + ' · ' : '') + g) + '</span>')
+        if(g) parts.push('<span class="imdbb-hero__g">' + esc((window.__imdbbAgeA = 1) && g + (o.ct ? ' · ' + o.ct : '')) + '</span>')
     }
     let sl0 = subLine(d, info, !!(o.rate && o.kp2))
     if(sl0) parts.push('<span class="imdbb-hero__sl">' + esc(sl0) + '</span>')
