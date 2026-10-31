@@ -297,8 +297,16 @@ function checkEmptyUrl(url){
     return url
 }
 
+const HTTP_ONLY_HOSTS = ['pl.bylampa.online']
+
 function rewriteIfHTTPS(u){
-    return window.location.protocol == 'https:' ? u.replace(/^(http:\/\/|https:\/\/)/, 'https://') : u
+    if(window.location.protocol != 'https:') return u
+
+    let host = (u + '').replace(/^https?:\/\//, '').split(/[\/?#:]/)[0].toLowerCase()
+
+    if(HTTP_ONLY_HOSTS.indexOf(host) >= 0) return u.replace(/^https:\/\//, 'http://')
+
+    return u.replace(/^(http:\/\/|https:\/\/)/, 'https://')
 }
 
 function fixProtocolLink(u){
