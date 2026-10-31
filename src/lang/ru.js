@@ -143,7 +143,7 @@ export default {
     settings_rest_navigation: 'Тип навигации',
     settings_rest_keyboard: 'Тип клавиатуры',
     settings_rest_device: 'Название устройства',
-    settings_rest_device_placeholder: 'Например: Моя Лампа',
+    settings_rest_device_placeholder: 'Например: Мой ТВ',
     settings_rest_cache: 'Очистить кэш',
     settings_rest_tmdb_example: 'Например:',
     settings_rest_tmdb_api_descr: 'Для получения данных',
@@ -856,11 +856,11 @@ export default {
     menu_multtv: 'Мультсериалы',
     menu_feed: 'Лента',
 
-    lampa_movie_title: 'Ламповое кино',
+    lampa_movie_title: 'MoovieS',
     lampa_movie_descr: 'Следите за новинками на своем смартфоне.',
 
     plugins_catalog_work: 'Рабочие плагины',
-    plugins_catalog_work_descr: 'Плагины, которые точно работают в лампе.',
+    plugins_catalog_work_descr: 'Плагины, которые точно работают в MoovieS.',
     plugins_catalog_popular: 'Популярные плагины среди пользователей',
     plugins_catalog_popular_descr: 'Установка из неизвестных источников может привести к некорректной работе приложения.',
     plugins_online: 'Просмотр онлайн',

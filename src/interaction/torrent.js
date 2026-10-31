@@ -556,7 +556,7 @@ function list(items, params){
             }
             
             menu.push({
-                title: Lang.translate('player_lauch') + ' - Lampa',
+                title: Lang.translate('player_lauch') + ' - MoovieS',
                 player: 'lampa'
             })
 
