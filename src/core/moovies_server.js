@@ -19,7 +19,7 @@ function init(){
     L.SettingsApi.addParam({
         component: 'moovies_server',
         param: {name: 'moovies_server_url', type: 'button'},
-        field: {name: 'Адрес сервера', description: url || 'Изменить адрес, с которого загружается приложение'},
+        field: {name: 'Адрес сайта (откуда грузится MoovieS)', description: url || 'Изменить адрес, с которого загружается приложение'},
         onChange: function(){ window.AndroidJS.changeServerUrl() }
     })
 }
@@ -108,11 +108,63 @@ function initTs(){
     setInterval(tick, 1000)
 }
 
+function initAddr(){
+    let L = window.Lampa
+    const EMB = '127.0.0.1:8090'
+    function cur(){
+        let one = L.Storage.get('torrserver_url', '') || ''
+        let two = L.Storage.get('torrserver_url_two', '') || ''
+        return L.Storage.field('torrserver_use_link') == 'two' ? two || one : one || two
+    }
+    function label(){
+        let a = cur()
+        if(!a) return 'Не задан'
+        return a.replace(/^https?:\/\//, '') == EMB ? EMB + ' (встроенный)' : a
+    }
+    function paint(){
+        let d = document.querySelector('[data-name="moovies_tsaddr1"] .settings-param__descr')
+        if(d) d.textContent = label()
+    }
+    function put(v){
+        v = (v || '').trim().replace(/\/+$/, '')
+        if(!v) v = EMB
+        L.Storage.set('torrserver_url', v)
+        L.Storage.set('torrserver_use_link', 'one')
+        L.Noty.show('Адрес TorrServer: ' + v)
+        paint()
+    }
+    L.SettingsApi.addParam({
+        component: 'moovies_server',
+        param: {name: 'moovies_tsaddr1', type: 'button'},
+        field: {name: 'Адрес TorrServer', description: label()},
+        onRender: function(){ paint() },
+        onChange: function(){
+            let en = L.Controller.enabled().name
+            L.Select.show({
+                title: 'Адрес TorrServer',
+                items: [
+                    {title: 'Встроенный', subtitle: EMB, value: 'emb'},
+                    {title: 'Свой адрес…', subtitle: label(), value: 'own'}
+                ],
+                onBack: function(){ L.Controller.toggle(en) },
+                onSelect: function(a){
+                    L.Controller.toggle(en)
+                    if(a.value == 'emb') return put(EMB)
+                    let before = cur()
+                    L.Input.edit({title: 'Адрес TorrServer', value: before, free: true}, function(v){ if((v || '') !== before) put(v) })
+                }
+            })
+        }
+    })
+    setInterval(paint, 1000)
+}
+
 let tries = 0
 let timer = setInterval(function(){
     if(ready()){
         clearInterval(timer)
         try{ init() }catch(e){}
+        try{ initAddr() }catch(e){}
         try{ initTs() }catch(e){}
     }
     else if(++tries > 120) clearInterval(timer)

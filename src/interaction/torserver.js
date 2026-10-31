@@ -142,7 +142,7 @@ function hash(object, success, fail){
         title: '[LAMPA] ' + ((object.title)+'').replace('??', '?'),
         poster: object.poster,
         data: send_data ? JSON.stringify(send_data) : '',
-        save_to_db: Storage.get('torrserver_savedb','false'),
+        save_to_db: true,
         category
     }
 
