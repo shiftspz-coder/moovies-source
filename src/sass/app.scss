@@ -992,3 +992,9 @@ html body .imdbb-home.imdbb-fsec .items-line__body .scroll__content{padding-left
 .card-wmini__pill--play::before{content:''; display:inline-block; border-style:solid; border-width:.35em 0 .35em .6em; border-color:transparent transparent transparent #fff; margin-right:.4em}
 .card-wmini__bar{position:absolute; left:0; right:0; bottom:0; height:.35em; background:rgba(255,255,255,.3)}
 .card-wmini__bar>div{height:100%; background:#fff}
+
+/*! imdbb-wbar */
+.card-wmini .card-wmini__pill{display:none}
+.card-wmini .card-wmini__bar{left:.7em; right:.7em; bottom:.7em; height:.55em; border-radius:.3em; background:rgba(0,0,0,.5); overflow:hidden}
+.card-wmini .card-wmini__bar>div{border-radius:.3em; background:#fff}
+body .card.focus .card__view::after,body .card.hover .card__view::after{top:-.75em; left:-.75em; right:-.75em; bottom:-.75em}

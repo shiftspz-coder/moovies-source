@@ -51,7 +51,7 @@ function add(){
             L.Activity.push({url: '', title: 'Русское', component: 'main', source: 'tmdb', rus_mode: true, page: 1})
         })
 
-        let main = list.find('[data-action="main"]').eq(0)
+        let main = (list.find('[data-action="tv"]').eq(0).length ? list.find('[data-action="tv"]').eq(0) : list.find('[data-action="main"]').eq(0))
 
         if(main.length) main.after(li)
         else list.append(li)
