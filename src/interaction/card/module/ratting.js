@@ -518,7 +518,7 @@ export function qlabel(m){
 }
 
 const IMDBB_MIC = '<svg class="imdbb-mic" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>'
-function bstyle(){ try{ return String(window.Lampa.Storage.get('imdbb_badge_style', '0')) }catch(e){ return '0' } }
+function bstyle(){ return 'd' }
 
 window.__imdbbBk = function(x){ x = String(x || ''); if(x === '4K') return '4k'; if(x === 'FHD') return 'fhd'; if(x === 'HDR') return 'hdr'; if(x === 'Dolby Vision' || x === 'DV') return 'dv'; if(x.indexOf('Дубляж') === 0 || x.indexOf('imdbb-mic') > -1) return 'dub'; return '' }
 

@@ -257,11 +257,6 @@ function init(){
             field: {name: 'Рейтинг Кинопоиска рядом с IMDb', description: 'Показывает оценку Кинопоиска справа от IMDb на главной и в карточке. Выключено: КП только вместо IMDb у русских фильмов'}
         })
 
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_dim_off', type: 'trigger', default: false},
-            field: {name: 'Убрать затемнение фона', description: 'Полностью убирает затемнение фона везде: на главной, в рядах и в карточке'}
-        })
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',
@@ -275,17 +270,7 @@ function init(){
             field: {name: 'Фон пустого поиска', description: 'Фон с логотипом, пока в поиске нет результатов'}
         })
 
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_dim_main', type: 'select', values: {'0': 'Нет', '25': '25%', '50': '50%', '75': '75%', '100': 'Стандартное'}, default: '100'},
-            field: {name: 'Затемнение: главная и ряды', description: 'Не действует, если включено «Убрать затемнение фона»'}
-        })
 
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_dim_card', type: 'select', values: {'0': 'Нет', '25': '25%', '50': '50%', '75': '75%', '100': 'Стандартное'}, default: '0'},
-            field: {name: 'Затемнение: карточка', description: 'Не действует, если включено «Убрать затемнение фона»'}
-        })
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',
@@ -294,34 +279,16 @@ function init(){
         })
 
 
-        let bsApply = function(){ try{ let v = String(window.Lampa.Storage.get('imdbb_badge_style', '0')); let cl = document.body && document.body.classList; if(!cl) return; if(v === 'a' || v === 'b' || v === 'c'){ v = 'd'; try{ window.Lampa.Storage.set('imdbb_badge_style', 'd') }catch(e){} } ['a', 'b', 'c', 'd', 'e'].forEach(function(k){ cl.remove('imdbb-bs-' + k) }); if(v === 'd' || v === 'e') cl.add('imdbb-bs-' + v) }catch(e){} }
-        let stApply = function(){ try{ let cl = document.body && document.body.classList; if(!cl) return; let v = String(Lp.Storage.get('imdbb_st_style', '0')), p = String(Lp.Storage.get('imdbb_st_pos', '1')); ['0', 'p', 'w', 'f', 't'].forEach(function(x){ cl.remove('imdbb-st-' + x) }); ['1', '2', '3'].forEach(function(x){ cl.remove('imdbb-sp-' + x) }); if(['p', 'w', 'f', 't'].indexOf(v) < 0) v = '0'; if(['1', '2', '3'].indexOf(p) < 0) p = '1'; cl.add('imdbb-st-' + v); cl.add('imdbb-sp-' + p) }catch(e){} }
+        let bsApply = function(){ try{ let v = 'd'; let cl = document.body && document.body.classList; if(!cl) return; if(v === 'a' || v === 'b' || v === 'c'){ v = 'd'; try{ window.Lampa.Storage.set('imdbb_badge_style', 'd') }catch(e){} } ['a', 'b', 'c', 'd', 'e'].forEach(function(k){ cl.remove('imdbb-bs-' + k) }); if(v === 'd' || v === 'e') cl.add('imdbb-bs-' + v) }catch(e){} }
+        let stApply = function(){ try{ let cl = document.body && document.body.classList; if(!cl) return; let v = 'p', p = '3'; ['0', 'p', 'w', 'f', 't'].forEach(function(x){ cl.remove('imdbb-st-' + x) }); ['1', '2', '3'].forEach(function(x){ cl.remove('imdbb-sp-' + x) }); if(['p', 'w', 'f', 't'].indexOf(v) < 0) v = '0'; if(['1', '2', '3'].indexOf(p) < 0) p = '1'; cl.add('imdbb-st-' + v); cl.add('imdbb-sp-' + p) }catch(e){} }
         stApply(); setTimeout(stApply, 800)
         Lp.Listener.follow('app', function(e){ if(e.type === 'ready') stApply() })
 
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_st_style', type: 'select', values: {'0': 'Выкл', 'p': 'Светлая плашка', 'w': 'Белые силуэты', 'f': 'Силуэты в рамке', 't': 'Названия текстом'}, default: '0'},
-            field: {name: 'Значки студий', description: 'Логотипы студий в герое главной и карточки. Новый вид виден при следующем открытии карточки'},
-            onChange: function(){ stApply() }
-        })
 
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_st_pos', type: 'select', values: {'1': 'Под описанием', '2': 'Под метой', '3': 'Правый верхний угол'}, default: '1'},
-            field: {name: 'Размещение значков студий', description: 'Где показывать значки студий в герое'},
-            onChange: function(){ stApply() }
-        })
 
         bsApply(); setTimeout(bsApply, 800)
         Lp.Listener.follow('app', function(e){ if(e.type === 'ready') bsApply() })
 
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_badge_style', type: 'select', values: {'0': 'Как сейчас', 'd': 'Тонкая рамка', 'e': 'Мягкая заливка'}, default: '0'},
-            field: {name: 'Плашки качества', description: 'Оформление плашек качества, HDR, Dolby Vision, дубляжа и возраста. HDR и Dolby Vision показываются только при выбранном оформлении (не «Как сейчас»)'},
-            onChange: function(){ bsApply() }
-        })
 
         Lp.SettingsApi.addParam({
             component: 'imdbb',

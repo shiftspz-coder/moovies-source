@@ -104,17 +104,7 @@ function bg(){
  * Сила затемнения фона 0..1 (1 = как в оригинале), настройки IMDb+
  */
 function imdbbDim(){
-    let g = function(k, d){ try{ return Storage.get(k, d) }catch(e){ return d } }
-    let off = g('imdbb_dim_off', 'false')
-
-    if(off === true || off === 'true') return 0
-
-    let main = bokeh.d
-    let v = parseFloat(g(main ? 'imdbb_dim_main' : 'imdbb_dim_card', main ? '100' : '0'))
-
-    if(isNaN(v)) v = main ? 100 : 0
-
-    return Math.max(0, Math.min(100, v)) / 100
+    return 1
 }
 
 /**

@@ -58,7 +58,7 @@ export function stFill(el, info){
     try{
         if(!el) return
         let L = window.Lampa
-        let st = String(L.Storage.get('imdbb_st_style', '0'))
+        let st = 'p'
         let pcs = (info && info.production_companies) || []
         let key = st + '|' + pcs.map(function(x){ return x.name }).join(',')
         if(el.__imdbbSt === key) return

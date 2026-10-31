@@ -10,9 +10,7 @@ function L(){
 }
 
 function on(){
-    let v = L().Storage.get('imdbb_bell', 'true')
-
-    return !(v === false || v === 'false')
+    return true
 }
 
 function proxy(){
@@ -223,11 +221,6 @@ function init(){
     let Lp = L()
 
     try{
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_bell', type: 'trigger', default: true},
-            field: {name: 'Колокольчик: качество и дубляж', description: 'Уведомления о закладках (проверка при открытии приложения)'}
-        })
     }
     catch(e){}
 

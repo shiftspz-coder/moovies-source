@@ -152,7 +152,6 @@ function init(){
 
         L.SettingsApi.addParam({component: 'imdbb', param: {name: 'imdbb_infinite', type: 'trigger', default: true}, field: {name: 'Бесконечные карточки', description: 'Ряды подгружаются до конца вместо кнопки «Ещё»'}})
 
-        L.SettingsApi.addParam({component: 'imdbb', param: {name: 'imdbb_style', type: 'trigger', default: true}, field: {name: 'Стильный интерфейс', description: 'Горизонтальные карточки, блок информации и новая карточка фильма во всех разделах, включая поиск и избранное. ТВ и телефон в горизонтали'}, onChange: function(){ if(window.__imdbbStySync) window.__imdbbStySync() }})
 
 
         let cmp = function(){
@@ -174,7 +173,7 @@ function init(){
             catch(e){}
         }
 
-        window.__imdbbStySync = function(){ try{ let st = L.Storage.get('imdbb_style', 'true'); let on = !(st === false || st === 'false'); try{ L.Storage.set('imdbb_compact', on); L.Storage.set('imdbb_wide', on) }catch(e){} localStorage.setItem('imdbb_compact', on ? 'true' : 'false'); localStorage.setItem('imdbb_wide', on ? 'true' : 'false') }catch(e){} cmp() };
+        window.__imdbbStySync = function(){ try{ let on = true; try{ L.Storage.set('imdbb_compact', on); L.Storage.set('imdbb_wide', on) }catch(e){} localStorage.setItem('imdbb_compact', on ? 'true' : 'false'); localStorage.setItem('imdbb_wide', on ? 'true' : 'false') }catch(e){} cmp() };
 
         let VIS = [
             ['imdbb_hide_badges', 'Рейтинг IMDb, качество, сезоны и серии на карточках', 'Значки на постерах и в рядах (по умолчанию показаны)', true],
@@ -210,7 +209,7 @@ function init(){
         
 
         cmp()
-        try{ if(localStorage.getItem('imdbb_style') === null){ let c0 = L.Storage.get('imdbb_compact', 'true'); let w0 = localStorage.getItem('imdbb_wide'); let on0 = !(c0 === false || c0 === 'false' || w0 === 'false'); L.Storage.set('imdbb_style', on0); window.__imdbbStySync() } }catch(e){}
+        try{ window.__imdbbClean = 'imdbb-clean1'; window.__imdbbStySync() }catch(e){}
         window.__imdbbSh = function(){ try{ ['prof','mark','bcast','logo','sub','qual','descr','disc','pers','meta'].forEach(function(k){ document.body.classList.toggle('imdbb-sh-' + k, localStorage.getItem('imdbb_h_' + k) === 'false') }) }catch(e){} }
         window.__imdbbSh(); setTimeout(window.__imdbbSh, 1000)
         try{ L.Storage.listener.follow('change', function(e){ if(e && e.name && e.name.indexOf('imdbb_h_') === 0) window.__imdbbSh() }) }catch(e){}

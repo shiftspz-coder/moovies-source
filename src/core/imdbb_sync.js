@@ -12,9 +12,7 @@ function L(){
 }
 
 function on(){
-    let v = L().Storage.get('imdbb_sync', 'true')
-
-    return !(v === false || v === 'false')
+    return true
 }
 
 function url(){
@@ -201,11 +199,6 @@ function init(){
     let Lp = L()
 
     try{
-        Lp.SettingsApi.addParam({
-            component: 'imdbb',
-            param: {name: 'imdbb_sync', type: 'trigger', default: true},
-            field: {name: 'Синхронизация закладок', description: 'Закладки, избранное, «Позже» и история между устройствами'}
-        })
     }
     catch(e){}
 
