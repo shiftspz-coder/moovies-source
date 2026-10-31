@@ -5,6 +5,31 @@ import Storage from '../../../core/storage/storage'
 import Utils from '../../../utils/utils'
 import Template from '../../template'
 
+function mini(v, d){
+    let w = document.createElement('div'), p = document.createElement('div')
+    let b = document.createElement('div'), i = document.createElement('div')
+    let ep = v.ep || {}, view = v.view || {}
+    let pc = Math.max(0, Math.min(100, view.percent || 0))
+
+    w.className = 'card-wmini'
+
+    if(d.original_name){
+        p.className = 'card-wmini__pill card-wmini__pill--l'
+        p.innerText = ep.episode_number ? (ep.season_number ? 'С' + ep.season_number + ' · ' : '') + 'Э' + ep.episode_number : (ep.name || '')
+    }
+    else{
+        p.className = 'card-wmini__pill card-wmini__pill--r card-wmini__pill--play'
+        p.innerText = view.time ? Utils.secondsToTimeHuman(view.time) : pc + '%'
+    }
+    b.className = 'card-wmini__bar'
+    i.style.width = pc + '%'
+    b.append(i)
+    w.append(p)
+    w.append(b)
+
+    return w
+}
+
 export default {
     onCreate: function(){
         let timer
@@ -69,7 +94,7 @@ export default {
                         if(filed && filed.episode){
                             viewed = {
                                 ep: {
-                                    episode_number: filed.episode,
+                                    season_number: filed.season, episode_number: filed.episode,
                                     name: Lang.translate('full_episode') + ' ' + filed.episode,
                                 },
                                 view: Timeline.view(Utils.hash([filed.season, filed.season > 10 ? ':' : '',filed.episode,data.original_title].join('')))
@@ -135,6 +160,8 @@ export default {
 
                             wrap.find('.card-watched__body').append(div)
                         })
+
+                        wrap = mini(viewed, data)
 
                         this.watched_wrap = wrap
 

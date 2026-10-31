@@ -982,3 +982,13 @@ html body .imdbb-home.imdbb-fsec .items-line__body .scroll__content{padding-left
 .torrent-seasons__tile{min-width:2.6em; padding:.5em .7em; text-align:center; border-radius:.4em; background:rgba(255,255,255,.1); font-size:1.1em}
 .torrent-seasons__tile.active{box-shadow:inset 0 -.2em 0 #fff}
 .torrent-seasons__tile.focus{background:#fff; color:#000}
+
+/*! imdbb-wmini */
+.card-wmini{position:absolute; left:0; right:0; top:0; bottom:0; z-index:1; display:none; pointer-events:none; border-radius:inherit; overflow:hidden}
+.card.focus .card-wmini{display:block}
+.card-wmini__pill{position:absolute; top:.5em; background:rgba(0,0,0,.65); border-radius:.5em; padding:.15em .6em; font-size:.8em; color:#fff; white-space:nowrap}
+.card-wmini__pill--r{right:.5em}
+.card-wmini__pill--l{left:.5em}
+.card-wmini__pill--play::before{content:''; display:inline-block; border-style:solid; border-width:.35em 0 .35em .6em; border-color:transparent transparent transparent #fff; margin-right:.4em}
+.card-wmini__bar{position:absolute; left:0; right:0; bottom:0; height:.35em; background:rgba(255,255,255,.3)}
+.card-wmini__bar>div{height:100%; background:#fff}
