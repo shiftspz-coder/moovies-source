@@ -24,11 +24,36 @@ function init(){
     })
 }
 
+function initTs(){
+    let A = window.AndroidJS, L = window.Lampa
+    if(typeof A.tsSet !== 'function') return
+    L.SettingsApi.addParam({
+        component: 'moovies_server',
+        param: {name: 'moovies_ts', type: 'button'},
+        field: {name: 'Встроенный TorrServer', description: 'Свой сервер вместо MatriX'},
+        onChange: function(){
+            let en = L.Controller.enabled().name
+            L.Select.show({
+                title: 'TorrServer',
+                items: [{title: 'Включить встроенный', value: 'on'}, {title: 'Выключить (открыть MatriX)', value: 'off'}, {title: 'Статус', value: 'st'}],
+                onBack: function(){ L.Controller.toggle(en) },
+                onSelect: function(a){
+                    L.Controller.toggle(en)
+                    if(a.value == 'on') A.tsSet(true)
+                    if(a.value == 'off') A.tsSet(false)
+                    L.Noty.show('TorrServer: ' + A.tsStatus())
+                }
+            })
+        }
+    })
+}
+
 let tries = 0
 let timer = setInterval(function(){
     if(ready()){
         clearInterval(timer)
         try{ init() }catch(e){}
+        try{ initTs() }catch(e){}
     }
     else if(++tries > 120) clearInterval(timer)
 }, 500)
