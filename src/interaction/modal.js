@@ -156,6 +156,10 @@ function bind(where){
 function jump(tofoward){
     let select = scroll.render().find('.selector.focus');
 
+    let hk = select.data('jump')
+    if(typeof hk == 'function') return hk(tofoward)
+
+
     if(tofoward) select = select.nextAll().filter('.selector');
     else         select = select.prevAll().filter('.selector');
 

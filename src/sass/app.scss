@@ -976,3 +976,9 @@ html body .imdbb-home.imdbb-fsec>.items-line__body{position:relative; z-index:1}
 /*! imdbb-fsec2 */
 html body .imdbb-home.imdbb-fsec .items-line__body>.scroll{margin-left:0!important}
 html body .imdbb-home.imdbb-fsec .items-line__body .scroll__content{padding-left:var(--imdbb-x)!important}
+
+/*! imdbb-seasons */
+.torrent-seasons{display:flex; flex-wrap:wrap; gap:.5em; padding:.6em 1em}
+.torrent-seasons__tile{min-width:2.6em; padding:.5em .7em; text-align:center; border-radius:.4em; background:rgba(255,255,255,.1); font-size:1.1em}
+.torrent-seasons__tile.active{box-shadow:inset 0 -.2em 0 #fff}
+.torrent-seasons__tile.focus{background:#fff; color:#000}

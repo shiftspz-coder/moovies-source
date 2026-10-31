@@ -348,6 +348,7 @@ function list(items, params){
     let playlist = []
     let scroll_to_element
     let first_item
+    let first_by_s = {}, s_order = [], scroll_season
 
     Lampa.Listener.send('torrent_file',{type:'list_open',items, params})
 
@@ -482,7 +483,7 @@ function list(items, params){
 
         item[0].visibility = 'hidden'
 
-        if(view.percent > 0) scroll_to_element = item
+        if(view.percent > 0){ scroll_to_element = item; scroll_season = element.season }
 
         element.subtitles = parseSubs(element.path, params.files)
 
@@ -637,8 +638,36 @@ function list(items, params){
 
         if(!first_item) first_item = item
 
+        if(element.season && element.episode){
+            let sk = String(element.season)
+            if(!first_by_s[sk]) first_by_s[sk] = item
+            item.data('jump', (fw)=>{
+                let t = s_order[s_order.indexOf(sk) + (fw ? 1 : -1)]
+                if(t !== undefined) Controller.collectionFocus(first_by_s[t][0], Modal.scroll().render())
+            })
+        }
+
         Lampa.Listener.send('torrent_file',{type:'render',element,item,items,params})
     })
+
+    s_order = Object.keys(first_by_s).sort((a,b)=>a-b)
+
+    if(s_order.length >= 3){
+        let bar = $('<div class="torrent-seasons"></div>')
+
+        s_order.forEach(s=>{
+            let t = $('<div class="torrent-seasons__tile selector' + (s == String(scroll_season) ? ' active' : '') + '">' + s + '</div>')
+
+            t.on('hover:enter',()=>{
+                Controller.collectionFocus(first_by_s[s][0], Modal.scroll().render())
+            })
+            bar.append(t)
+        })
+
+        html.prepend(bar)
+
+        if(!scroll_to_element) scroll_to_element = first_item
+    }
 
     if(items.length == 0) html = Template.get('error',{title: Lang.translate('empty_title'),text: Lang.translate('torrent_parser_nofiles')})
     else Modal.title(Lang.translate('title_files'))
