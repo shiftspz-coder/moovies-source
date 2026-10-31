@@ -32,6 +32,8 @@ function api(url){
  * @return {string} Проксированный URL изображения
  */
 function image(url){
+    if(window.location.protocol == 'https:') return window.location.origin + '/p/3849c2cf/tmdbimg/' + url
+
     let base  = Utils.protocol() + 'image.tmdb.org/' + url
 
     return Storage.field('proxy_tmdb') && Storage.field('tmdb_proxy_image') ? proxy('tmdb_proxy_image') + '/' + base : base

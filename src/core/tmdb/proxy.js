@@ -88,6 +88,8 @@ function init(){
     }
 
     TMDB.image = function(url){
+        if(window.location.protocol == 'https:') return window.location.origin + '/p/3849c2cf/tmdbimg/' + url
+
         let base  = Utils.protocol() + 'image.tmdb.org/' + url
 
         return Utils.addUrlComponent(filter(Storage.field('proxy_tmdb') ? Utils.protocol() + IMG.current() + url : base), 'email=' + encodeURIComponent(email()))
