@@ -27,6 +27,16 @@ function mini(v, d){
     w.append(p)
     w.append(b)
 
+    let da = pc + ' ' + (100 - pc)
+    let rc = 'x="1.5" y="1.5" width="97" height="147" rx="7" fill="none" stroke-width="3"'
+    let ring = '<svg class="card-wmini__ring" viewBox="0 0 100 150" preserveAspectRatio="none"><rect ' + rc + ' stroke="rgba(0,0,0,.5)"/><rect ' + rc + ' stroke="#fff" pathLength="100" stroke-dasharray="' + da + '"/></svg>'
+    let corner = '<svg class="card-wmini__corner" viewBox="0 0 28 28"><circle cx="14" cy="14" r="10" fill="rgba(0,0,0,.35)" stroke="rgba(0,0,0,.5)" stroke-width="4"/><circle cx="14" cy="14" r="10" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="' + da + '" transform="rotate(-90 14 14)"/></svg>'
+    let dim = '<div class="card-wmini__dim" style="width:' + (100 - pc) + '%"></div><div class="card-wmini__cut" style="left:' + pc + '%"></div>'
+
+    w.style.setProperty('--wp', pc + '%')
+    w.insertAdjacentHTML('beforeend', ring + corner + dim)
+    b.insertAdjacentHTML('beforeend', '<div class="card-wmini__dot" style="left:' + pc + '%"></div>')
+
     return w
 }
 

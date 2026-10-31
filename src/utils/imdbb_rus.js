@@ -11,7 +11,25 @@ function enabled(){
 
 function apply(){
     if(li) li.toggleClass('hide', !enabled())
+    applyStyle()
+    place()
 }
+
+const WST = ['a','b','v','ring','side','top','corner','dim','under']
+
+function applyStyle(){
+    let v = window.Lampa.Storage.get('imdbb_wstyle', 'b')
+    WST.forEach(k => document.body.classList.remove('wst-' + k))
+    document.body.classList.add('wst-' + (WST.indexOf(v) > -1 ? v : 'b'))
+}
+
+function place(){
+    if(!li) return
+    let tv = li.parent().find('[data-action="tv"]').eq(0)
+    if(tv.length && !tv.next().is(li)) tv.after(li)
+}
+
+setInterval(place, 2000)
 
 function addParam(){
     if(param_added) return
@@ -28,8 +46,15 @@ function addParam(){
         field: {name: 'Русское в меню', description: 'Показывать пункт «Русское» (русские фильмы, сериалы и подборки по платформам)'}
     })
 
+    L.SettingsApi.addParam({
+        component: 'imdbb',
+        param: {name: 'imdbb_wstyle', type: 'select', values: {a: 'А · у края', b: 'Б · плавающая полоса', v: 'В · с маркером', ring: '1 · по рамке', side: '2 · сбоку', top: '3 · сверху', corner: '4 · кольцо в углу', dim: '5 · затемнение', under: '6 · под карточкой'}, default: 'b'},
+        field: {name: 'Вид метки просмотра', description: 'Как показывать прогресс на карточке в фокусе'}
+    })
+
     L.Storage.listener.follow('change', (e)=>{
         if(e.name === 'rus_menu') apply()
+        if(e.name === 'imdbb_wstyle') applyStyle()
     })
 }
 
