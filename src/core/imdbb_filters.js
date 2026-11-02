@@ -131,18 +131,20 @@ function init(){
         let lgxCard = function(){ let v = L.Storage.get('logo_card', 'true'); return !(v === false || v === 'false') }
         let lgxMode = function(){ let m = String(L.Storage.get('imdbb_logo_mode', 'a')); return LGM[m] ? m : 'a' }
         let lgxRu = function(){ let v = L.Storage.get('imdbb_logo_ru', 'false'); return v === true || v === 'true' }
-        let lgxText = function(){ return 'В открытой карточке: ' + (lgxCard() ? 'да' : 'нет') + ' · В ряду: ' + LGM[lgxMode()] + ' · Русское название: ' + (lgxRu() ? 'да' : 'нет') }
+        let lgxPl = function(){ let v = L.Storage.get('imdbb_logo_player', 'true'); return !(v === false || v === 'false') }
+        let lgxText = function(){ return 'В открытой карточке: ' + (lgxCard() ? 'да' : 'нет') + ' · В ряду: ' + LGM[lgxMode()] + ' · Русское название: ' + (lgxRu() ? 'да' : 'нет') + ' · В плеере: ' + (lgxPl() ? 'да' : 'нет') }
         let lgxBack = function(){ if(lgxItem) lgxItem.find('.settings-param__descr').text(lgxText()); L.Controller.toggle('settings_component') }
         let lgxOpen = function(){
             L.Select.show({
                 title: 'Логотипы',
                 items: [
                     {title: 'Логотип вместо названия в открытой карточке', subtitle: 'На карточке фильма', key: 'card', checkbox: true, checked: lgxCard()},
+                    {title: 'Логотип вместо названия в плеере', subtitle: 'Если логотипа нет, название текстом', key: 'pl', checkbox: true, checked: lgxPl()},
                     {title: 'Русское название над логотипом', subtitle: 'Если логотип не русский', key: 'ru', checkbox: true, checked: lgxRu()},
                     {title: 'Русское название шрифтом вместо логотипа', subtitle: 'Если логотип не русский. Цвет как у логотипа', key: 'tx', checkbox: true, checked: (function(){ let v = L.Storage.get('imdbb_logo_tx', 'false'); return v === true || v === 'true' })()},
                     {title: 'Логотипы на карточках в ряду', subtitle: 'Сейчас: ' + LGM[lgxMode()] + ' (только главная)', onSelect: function(){ setTimeout(function(){ L.Select.show({title: 'Логотипы в ряду (главная)', items: Object.keys(LGM).map(function(k){ return {title: LGM[k], key: k, selected: lgxMode() === k} }), onSelect: function(a){ L.Storage.set('imdbb_logo_mode', a.key); lgxBack() }, onBack: lgxBack }) }, 50) }}
                 ],
-                onCheck: function(a){ L.Storage.set(a.key === 'ru' ? 'imdbb_logo_ru' : (a.key === 'tx' ? 'imdbb_logo_tx' : 'logo_card'), a.checked) },
+                onCheck: function(a){ L.Storage.set(a.key === 'ru' ? 'imdbb_logo_ru' : (a.key === 'tx' ? 'imdbb_logo_tx' : (a.key === 'pl' ? 'imdbb_logo_player' : 'logo_card')), a.checked) },
                 onBack: lgxBack
             })
         }

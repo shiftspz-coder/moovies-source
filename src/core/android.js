@@ -71,6 +71,8 @@ function openTorrent(SERVER){
 
 function openPlayer(link, data){
     if (data) data.card = resolveCard(data)
+    try{ let Lm = window.Lampa, pv = Lm.Storage.get('imdbb_logo_player', 'true'), ls = data && data.card && data.card.images && data.card.images.logos
+        if(ls && ls.length && !(pv === false || pv === 'false')){ let pk = ls.filter(x=>x.iso_639_1 === 'ru')[0] || ls.filter(x=>x.iso_639_1 === 'en')[0] || ls[0]; if(pk && pk.file_path) data.ms_logo = Lm.TMDB.image('t/p/w500' + pk.file_path.replace('.svg', '.png')) } }catch(e){}
 
     let updateTimeline = function(elem){
         if(elem.timeline){
