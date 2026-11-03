@@ -159,12 +159,47 @@ function initAddr(){
     setInterval(paint, 1000)
 }
 
+function initCache(){
+    let L = window.Lampa, cur = {}
+    let base = function(){ let a = L.Storage.get('torrserver_url', '') || '127.0.0.1:8090'; return /^https?:/.test(a) ? a : 'http://' + a }
+    let call = function(b){ return fetch(base() + '/settings', {method: 'POST', body: JSON.stringify(b)}).then(r => r.text()).then(t => { try{ return JSON.parse(t) }catch(e){ return {} } }) }
+    let load = function(){ return call({action: 'get'}).then(j => { if(j && j.CacheSize) cur = j; return cur }) }
+    let save = function(k, v, paint){
+        load().then(j => {
+            if(!j || !j.CacheSize) return L.Noty.show('Сервер не отвечает')
+            let s = Object.assign({}, j); s[k] = v
+            return call({action: 'set', sets: s}).then(load).then(n => { paint(); L.Noty.show(n[k] === v ? 'Сохранено' : 'Сервер не принял значение') })
+        }).catch(() => L.Noty.show('Сервер не отвечает'))
+    }
+    let mk = function(name, title, key, vals, show){
+        let paint = function(){ let d = document.querySelector('[data-name="' + name + '"] .settings-param__descr'); if(d) d.textContent = cur[key] ? show(cur[key]) : 'Нет связи с сервером' }
+        L.SettingsApi.addParam({
+            component: 'moovies_server',
+            param: {name: name, type: 'button'},
+            field: {name: title, description: 'Загрузка…'},
+            onRender: function(){ load().then(paint).catch(paint) },
+            onChange: function(){
+                let en = L.Controller.enabled().name
+                L.Select.show({
+                    title: title,
+                    items: vals.map(v => ({title: show(v), subtitle: cur[key] === v ? 'Сейчас' : '', value: v})),
+                    onBack: function(){ L.Controller.toggle(en) },
+                    onSelect: function(a){ L.Controller.toggle(en); save(key, a.value, paint) }
+                })
+            }
+        })
+    }
+    mk('moovies_tscache', 'Размер кэша', 'CacheSize', [100, 200, 300, 400].map(m => m * 1048576), b => Math.round(b / 1048576) + ' МБ')
+    mk('moovies_tspre', 'Предзагрузка кэша', 'PreloadCache', [20, 40, 60, 80], v => v + ' %')
+}
+
 let tries = 0
 let timer = setInterval(function(){
     if(ready()){
         clearInterval(timer)
         try{ init() }catch(e){}
         try{ initAddr() }catch(e){}
+        try{ initCache() }catch(e){}
         try{ initTs() }catch(e){}
     }
     else if(++tries > 120) clearInterval(timer)

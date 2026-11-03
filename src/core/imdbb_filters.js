@@ -152,6 +152,7 @@ function init(){
 
         
 
+        L.SettingsApi.addParam({component: 'imdbb', param: {name: 'imdbb_player_panel', type: 'select', values: {now: 'Как сейчас', a: 'A · логотип сверху', b: 'B · всё по краям', c: 'C · как в стриминге', d: 'D · центр сверху', e: 'E · четыре угла', f: 'F · логотип слева', g: 'G · всё снизу', h: 'H · правая колонка', i: 'I · одна строка'}, default: 'now'}, field: {name: 'Панель плеера', description: 'Где показывать логотип, серию, формат и время'}})
         L.SettingsApi.addParam({component: 'imdbb', param: {name: 'imdbb_infinite', type: 'trigger', default: true}, field: {name: 'Бесконечные карточки', description: 'Ряды подгружаются до конца вместо кнопки «Ещё»'}})
 
 
