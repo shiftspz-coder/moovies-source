@@ -36,11 +36,19 @@ function kindOf(m){
     return m.media_type === 'tv' || (m.name && !m.title) || m.first_air_date ? 'tv' : 'movie'
 }
 
-function dcode(d){
-    return d ? 1 : 0
+function dcode(v){
+    let q = v && v.dubq ? v.dubq : null
+
+    if(q && q['4K']) return 3
+    if(q && q['1080']) return 2
+
+    return v && v.dub ? 2 : 0
 }
 
-function dtext(c){
+function dtext(c, p){
+    if(c >= 3 && p >= 2) return '🗣️ Дубляж 4K (раньше был FHD)'
+    if(c >= 2) return '🗣️ Появился дубляж ' + (c >= 3 ? '4K' : 'FHD')
+
     return '🗣️ Появился дубляж'
 }
 
@@ -62,7 +70,7 @@ function fetchQ(card, cb){
         try{ v = JSON.parse(x.responseText) }
         catch(e){}
 
-        cb(v && typeof v === 'object' ? {q: v.q || null, dub: v.dub || null} : null)
+        cb(v && typeof v === 'object' ? {q: v.q || null, dub: v.dub || null, dubq: v.dubq || null} : null)
     }
     x.onerror = x.ontimeout = function(){ cb(null) }
     x.send()
@@ -106,18 +114,19 @@ function handle(card, snap, items, done){
         }
 
         let nr = RANK[v.q] || 0
-        let nd = dcode(v.dub)
-        let cur = {r: Math.max(nr, old ? old.r : 0), d: Math.max(nd, old ? old.d : 0)}
+        let nd = dcode(v)
+        let od = old ? (old.d === 2 || old.d === 3 ? old.d : (old.d ? Math.max(nd, 2) : 0)) : 0
+        let cur = {r: Math.max(nr, old ? old.r : 0), d: Math.max(nd, od)}
 
         items[key] = cur
 
         if(old){
             let up = nr > old.r
-            let dn = nd > old.d
+            let dn = nd > od
             let parts = []
 
             if(up) parts.push(old.r ? 'Качество: ' + RN[old.r] + ' → ' + RN[nr] : 'Качество: ' + RN[nr])
-            if(dn) parts.push(dtext(nd))
+            if(dn) parts.push(dtext(nd, od))
 
             if(parts.length) notify(card, key, up && dn ? 'Новое качество и дубляж' : up ? 'Новое качество' : 'Дубляж', parts, cur)
         }
@@ -250,6 +259,8 @@ function init(){
     if(window.appready) start()
     else Lp.Listener.follow('app', function(e){ if(e.type === 'ready') start() })
 }
+
+window.__imdbb_dubr1 = 1
 
 export default {init, check}
 
