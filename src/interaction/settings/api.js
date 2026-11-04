@@ -52,7 +52,7 @@ function addParam(data){
  */
 // imdbb-setord: порядок и заголовки раздела IMDb+ (не зависит от порядка загрузки модулей)
 const IMDBB_ORD = [
-    ['Главная и карточки', ['imdbb_infinite', 'imdbb_swipe', 'imdbb_visible']],
+    ['Главная и карточки', ['imdbb_swipe', 'imdbb_visible']],
     ['Внешний вид', ['imdbb_lgx']],
     ['Трейлеры', ['imdbb_tr_mode', 'imdbb_tr_full', 'imdbb_tr_delay', 'imdbb_tr_zoom', 'imdbb_tr_q', 'imdbb_tr_sound', 'imdbb_tr_noty']],
     ['Качество и фильтры', ['imdbb_flt', 'imdbb_trk', 'imdbb_kp_both', 'imdbb_lgbt_block']]

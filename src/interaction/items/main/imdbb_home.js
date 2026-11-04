@@ -201,17 +201,7 @@ export default function(main){
                 lg.innerHTML = '<div class="imdbb-hero__t">' + esc(title) + '</div>'
             }
 
-            try{
-                let ru = L.Storage.get('imdbb_logo_ru', 'false')
-                let old = lg.querySelector('.imdbb-hero__ru')
-                if(old) old.remove()
-                if((ru === true || ru === 'true') && !(window.__imdbbLgTx && window.__imdbbLgTx.use(d, logo, pl, title)) && logo && pl !== null && pl !== 'ru' && title && title !== (d.original_title || d.original_name || '')){
-                    let c = document.createElement('div')
-                    c.className = 'imdbb-hero__ru'
-                    c.textContent = title
-                    lg.appendChild(c)
-                }
-            }catch(e){}
+            
 
             q('.imdbb-hero__tag').textContent = (info && info.tagline) || ''
 

@@ -215,7 +215,7 @@ class Start extends Emit {
             setTimeout(function(){ gate(ibw) }, 1000)
         }
 
-        let logoOff = window.Lampa.Storage.get('logo_card', 'true')
+        let logoOff = 'true'
 
         if(!(logoOff === false || logoOff === 'false') && this.card.id){
             let L = window.Lampa
@@ -225,8 +225,8 @@ class Start extends Emit {
             let ibh = this.html
             let ibc = this.card
             let ibl = lgcached(ibc)
-            let ruOn = L.Storage.get('imdbb_logo_ru', 'false'); ruOn = ruOn === true || ruOn === 'true'
-            if(ibl && ibl.l === undefined && (ruOn || (window.__imdbbLgTx && window.__imdbbLgTx.on()))) ibl = null
+            
+            if(ibl && ibl.l === undefined && (window.__imdbbLgTx && window.__imdbbLgTx.on())) ibl = null
             let back = function(){ lt.css('visibility', ''); lg.css('visibility', ''); try{ let hl = ibh.find('.imdbb-hero__logo'); if(hl.length && !hl.children().length) hl.html($('<div class="imdbb-hero__t"></div>').text(ibc.title || ibc.name || '')) }catch(e){} gate(ibh, 'l') }
             let url = L.TMDB.api((this.card.name ? 'tv' : 'movie') + '/' + this.card.id + '/images?api_key=' + L.TMDB.key() + '&include_image_language=' + lang + ',en,null')
 
@@ -248,8 +248,8 @@ class Start extends Emit {
                 let img = $('<img style="' + st + '" />')
 
                 img.on('load', function(){
-                    lt.removeClass('twolines').html('').append(img).css('visibility', ''); try{ let hl = ibh.find('.imdbb-hero__logo')[0]; if(hl){ hl.innerHTML = '<img alt="">'; hl.firstChild.src = img.attr('src'); if(window.__imdbbLgDark) window.__imdbbLgDark.watch(hl.firstChild); try{ let c0 = ibc.title || ibc.name || '', o0 = ibc.original_title || ibc.original_name || ''; if(ruOn && (pick.iso_639_1 || '') !== lang && c0 && c0 !== o0){ let e0 = document.createElement('div'); e0.className = 'imdbb-hero__ru'; e0.textContent = c0; hl.appendChild(e0) } }catch(e){} } }catch(e){}
-                    try{ ibh.find('.imdbb-rutl').remove(); let ct = ibc.title || ibc.name || ''; let co = ibc.original_title || ibc.original_name || ''; if(ruOn && (pick.iso_639_1 || '') !== lang && ct && ct !== co){ let w = document.createElement('div'); w.className = 'imdbb-rutl'; let t2 = document.createElement('div'); t2.className = 'imdbb-rutl__t'; t2.textContent = ct; w.appendChild(t2); if(lt[0] && lt[0].parentNode) lt[0].parentNode.insertBefore(w, lt[0]) } }catch(e){}
+                    lt.removeClass('twolines').html('').append(img).css('visibility', ''); try{ let hl = ibh.find('.imdbb-hero__logo')[0]; if(hl){ hl.innerHTML = '<img alt="">'; hl.firstChild.src = img.attr('src'); if(window.__imdbbLgDark) window.__imdbbLgDark.watch(hl.firstChild); } }catch(e){}
+                    
                     lg.css('visibility', '')
                     gate(ibh, 'l')
                 })

@@ -1,6 +1,5 @@
 window.imdbbInf = function(){
-    try{ let v = window.Lampa.Storage.get('imdbb_infinite', 'true'); return !(v === false || v === 'false') }
-    catch(e){ return true }
+    return true
 }
 
 export default {

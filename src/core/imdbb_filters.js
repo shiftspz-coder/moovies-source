@@ -11,7 +11,7 @@ const ITEMS = [
 ]
 
 function on(n){
-    let v = window.Lampa.Storage.get('imdbb_f_' + n, 'false')
+    let v = window.Lampa.Storage.get('imdbb_f_' + n, (n === 'asian' || n === 'lang') ? 'true' : 'false')
 
     return v === true || v === 'true'
 }
@@ -101,6 +101,7 @@ function init(){
 
     try{
         let noacc = window.lampa_settings && window.lampa_settings.account_use === false
+        try{ if(L.Storage.get('imdbb_f_def2', '') !== '1'){ L.Storage.set('imdbb_f_asian', true); L.Storage.set('imdbb_f_lang', true); L.Storage.set('imdbb_f_def2', '1') } }catch(e){}
 
         L.SettingsApi.addComponent({
             component: 'imdbb',
@@ -112,7 +113,7 @@ function init(){
         let FLT = ITEMS.map(function(it){ return [it[0], it[1].replace(/^Фильтр: /, ''), it[2]] }).concat([['nobd', 'Поиск: скрывать карточки без кадра', 'В поиске остаются только широкие карточки с кадром (при следующем поиске)']])
         let NBD = {off: 'Как сейчас', a: 'А: постер обрезан по центру', b: 'Б: постер целиком на фоне'}
         let fltItem = null
-        let fltOn = function(k){ let v = L.Storage.get('imdbb_f_' + k, 'false'); return v === true || v === 'true' }
+        let fltOn = function(k){ let v = L.Storage.get('imdbb_f_' + k, (k === 'asian' || k === 'lang') ? 'true' : 'false'); return v === true || v === 'true' }
         let fltNbd = function(){ let m = String(L.Storage.get('imdbb_card_nobd', 'off')); return NBD[m] ? m : 'off' }
         let fltText = function(){ return 'Включено: ' + FLT.filter(function(x){ return fltOn(x[0]) }).length + ' из ' + FLT.length + ' · Поиск, карточки без кадра: ' + NBD[fltNbd()] }
         let fltBack = function(){ if(fltItem) fltItem.find('.settings-param__descr').text(fltText()); L.Controller.toggle('settings_component') }
@@ -128,23 +129,23 @@ function init(){
 
         let LGM = {off: 'Выкл', a: 'А: снизу слева', b: 'Б: по центру', c: 'В: только в фокусе'}
         let lgxItem = null
-        let lgxCard = function(){ let v = L.Storage.get('logo_card', 'true'); return !(v === false || v === 'false') }
+        
         let lgxMode = function(){ let m = String(L.Storage.get('imdbb_logo_mode', 'a')); return LGM[m] ? m : 'a' }
-        let lgxRu = function(){ let v = L.Storage.get('imdbb_logo_ru', 'false'); return v === true || v === 'true' }
+        
         let lgxPl = function(){ let v = L.Storage.get('imdbb_logo_player', 'true'); return !(v === false || v === 'false') }
-        let lgxText = function(){ return 'В открытой карточке: ' + (lgxCard() ? 'да' : 'нет') + ' · В ряду: ' + LGM[lgxMode()] + ' · Русское название: ' + (lgxRu() ? 'да' : 'нет') + ' · В плеере: ' + (lgxPl() ? 'да' : 'нет') }
+        let lgxText = function(){ return 'В ряду: ' + LGM[lgxMode()] + ' · В плеере: ' + (lgxPl() ? 'да' : 'нет') }
         let lgxBack = function(){ if(lgxItem) lgxItem.find('.settings-param__descr').text(lgxText()); L.Controller.toggle('settings_component') }
         let lgxOpen = function(){
             L.Select.show({
                 title: 'Логотипы',
                 items: [
-                    {title: 'Логотип вместо названия в открытой карточке', subtitle: 'На карточке фильма', key: 'card', checkbox: true, checked: lgxCard()},
+                    
                     {title: 'Логотип вместо названия в плеере', subtitle: 'Если логотипа нет, название текстом', key: 'pl', checkbox: true, checked: lgxPl()},
-                    {title: 'Русское название над логотипом', subtitle: 'Если логотип не русский', key: 'ru', checkbox: true, checked: lgxRu()},
+                    
                     {title: 'Русское название шрифтом вместо логотипа', subtitle: 'Если логотип не русский. Цвет как у логотипа', key: 'tx', checkbox: true, checked: (function(){ let v = L.Storage.get('imdbb_logo_tx', 'false'); return v === true || v === 'true' })()},
                     {title: 'Логотипы на карточках в ряду', subtitle: 'Сейчас: ' + LGM[lgxMode()] + ' (только главная)', onSelect: function(){ setTimeout(function(){ L.Select.show({title: 'Логотипы в ряду (главная)', items: Object.keys(LGM).map(function(k){ return {title: LGM[k], key: k, selected: lgxMode() === k} }), onSelect: function(a){ L.Storage.set('imdbb_logo_mode', a.key); lgxBack() }, onBack: lgxBack }) }, 50) }}
                 ],
-                onCheck: function(a){ L.Storage.set(a.key === 'ru' ? 'imdbb_logo_ru' : (a.key === 'tx' ? 'imdbb_logo_tx' : (a.key === 'pl' ? 'imdbb_logo_player' : 'logo_card')), a.checked) },
+                onCheck: function(a){ L.Storage.set((a.key === 'tx' ? 'imdbb_logo_tx' : 'imdbb_logo_player'), a.checked) },
                 onBack: lgxBack
             })
         }
@@ -152,7 +153,7 @@ function init(){
 
         
 
-        L.SettingsApi.addParam({component: 'imdbb', param: {name: 'imdbb_infinite', type: 'trigger', default: true}, field: {name: 'Бесконечные карточки', description: 'Ряды подгружаются до конца вместо кнопки «Ещё»'}})
+        
 
 
 
