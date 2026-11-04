@@ -39,6 +39,8 @@ function Main(){
         for(let name in components){
             let aded = components[name]
 
+            if(aded.hidden) continue
+
             if(!comp.find('[data-component="'+name+'"]').length){
                 let item = $(`<div class="settings-folder selector" data-component="${name}">
                     <div class="settings-folder__icon">

@@ -96,8 +96,54 @@ function imdbbOrder(list){
     }
 }
 
+// imdbb-subs: вложенные подэкраны
+IMDBB_ORD.forEach((g, i)=>addComponent({component: 'imdbb_g' + i, icon: '', name: g[0], hidden: true}))
+addComponent({component: 'imdbb_grest', icon: '', name: 'Прочее', hidden: true})
+
+function imdbbGroups(list){
+    let used = {}
+    let out  = IMDBB_ORD.map((g, i)=>{
+        let items = []
+        g[1].forEach(n=>list.forEach(e=>{
+            if(e && e.param && e.param.name === n){
+                used[n] = true
+                items.push(e)
+            }
+        }))
+        return {key: 'imdbb_g' + i, title: g[0], items: items}
+    })
+    out.push({key: 'imdbb_grest', title: 'Прочее', items: list.filter(e=>!(e && e.param && used[e.param.name]))})
+    return out
+}
+
+function imdbbFolders(list){
+    try{
+        let out = []
+        imdbbGroups(list).forEach(g=>{
+            if(!g.items.length) return
+            let pos = out.length
+            out.push({
+                component: 'imdbb',
+                param: {name: 'imdbb_dir_' + g.key, type: 'button'},
+                field: {name: g.title, description: 'Пунктов: ' + g.items.length},
+                onChange: ()=>{
+                    let S = window.Lampa.Settings
+                    S.create(g.key, {onBack: ()=>S.create('imdbb', {last_index: pos})})
+                }
+            })
+        })
+        return out
+    }
+    catch(e){
+        return imdbbOrder(list)
+    }
+}
+
 function getParam(component){
-    return component === 'imdbb' && params[component] ? imdbbOrder(params[component]) : params[component]
+    let l = params.imdbb
+    if(component === 'imdbb' && l) return imdbbFolders(l)
+    let g = l && /^imdbb_g/.test(component) ? imdbbGroups(l).filter(x=>x.key === component)[0] : null
+    return g ? g.items : params[component]
 }
 /**
  * Удалить параметры

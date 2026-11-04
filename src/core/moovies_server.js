@@ -189,7 +189,7 @@ function initCache(){
             }
         })
     }
-    mk('moovies_tscache', 'Размер кэша', 'CacheSize', [100, 200, 300, 400].map(m => m * 1048576), b => Math.round(b / 1048576) + ' МБ')
+    mk('moovies_tscache', 'Размер кэша', 'CacheSize', [64, 100, 200, 300, 400].map(m => m * 1048576), b => Math.round(b / 1048576) + ' МБ')
     mk('moovies_tspre', 'Предзагрузка кэша', 'PreloadCache', [20, 40, 60, 80], v => v + ' %')
 }
 
