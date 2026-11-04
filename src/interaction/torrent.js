@@ -483,7 +483,8 @@ function list(items, params){
 
         item[0].visibility = 'hidden'
 
-        if(view.percent > 0){ scroll_to_element = item; scroll_season = element.season }
+        window.__imdbb_vscroll1 = 1
+        if(view.percent > 0 || view.time > 0){ scroll_to_element = item; scroll_season = element.season }
 
         element.subtitles = parseSubs(element.path, params.files)
 
