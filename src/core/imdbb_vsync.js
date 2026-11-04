@@ -90,6 +90,27 @@ function collect(cur, from, first){
 
     return {views: out, max: max}
 }
+function sync(){
+    let Lp = L()
+    let u = url()
+
+    if(busy || !u || !Lp) return
+
+    let m = meta()
+    let cur = {}
+    let pack = null
+
+    try{ cur = Lp.Storage.get(Lp.Timeline.filename(), {}) }
+    catch(e){ return }
+
+    pack = collect(cur || {}, m ? m.t : 0, !m)
+    busy = true
+    last = Date.now()
+
+    let x = new XMLHttpRequest()
+    x.open('POST', u, true)
+    x.setRequestHeader('Content-Type', 'text/plain')
+    x.timeout = 20000
     x.onload = function(){
         busy = false
 
