@@ -111,6 +111,7 @@ import ImdbbFilters from './core/imdbb_filters'
 import './core/moovies_server'
 import ImdbbBell from './core/imdbb_bell'
 import ImdbbSync from './core/imdbb_sync'
+import ImdbbVSync from './core/imdbb_vsync'
 import ImdbbSnow from './core/imdbb_snow'
 import ImdbbTrailer from './core/imdbb_trailer'
 window.__imdbbTrMod = ImdbbTrailer
@@ -642,6 +643,7 @@ function startApp(){
     ImdbbFilters.init()
     ImdbbBell.init()
     ImdbbSync.init()
+    ImdbbVSync.init()
     ImdbbSnow.init()
     LoadingProgress.status('ContentRows init')
     
