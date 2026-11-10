@@ -250,6 +250,8 @@ export default {
     settings_server_base: 'Сохранять в базу',
     settings_server_base_descr: 'Торрент будет добавлен в базу TorrServer',
     settings_server_preload: 'Использовать буфер пред.загрузки',
+    settings_server_connlimit: 'Лимит соединений TorrServer',
+    settings_server_connlimit_descr: 'Максимум соединений с пирами, применяется к серверу сразу',
     settings_server_preload_descr: 'Дожидаться заполнения буфера предварительной загрузки TorrServer перед проигрыванием',
     settings_server_auth: 'Авторизация',
     settings_server_password_use: 'Вход по паролю',

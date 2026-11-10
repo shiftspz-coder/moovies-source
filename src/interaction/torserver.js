@@ -437,7 +437,34 @@ function error(){
     Controller.toggle('modal')
 }
 
+let limit_net = new Request()
+
+/**
+ * Ставит ConnectionsLimit на TorrServer (меняется только это поле)
+ */
+function setLimit(limit, success, fail){
+    limit_net.clear()
+    limit_net.timeout(8000)
+
+    limit_net.silent(url()+'/settings',(json)=>{
+        if(typeof json.CacheSize == 'undefined') return fail && fail('no TorrServer')
+
+        if(json.ConnectionsLimit == limit) return success && success(limit, true)
+
+        json.ConnectionsLimit = limit
+
+        limit_net.silent(url()+'/settings',()=>{
+            success && success(limit, false)
+        },(a,c)=>{
+            fail && fail(limit_net.errorDecode(a,c))
+        },JSON.stringify({action: 'set', sets: json}),{dataType: 'text'})
+    },(a,c)=>{
+        fail && fail(limit_net.errorDecode(a,c))
+    },JSON.stringify({action: 'get'}))
+}
+
 export default {
+    setLimit,
     ip,
     my,
     add,

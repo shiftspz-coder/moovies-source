@@ -6,6 +6,7 @@ import Utils from '../utils/utils'
 import Request from '../utils/reguest'
 import Lang from '../core/lang'
 import Settings from '../interaction/settings/settings'
+import Torserver from '../interaction/torserver'
 
 let torrent_net = new Request()
 
@@ -17,14 +18,28 @@ function init(){
     Storage.listener.follow('change', function (e) {
         if (e.name == 'torrserver_url') check(e.name)
         if (e.name == 'torrserver_url_two') check(e.name)
+        if (e.name == 'torrserver_connlimit') applyLimit(true)
         if (e.name == 'torrserver_use_link') check(e.value == 'one' ? 'torrserver_url' : 'torrserver_url_two')
     })
 
     Settings.listener.follow('open', function (e){
         if(e.name == 'server'){
+            applyLimit(false)
             check(Storage.field('torrserver_use_link') == 'one' ? 'torrserver_url' : 'torrserver_url_two')
         }
         else torrent_net.clear() 
+    })
+}
+
+function applyLimit(notify){
+    if(!Torserver.url()) return
+
+    let want = parseInt(Storage.field('torrserver_connlimit')) || 50
+
+    Torserver.setLimit(want, (v, same)=>{
+        if(notify) Noty.show('TorrServer: ' + v)
+    }, (err)=>{
+        if(notify) Noty.show('TorrServer: ' + err)
     })
 }
 
