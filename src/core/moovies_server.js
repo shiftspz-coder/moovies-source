@@ -191,6 +191,14 @@ function initCache(){
     }
     mk('moovies_tscache', 'Размер кэша', 'CacheSize', [64, 100, 200, 300, 400].map(m => m * 1048576), b => Math.round(b / 1048576) + ' МБ')
     mk('moovies_tspre', 'Предзагрузка кэша', 'PreloadCache', [20, 40, 60, 80], v => v + ' %')
+    mk('moovies_tsconn', 'Лимит соединений', 'ConnectionsLimit', [25, 50, 75, 100], v => String(v))
+    try{
+        if(!L.Storage.get('moovies_conn50', '')) load().then(j => {
+            if(!j || !j.CacheSize) return
+            L.Storage.set('moovies_conn50', '1')
+            if(j.ConnectionsLimit !== 50) save('ConnectionsLimit', 50, function(){})
+        }).catch(() => {})
+    }catch(e){}
 }
 
 let tries = 0
