@@ -54,7 +54,7 @@ function create(){
                 <span class="media-loading__separator media-loading__speed-separator"></span>
                 <span class="media-loading__percent">0%</span>
             </div>
-            <div class="ml2-extra" style="margin-top:.6em;font-size:1.05em;line-height:1.5;text-align:center;opacity:.85"><div class="ml2-l1"></div><div class="ml2-l2"></div></div>
+            <div class="ml2-extra" style="margin-top:.8em;text-align:center"><div class="ml2-l1" style="font-size:1.05em;line-height:1.5;opacity:.85"></div><div class="ml2-l2" style="display:grid;grid-template-columns:1fr 1fr 1.35fr;gap:.5em;width:26em;max-width:90vw;margin:.6em auto 0"></div></div>
         </div>
     </div>`)
     let media = {}
@@ -94,8 +94,8 @@ function create(){
 
         let mb = v=>(v/1048576).toFixed(1)
         let l1 = [], l2 = []
-        if(speed) l1.push('\u2193 ' + speed)
-        if(stats.up) l1.push('\u2191 ' + stats.up)
+        // speed is shown in tiles
+        // upload is shown in tiles
         if(stats.ps > 0) l1.push(mb(stats.pb || 0) + ' / ' + mb(stats.ps) + ' \u041c\u0411')
         if(stats.ps > 0 && stats.dl > 0){
             let left = Math.max(0, Math.round((stats.ps - (stats.pb || 0)) / stats.dl))
@@ -109,7 +109,9 @@ function create(){
             if(!isNaN(total)) l2.push(total + ' \u0432\u0441\u0435\u0433\u043e')
         }
         html.find('.ml2-l1').text(l1.join(' \u00b7 ')).toggleClass('hide', !l1.length)
-        html.find('.ml2-l2').text(l2.join(' \u00b7 ')).toggleClass('hide', !l2.length)
+        let tile = (n, v)=>'<div style="background:rgba(255,255,255,0.08);border-radius:.5em;padding:.4em .6em;text-align:left"><div style="font-size:.8em;color:rgba(255,255,255,0.6);white-space:nowrap">' + n + '</div><div style="font-weight:500;color:#fff;white-space:nowrap">' + v + '</div></div>'
+        let num = v=>isNaN(v) ? '—' : v
+        html.find('.ml2-l2').html(show_peers ? tile('Скачивание', speed || '0.0') + tile('Отдача', stats.up || '0') + tile('Сиды', num(stats.seeds)) + tile('Активные', active) + tile('В очереди', num(stats.pending)) + tile('Подключаются', num(stats.half)) : '').toggleClass('hide', !show_peers)
     }
 
     function show(data){
