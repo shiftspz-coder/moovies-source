@@ -54,6 +54,7 @@ function create(){
                 <span class="media-loading__separator media-loading__speed-separator"></span>
                 <span class="media-loading__percent">0%</span>
             </div>
+            <div class="ml2-extra" style="margin-top:.6em;font-size:1.05em;line-height:1.5;text-align:center;opacity:.85"><div class="ml2-l1"></div><div class="ml2-l2"></div></div>
         </div>
     </div>`)
     let media = {}
@@ -90,6 +91,25 @@ function create(){
         html.find('.media-loading__speed-separator').toggleClass('hide', !speed)
         html.find('.media-loading__peers').toggleClass('hide', !show_peers)
         html.find('.media-loading__peers-value').text(show_peers ? active + ' / ' + (isNaN(total) ? '—' : total) : '')
+
+        let mb = v=>(v/1048576).toFixed(1)
+        let l1 = [], l2 = []
+        if(speed) l1.push('\u2193 ' + speed)
+        if(stats.up) l1.push('\u2191 ' + stats.up)
+        if(stats.ps > 0) l1.push(mb(stats.pb || 0) + ' / ' + mb(stats.ps) + ' \u041c\u0411')
+        if(stats.ps > 0 && stats.dl > 0){
+            let left = Math.max(0, Math.round((stats.ps - (stats.pb || 0)) / stats.dl))
+            l1.push('\u043e\u0441\u0442\u0430\u043b\u043e\u0441\u044c ~' + Math.floor(left / 60) + ':' + ('0' + (left % 60)).slice(-2))
+        }
+        if(show_peers){
+            l2.push(active + ' \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445')
+            if(!isNaN(stats.seeds)) l2.push(stats.seeds + ' \u0441\u0438\u0434\u043e\u0432')
+            if(stats.half > 0) l2.push(stats.half + ' \u043f\u043e\u0434\u043a\u043b\u044e\u0447\u0430\u044e\u0442\u0441\u044f')
+            if(stats.pending > 0) l2.push(stats.pending + ' \u0436\u0434\u0443\u0442')
+            if(!isNaN(total)) l2.push(total + ' \u0432\u0441\u0435\u0433\u043e')
+        }
+        html.find('.ml2-l1').text(l1.join(' \u00b7 ')).toggleClass('hide', !l1.length)
+        html.find('.ml2-l2').text(l2.join(' \u00b7 ')).toggleClass('hide', !l2.length)
     }
 
     function show(data){

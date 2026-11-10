@@ -310,7 +310,11 @@ function preload(data, run){
                     ps = res.preload_size || 0,
                     sp = res.download_speed ? Utils.bytesToSize(res.download_speed * 8, true) : '0.0',
                     active_peers = parseInt(res.active_peers || 0),
-                    total_peers = parseInt(res.total_peers || 0)
+                    total_peers = parseInt(res.total_peers || 0),
+                    up = res.upload_speed ? Utils.bytesToSize(res.upload_speed * 8, true) : '',
+                    seeds = parseInt(res.connected_seeders || 0),
+                    pending = parseInt(res.pending_peers || 0),
+                    half = parseInt(res.half_open_peers || 0)
 
                 let progress = Math.min(100,((pb * 100) / ps ))
 
@@ -328,7 +332,15 @@ function preload(data, run){
                     Loading.setProgress(progress, {
                         speed: sp,
                         active_peers: active_peers,
-                        total_peers: total_peers
+                        total_peers: total_peers,
+                        up: up,
+                        seeds: seeds,
+                        pending: pending,
+                        half: half,
+                        pb: pb,
+                        ps: ps,
+                        dl: res.download_speed || 0,
+                        size: res.torrent_size || 0
                     })
 
                     next()
