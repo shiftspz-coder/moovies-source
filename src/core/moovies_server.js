@@ -201,6 +201,28 @@ function initCache(){
     }catch(e){}
 }
 
+function initLs(){
+    let L = window.Lampa
+    const NAMES = {1: 'Сиды крупно', 2: 'Плитки', 3: 'Скорость крупно', 4: 'Шкалы пиров', 5: 'Короткая фраза'}
+    let get = function(){ let v = parseInt(L.Storage.get('moovies_ls', '2')); return NAMES[v] ? v : 2 }
+    let paint = function(){ let d = document.querySelector('[data-name="moovies_ls"] .settings-param__descr'); if(d) d.textContent = get() + ' · ' + NAMES[get()] }
+    L.SettingsApi.addParam({
+        component: 'moovies_server',
+        param: {name: 'moovies_ls', type: 'button'},
+        field: {name: 'Экран загрузки', description: get() + ' · ' + NAMES[get()]},
+        onRender: function(){ paint() },
+        onChange: function(){
+            let en = L.Controller.enabled().name
+            L.Select.show({
+                title: 'Экран загрузки',
+                items: [1, 2, 3, 4, 5].map(v => ({title: v + ' · ' + NAMES[v], subtitle: get() === v ? 'Сейчас' : '', value: v})),
+                onBack: function(){ L.Controller.toggle(en) },
+                onSelect: function(a){ L.Controller.toggle(en); L.Storage.set('moovies_ls', String(a.value)); paint(); L.Noty.show('Экран загрузки: ' + a.value) }
+            })
+        }
+    })
+}
+
 let tries = 0
 let timer = setInterval(function(){
     if(ready()){
@@ -208,6 +230,7 @@ let timer = setInterval(function(){
         try{ init() }catch(e){}
         try{ initAddr() }catch(e){}
         try{ initCache() }catch(e){}
+        try{ initLs() }catch(e){}
         try{ initTs() }catch(e){}
     }
     else if(++tries > 120) clearInterval(timer)
