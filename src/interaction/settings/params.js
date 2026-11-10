@@ -583,13 +583,6 @@ select('torrserver_use_link',{
     'two': '#{settings_param_link_use_two}'
 },'one')
 
-select('torrserver_connlimit',{
-    '25': '25',
-    '50': '50',
-    '75': '75',
-    '100': '100'
-},'50')
-
 select('torrserver_search_type',{
     'rutor': '#{settings_param_torrserver_search_rutor}',
     'torznab': '#{settings_param_torrserver_search_torznab}',

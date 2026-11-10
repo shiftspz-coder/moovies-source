@@ -210,8 +210,6 @@ export default {
     settings_server_base: 'Save to database',
     settings_server_base_descr: 'The torrent will be added to the TorrServer database',
     settings_server_preload: 'Use prefetch buffer',
-    settings_server_connlimit: 'TorrServer connections limit',
-    settings_server_connlimit_descr: 'Maximum peer connections, applied to the server immediately',
     settings_server_preload_descr: 'Wait for TorrServer\'s preload buffer to fill before playing',
     settings_server_auth: 'Authorization',
     settings_server_password_use: 'Password login',
