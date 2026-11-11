@@ -203,8 +203,8 @@ function initCache(){
 
 function initLs(){
     let L = window.Lampa
-    const NAMES = {1: 'Сиды крупно', 2: 'Плитки', 3: 'Скорость крупно', 4: 'Шкалы пиров', 5: 'Короткая фраза'}
-    let get = function(){ let v = parseInt(L.Storage.get('moovies_ls', '2')); return NAMES[v] ? v : 2 }
+    const NAMES = {1: 'Капсула', 2: 'Сиды в капсуле', 3: 'Три числа', 4: 'Две колонки', 5: 'Спецификация', 6: 'Кольцо', 7: 'Фраза', 8: 'Шкала', 9: 'Светлая плашка', 10: 'Нижняя панель'}
+    let get = function(){ let v = parseInt(L.Storage.get('moovies_ls', '3')); return NAMES[v] ? v : 3 }
     let paint = function(){ let d = document.querySelector('[data-name="moovies_ls"] .settings-param__descr'); if(d) d.textContent = get() + ' · ' + NAMES[get()] }
     L.SettingsApi.addParam({
         component: 'moovies_server',
@@ -215,7 +215,7 @@ function initLs(){
             let en = L.Controller.enabled().name
             L.Select.show({
                 title: 'Экран загрузки',
-                items: [1, 2, 3, 4, 5].map(v => ({title: v + ' · ' + NAMES[v], subtitle: get() === v ? 'Сейчас' : '', value: v})),
+                items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(v => ({title: v + ' · ' + NAMES[v], subtitle: get() === v ? 'Сейчас' : '', value: v})),
                 onBack: function(){ L.Controller.toggle(en) },
                 onSelect: function(a){ L.Controller.toggle(en); L.Storage.set('moovies_ls', String(a.value)); paint(); L.Noty.show('Экран загрузки: ' + a.value) }
             })
